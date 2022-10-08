@@ -19,12 +19,8 @@ export const userLogin  = async (req, res) => {
             res.send(Salt);
         }
     } catch (error) {
-        console.log("오류");
+       return res.redirect("/");
     }
-
-    
-
-
 };
 
 export const userJoin = async (req, res) => {
@@ -43,9 +39,9 @@ export const userJoin = async (req, res) => {
         Name: body.joinNameName,
         NickName: body.joinNickName,
         BirthDay: birthDay
-    }).then(result => {
+    }).then(() => {
         console.log("암호화 회원가입 완료");
-        res.redirect("/");
+        return res.redirect("/");
     }).catch(error => {
         console.log(error);
     })
