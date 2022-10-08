@@ -3,18 +3,10 @@
 install  
 
     npm i
-
-db connect  
-
-    npm run conn  
     
 node run  
 
     npm run start  
-
-db disconnect  
-
-    npm run disconn  
 
 url (localhost)
 
@@ -60,9 +52,12 @@ url (localhost)
     1. 3000포트 서버 열기  
     2. 기본 Controller, Router 설정  
     3. 기본 Mysql DB 연결 완료  
+    4. 회원 가입 패스워드 암호화 구현  
+    5. 회원 가입 DB 구현  
+    6. 로그인 DB 구현  
 
 ------------  
 ## [진행 중]  
-    1. 회원 가입 패스워드 암호화 구현  
-    2. 회원 가입 DB 구현  
-    3. 로그인 DB 구현  
+    1. JWT 구현  
+    2. 게시판 글쓰기 구현  
+    3. 게시판 글수정 구현  

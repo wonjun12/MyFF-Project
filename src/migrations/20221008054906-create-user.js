@@ -10,30 +10,42 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       Email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull:false,
+        validate: {
+        isEmail: true
+      }
       },
       Pwd: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       Name: {
+        allowNull:false,
+        unique: true,
         type: Sequelize.STRING
       },
       NickName: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       BirthDay: {
         type: Sequelize.DATE
       },
       Salt: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        allowNull: true,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        allowNull: true,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },

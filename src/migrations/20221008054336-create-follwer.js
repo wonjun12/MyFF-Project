@@ -10,22 +10,27 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       MyUID: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       FUID: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       createdAt: {
+        type: Sequelize.DATE,
         allowNull: true,
-        type: Sequelize.DATE
+        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
+        type: Sequelize.DATE,
         allowNull: true,
-        type: Sequelize.DATE
+        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },
   async down(queryInterface, Sequelize) {
+    // await queryInterface.removeConstraint('', 'user_list_fk');
     await queryInterface.dropTable('Follwers');
   }
 };
