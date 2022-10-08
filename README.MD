@@ -16,7 +16,7 @@ db disconnect
 
     npm run disconn  
 
-url
+url (localhost)
 
     http://localhost:3000/
 
