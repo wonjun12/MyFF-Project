@@ -2,16 +2,16 @@
   
 @db connect  
 
-    : npm run conn  
+    npm run conn  
     
 @node run  
 
-    : npm run start  
+    npm run start  
 
 @db disconnect  
 
-    : npm run disconn  
-    
+    npm run disconn  
+
 
 
 [windows 설치 파일]  
