@@ -2,16 +2,17 @@ import crypto from "crypto";
 import { Op } from "sequelize";
 import {Users} from "../models";
 export const userLogin  = async (req, res) => {
-    const id = req.body.loginENName;
-    const password = req.body.loginPwdName;
+    const {loginENName, loginPwdName} = req.body;
+
     try {
         const result = await Users.findOne({
             where: {
-                [Op.or]: [{Email: id}, {NickName: id}]
+                [Op.or]: [{Email: loginENName}, {NickName: loginENName}]
             }
         });
+        
         const {Salt, Pwd} = result;
-        const hashPassword = crypto.createHash("sha512").update(password + Salt).digest("hex");
+        const hashPassword = crypto.createHash("sha512").update(loginPwdName + Salt).digest("hex");
 
         if(hashPassword === Pwd){
             res.send("비밀번호 일치");
@@ -24,26 +25,26 @@ export const userLogin  = async (req, res) => {
 };
 
 export const userJoin = async (req, res) => {
-    const body = req.body;
+    const {joinPwdName, joinYearName, joinMonthName, joinDayName, joinEmailName, joinNameName, joinNickName} 
+            = req.body;
 
-    const password = body.joinPwdName;
     const salt = Math.round((new Date().valueOf() * Math.random())) + "";
-    const hashPassword = crypto.createHash("sha512").update(password + salt).digest("hex");
+    const hashPassword = crypto.createHash("sha512").update(joinPwdName + salt).digest("hex");
 
-    const birthDay = body.joinYearName + "-" + body.joinMonthName + "-" + body.joinDayName;
+    const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
 
     await Users.create({
-        Email: body.joinEmailName,
+        Email: joinEmailName,
         Pwd: hashPassword,
         Salt: salt,
-        Name: body.joinNameName,
-        NickName: body.joinNickName,
+        Name: joinNameName,
+        NickName: joinNickName,
         BirthDay: birthDay
     }).then(() => {
         console.log("암호화 회원가입 완료");
         return res.redirect("/");
     }).catch(error => {
-        console.log(error);
+        return res.redirect("/");
     })
 
 };
