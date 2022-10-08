@@ -29,7 +29,11 @@ url (localhost)
       3.  아래 사진 제외하고 전부 NEXT  
 ![DB설치](./mysqlSelect.png)  
 (5.x 버전을 설치해야 node와 연동 가능하다.)  
-  
+    
+### mysql create table
+
+    CREATE DATABASE myff_db default CHARACTER SET UTF8;
+
 ### mysql create user  
 
     create user 'Locept'@'localhost' identified by 'Loceept0705';
