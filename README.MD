@@ -1,5 +1,9 @@
 #Web Porject  
   
+@install  
+
+    npm i
+
 @db connect  
 
     npm run conn  
