@@ -18,8 +18,8 @@
 
 
 ------------  
-[windows 설치 파일]  
-   - mysql  
+## [windows 설치 파일]  
+### mysql  
       1. https://dev.mysql.com/downloads/file/?id=512698  
       2. "No thanks, just start my download." <- 클릭  
       3.  아래 사진 제외하고 전부 NEXT  
