@@ -1,20 +1,24 @@
 # Web Porject  
   
-@install  
+install  
 
     npm i
 
-@db connect  
+db connect  
 
     npm run conn  
     
-@node run  
+node run  
 
     npm run start  
 
-@db disconnect  
+db disconnect  
 
     npm run disconn  
+
+url
+
+    http://localhost:3000/
 
 
 ------------  
@@ -24,7 +28,7 @@
       2. "No thanks, just start my download." <- 클릭  
       3.  아래 사진 제외하고 전부 NEXT  
 ![DB설치](./mysqlSelect.png)  
-          (5.x 버전을 설치해야 node와 연동 가능하다.) 
+(5.x 버전을 설치해야 node와 연동 가능하다.) 
 
   ------------ 
 ## [스크립트 실행 오류]  
