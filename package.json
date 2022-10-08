@@ -1,0 +1,35 @@
+{
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/node": "^7.19.1",
+    "@babel/preset-env": "^7.19.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
+    "sequelize": "^6.24.0",
+    "sequelize-cli": "^6.5.1"
+  },
+  "name": "myff-project",
+  "description": "Web Porject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "conn" : "cd src/ && sequelize db:migrate",
+    "start": "nodemon --exec babel-node src/index.js",
+    "disconn" : "cd src/ && sequelize db:migrate:undo:all"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wonjun12/MyFF-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wonjun12/MyFF-Project/issues"
+  },
+  "homepage": "https://github.com/wonjun12/MyFF-Project#readme"
+}
