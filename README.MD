@@ -22,13 +22,26 @@ url (localhost)
 
 
 ------------  
-## [windows 설치 파일]  
+## [windows]  
 ### mysql  
       1. https://dev.mysql.com/downloads/file/?id=512698  
       2. "No thanks, just start my download." <- 클릭  
       3.  아래 사진 제외하고 전부 NEXT  
 ![DB설치](./mysqlSelect.png)  
-(5.x 버전을 설치해야 node와 연동 가능하다.) 
+(5.x 버전을 설치해야 node와 연동 가능하다.)  
+  
+### mysql create user  
+
+    create user 'Locept'@'localhost' identified by 'Loceept0705';
+
+### mysql grant user
+
+    grant all privileges on myff_db.* to 'Locept'@'localhost';
+
+### mysql commit
+
+    FLUSH PRIVILEGES;
+
 
   ------------ 
 ## [스크립트 실행 오류]  
