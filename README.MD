@@ -28,7 +28,7 @@
 
   ------------ 
 ## [스크립트 실행 오류]  
-&nbsp;&nbsp;    1. "Windows PowerShell" <- windows 검색  
+1. "Windows PowerShell" <- windows 검색  
     2. 관리자 권한 실행  
     3. "get-ExecutionPolicy" <- 입력  
     4. "RemoteSigned" 아닌것을 확인  
