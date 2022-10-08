@@ -19,12 +19,12 @@
 
 
 [windows 설치 파일]  
-    - mysql  
-        1) https://dev.mysql.com/downloads/file/?id=512698  
-        2) "No thanks, just start my download." <- 클릭  
-        3)  아래 사진 제외하고 전부 NEXT  
-        ![DB설치](./mysqlSelect.png)  
-            (5.x 버전을 설치해야 node와 연동 가능하다.)  
+>   - mysql  
+>>       1) https://dev.mysql.com/downloads/file/?id=512698  
+>>       2) "No thanks, just start my download." <- 클릭  
+>>       3)  아래 사진 제외하고 전부 NEXT  
+>>      ![DB설치](./mysqlSelect.png)  
+>>           (5.x 버전을 설치해야 node와 연동 가능하다.)  
 
 [스크립트 실행 오류]  
     1) "Windows PowerShell" <- windows 검색  
