@@ -12,8 +12,8 @@
 
     http://localhost:3000/
 
-## create dummy users
 
+## create dummy users
     npm run dum
 
 ## delete dummy users
@@ -54,35 +54,21 @@
     nick  : 집돌이  
     pwd   : 23456789  
     
+    email : jun@myff.com  
+    nick  : 밖돌이  
+    pwd   : abcdefg
 
- - 2)  
-  - email  
-   * jun@myff.com
-  - nickname
-   * 밖돌이
-  - pwd
-   * abcdefg
- - 3)
-  - email
-   * son@myff.com
-  - nickname
-   * 송송돌이
-  - pwd
-   * qwe789
- - 4)
-  - email
-   * big@myff.com
-  - nickname
-   * 먹을거 주세요
-  - pwd
-   * asd456
- - 5)
-  - email
-   * home@myff.com
-  - nickname
-   * 집 전세냄
-  - pwd
-   * zxc123
+    email : son@myff.com
+    nick  : 송송돌이
+    pwd   : qwe789
+    
+    email : big@myff.com
+    nick  : 먹을거 주세요
+    pwd   :  asd456
+
+    email : home@myff.com
+    nick  : 집 전세냄
+    pwd   : zxc123
 
 
   ------------ 
