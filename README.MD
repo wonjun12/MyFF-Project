@@ -50,15 +50,15 @@
 
 ## [Dummy Users]
 
- - 1)
-  - email
-   * won@myff.com
-  - nickname
-   * 집돌이
-  - pwd
-   * 123456789
- - 2)
-  - email
+ - 1)  
+  - email  
+   * won@myff.com  
+  - nickname  
+   * 집돌이  
+  - pwd  
+   * 123456789  
+ - 2)  
+  - email  
    * jun@myff.com
   - nickname
    * 밖돌이
