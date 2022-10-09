@@ -6,7 +6,7 @@ export const mainPage = async (req, res) => {
         Users = await models.Users.findOne({
             where: {UID: req.UID}
         });
-
+        kakaoScript.then("testDivId");
         res.render("home.html", {UID: Users.UID});
     } catch (error) {
         res.render("home.html", {UID: Users});
