@@ -1,21 +1,31 @@
 import crypto from "crypto";
 import { Op } from "sequelize";
 import {Users} from "../models";
+import jwt from "../jwt/jwt";
+
+//로그인
 export const userLogin  = async (req, res) => {
     const {loginENName, loginPwdName} = req.body;
 
     try {
-        const result = await Users.findOne({
+        const Uers = await Users.findOne({
             where: {
+                //or 연산자 사용
                 [Op.or]: [{Email: loginENName}, {NickName: loginENName}]
             }
         });
         
-        const {Salt, Pwd} = result;
+        const {Salt, Pwd} = Uers;
+        //hash 단방향 변환
         const hashPassword = crypto.createHash("sha512").update(loginPwdName + Salt).digest("hex");
 
         if(hashPassword === Pwd){
-            res.send("비밀번호 일치");
+            console.log("로그인 성공");
+
+            const {token} = await jwt.sign(Uers);
+            res.cookie("MyAccess", token, {httpOnly:true});
+
+            return res.redirect("/");
         }else{
             res.send(Salt);
         }
@@ -24,11 +34,14 @@ export const userLogin  = async (req, res) => {
     }
 };
 
+//회원 가입
 export const userJoin = async (req, res) => {
     const {joinPwdName, joinYearName, joinMonthName, joinDayName, joinEmailName, joinNameName, joinNickName} 
             = req.body;
 
+    //현재 날짜에 의거하여 랜덤 부여
     const salt = Math.round((new Date().valueOf() * Math.random())) + "";
+    //hash 단방향 변환 (salt를 추가하여 변환)
     const hashPassword = crypto.createHash("sha512").update(joinPwdName + salt).digest("hex");
 
     const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
@@ -48,8 +61,26 @@ export const userJoin = async (req, res) => {
     })
 
 };
-export const userSee = (req, res) => {
-    res.send("see user");
+
+export const userLogout = (req, res) => {
+    res.clearCookie("MyAccess");
+    return res.redirect("/");
+};
+
+export const userSee = async (req, res) => {
+    const {id} = req.params;
+    const {MyAccess} = req.cookies;
+    
+    const Uers = await Users.findOne({
+        where: {UID: id}
+    });
+    
+    if(MyAccess){
+        const user = await jwt.verify(MyAccess);
+        req.UID = user.UID;
+    }
+
+    return res.render("userTest.html", {Uers, reqId: req.UID});
 };
 export const userEditGet = (req, res) => {
     res.send("edit user");

@@ -28,5 +28,10 @@
             <input type="text" name="loginPwdName" placeholder="비밀번호">
             <input type="submit" value="로그인" />
         </form>
+        <br>
+        <form action="/user/1/logout" method="POST">
+            <input type="submit" value="로그아웃">
+        </form>
+        <a href="/user/<%=UID%>">정보 보기</a>
     </body>
 </html>
