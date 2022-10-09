@@ -60,19 +60,19 @@
     pwd   : abcdefg
 
 
->    email : son@myff.com
-    nick  : 송송돌이
-    pwd   : qwe789
+>    email : son@myff.com  
+    nick  : 송송돌이  
+    pwd   : qwe789  
 
 
->    email : big@myff.com
-    nick  : 먹을거 주세요
-    pwd   :  asd456
+>    email : big@myff.com  
+    nick  : 먹을거 주세요  
+    pwd   :  asd456  
 
 
->    email : home@myff.com
-    nick  : 집 전세냄
-    pwd   : zxc123
+>    email : home@myff.com  
+    nick  : 집 전세냄  
+    pwd   : zxc123  
 
 
   ------------ 
