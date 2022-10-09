@@ -19,7 +19,7 @@
 ## delete dummy users
 
     npm run deldum  
-    [사용 시 users 테이블 값 전체 삭제]
+    [※주의※ 사용 시 users 테이블 값 전체 삭제]
 
 
 ------------  
