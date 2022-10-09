@@ -49,14 +49,12 @@
 
 
 ## [Dummy Users]
+ 
+    email : won@myff.com  
+    nick  : 집돌이  
+    pwd   : 23456789  
+    
 
- - 1)  
-  - email  
-   * won@myff.com  
-  - nickname  
-   * 집돌이  
-  - pwd  
-   * 123456789  
  - 2)  
   - email  
    * jun@myff.com
