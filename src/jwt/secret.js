@@ -9,3 +9,4 @@ module.exports = {
         issuer: "myff"
     }
 }
+//최종시 gitignore 추가

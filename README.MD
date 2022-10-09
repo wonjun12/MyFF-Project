@@ -1,16 +1,25 @@
 # Web Porject  
   
-install  
+## install  
 
     npm i
     
-node run  
+## node run  
 
     npm run start  
 
-url (localhost)
+## url (localhost)
 
     http://localhost:3000/
+
+## create dummy users
+
+    npm run dum
+
+## delete dummy users
+
+    npm run deldum  
+    [사용 시 users 테이블 값 전체 삭제]
 
 
 ------------  
@@ -39,6 +48,45 @@ url (localhost)
     FLUSH PRIVILEGES;
 
 
+## [Dummy Users]
+
+ - 1)
+  - email
+   * won@myff.com
+  - nickname
+   * 집돌이
+  - pwd
+   * 123456789
+ - 2)
+  - email
+   * jun@myff.com
+  - nickname
+   * 밖돌이
+  - pwd
+   * abcdefg
+ - 3)
+  - email
+   * son@myff.com
+  - nickname
+   * 송송돌이
+  - pwd
+   * qwe789
+ - 4)
+  - email
+   * big@myff.com
+  - nickname
+   * 먹을거 주세요
+  - pwd
+   * asd456
+ - 5)
+  - email
+   * home@myff.com
+  - nickname
+   * 집 전세냄
+  - pwd
+   * zxc123
+
+
   ------------ 
 ## [스크립트 실행 오류]  
     1. "Windows PowerShell" <- windows 검색  
@@ -56,9 +104,9 @@ url (localhost)
     5. 회원 가입 DB 구현  
     6. 로그인 DB 구현  
     7. 기초 JWT 구현
+    8. 더미 유저 생성 구현
 
 ------------  
 ## [진행 중]  
-    1. 실험 용 더미 만들기  
-    2. 좋아요 구현
-    3. 지도 API (예상)
+    1. 좋아요 구현
+    2. 지도 API (예상)

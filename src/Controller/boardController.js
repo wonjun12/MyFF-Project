@@ -1,4 +1,5 @@
 import models from "../models";
+
 export const boardWriteGet = (req, res) => {
     res.send("board write");
 };

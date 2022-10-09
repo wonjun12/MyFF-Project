@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { Op } from "sequelize";
-import {Users} from "../models";
+import models from "../models";
 import jwt from "../jwt/jwt";
 
 //로그인
@@ -8,29 +8,29 @@ export const userLogin  = async (req, res) => {
     const {loginENName, loginPwdName} = req.body;
 
     try {
-        const Uers = await Users.findOne({
+        const Users = await models.Users.findOne({
             where: {
                 //or 연산자 사용
                 [Op.or]: [{Email: loginENName}, {NickName: loginENName}]
             }
         });
         
-        const {Salt, Pwd} = Uers;
+        const {Salt, Pwd} = Users;
         //hash 단방향 변환
         const hashPassword = crypto.createHash("sha512").update(loginPwdName + Salt).digest("hex");
 
         if(hashPassword === Pwd){
             console.log("로그인 성공");
 
-            const {token} = await jwt.sign(Uers);
+            const {token} = await jwt.sign(Users);
             res.cookie("MyAccess", token, {httpOnly:true});
 
-            return res.redirect("/");
+            return res.render("home.html", {UID: Users.UID});
         }else{
             res.send(Salt);
         }
     } catch (error) {
-       return res.redirect("/");
+        return res.redirect("/");
     }
 };
 
@@ -46,7 +46,7 @@ export const userJoin = async (req, res) => {
 
     const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
 
-    await Users.create({
+    await models.Users.create({
         Email: joinEmailName,
         Pwd: hashPassword,
         Salt: salt,
@@ -71,7 +71,7 @@ export const userSee = async (req, res) => {
     const {id} = req.params;
     const {MyAccess} = req.cookies;
     
-    const Uers = await Users.findOne({
+    const Users = await models.Users.findOne({
         where: {UID: id}
     });
     
@@ -80,7 +80,7 @@ export const userSee = async (req, res) => {
         req.UID = user.UID;
     }
 
-    return res.render("userTest.html", {Uers, reqId: req.UID});
+    return res.render("userTest.html", {Users, reqId: req.UID});
 };
 export const userEditGet = (req, res) => {
     res.send("edit user");

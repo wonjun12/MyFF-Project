@@ -21,9 +21,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "conn": "cd src/ && sequelize db:migrate",
+    "dum": "cd src/ && sequelize db:seed:all",
     "start": "nodemon --exec babel-node src/index.js",
-    "disconn": "cd src/ && sequelize db:migrate:undo:all"
+    "deldum": "cd src/ && sequelize db:seed:undo:all"
   },
   "repository": {
     "type": "git",
