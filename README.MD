@@ -54,17 +54,21 @@
     nick  : 집돌이  
     pwd   : 23456789  
     
+
     email : jun@myff.com  
     nick  : 밖돌이  
     pwd   : abcdefg
 
+
     email : son@myff.com
     nick  : 송송돌이
     pwd   : qwe789
-    
+
+
     email : big@myff.com
     nick  : 먹을거 주세요
     pwd   :  asd456
+
 
     email : home@myff.com
     nick  : 집 전세냄
