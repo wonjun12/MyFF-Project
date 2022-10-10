@@ -1,4 +1,6 @@
 import express from "express";
+//파일을 올릴때 필요한 모듈
+import fileupload from "express-fileupload";
 //쿠키 추출
 import cookieParser from "cookie-parser";
 //db model 생성 및 연결
@@ -29,6 +31,8 @@ app.engine("html", require("ejs").renderFile);
 
 //쿠키 사용
 app.use(cookieParser());
+//파일 업로드를 해석해준다.
+app.use(fileupload());
 //html body 해석
 app.use(express.urlencoded({extended: true}));
 

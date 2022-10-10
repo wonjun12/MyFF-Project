@@ -62,7 +62,6 @@ export const boardSee = async (req, res) => {
     const Picture = await models.Picture.findAll({
         where: {BID: id}
     })
-
     //게시글 유무 확인
     if(Board != null){
         return res.render("boardSee.html",{Board, Picture});    

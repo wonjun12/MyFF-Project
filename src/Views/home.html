@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
         <script type='text/javascript' src='//dapi.kakao.com/v2/maps/sdk.js?appkey=521294d17a784996932d8159a1766a95&libraries=services,clusterer'> 
-        </script>
-        <script>
-            window.onload =  function() {
-                const a = document.getElementById("selectdId");
-                a[1].selected = true;
-            }
         </script>
     </head>
     <body>
@@ -50,7 +45,37 @@
         <a href="/board/8">
             1번째 글 보기
         </a>
+        <br>
+        <form method="post" id="fileForm">
+        <input type="file" name="filenamename" id="fileTest">
+        <input type="button" value="실행" onclick="ajaxTest()">
+        <p id="PTEST"></p>
+        </form>
     </body>
+        <script>
+            function ajaxTest(){
+                const iner = document.getElementById("PTEST");
+                const fileTst =  jQuery("#fileForm")[0];
+                var formData = new FormData(fileTst);
+                formData.append('file', fileTst);
+                $.ajax({
+                    type: "post",
+                    url: "/getLetter",
+                    processData: false,
+		            contentType: false,
+                    data: formData,
+                    success: function (result){
+                        iner.innerHTML = result;
+                    },
+                    error: function(req, stat, error){
+                        console.log(error);
+                    }
+                });
+            }
+        </script>
+
+
+
     <script>
         let container = document.getElementById("kakaoDivId");
         let options = {

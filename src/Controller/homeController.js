@@ -25,3 +25,8 @@ export const mainPage = async (req, res) => {
 export const locationPage = (req, res) => {
     res.send("location page");
 };
+
+export const getLetter = async (req, res) => {
+    console.log(req.files.filenamename.data);
+    res.json(req.files.filenamename.data);
+}

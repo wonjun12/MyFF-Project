@@ -3,7 +3,7 @@
     <body>
         <form method="post">
             <input type="text" name="writeAddrName" id="" value="<%=Board.Location%>">
-            <input type="text" name="writeCommName" id="" value="<%=Board.Content%>">
+            <textarea name="writeCommName"><%=Board.Content%></textarea>
             <input type="text" name="writeStarName" id="" value="<%=Board.Star%>">
             <br>
             <% for(let poto of Picture) { %>

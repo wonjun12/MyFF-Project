@@ -4,10 +4,10 @@
     <body>
         <%=Board.BID%>
         <%=Board.Location%>
-        <%=Board.Content%>
+        <pre style="color: red;"><%=Board.Content%></pre>
         <%=Board.Star%>
          <br>
-        <%=Picture[0].Poto%>
+        
 
         <a href="<%=Board.BID%>/edit">수정하기</a>
         <form method="POST" action="<%=Board.BID%>/delete">
@@ -15,3 +15,5 @@
         </form>
     </body>
 </html>
+
+<!-- <Picture[0].Poto> -->
