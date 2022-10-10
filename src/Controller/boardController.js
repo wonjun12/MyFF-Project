@@ -122,6 +122,7 @@ export const boardEditPost = async (req, res) => {
 export const boardDelte = async (req, res) => {
     const {id} = req.params;
 
+    //외래키 때문에 사진 먼저 삭제 해야함.
     await models.Picture.destroy({
         where: {BID: id}
     })
