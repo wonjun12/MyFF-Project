@@ -1,7 +1,7 @@
 import express from "express";
 //쿠키 추출
 import cookieParser from "cookie-parser";
-//db model 연결
+//db model 생성 및 연결
 import models from "./models/index.js";
 //route 연결
 import homeRouter from "./Router/homeRouter";
@@ -13,11 +13,14 @@ import checkToken from "./jwt/check";
 const app = express();
 const port = 3000;
 
+//db 생성 및 연결
 models.sequelize.sync().then(() => {
-    console.log("DB 연결");
+    console.log("성공");
 }).catch(error => {
     console.log(error);
-})
+});
+
+
 
 //html > ejs 변환
 app.set("view engine", "ejs");
