@@ -6,8 +6,8 @@ const userRouter = express.Router();
 
 userRouter.get("/:id(\\d+)", userSee);
 //edit get, post
-userRouter.route("/1/edit").get(checkToken, userEditGet).post(checkToken, userEditPost);
-userRouter.post("/1/logout",checkToken, userLogout);
-userRouter.post("/1/delete",checkToken, userDelete);
+userRouter.route("/:id(\\d+)/edit").get(checkToken, userEditGet).post(checkToken, userEditPost);
+userRouter.post("/:id(\\d+)/logout",checkToken, userLogout);
+userRouter.post("/:id(\\d+)/delete",checkToken, userDelete);
 
 export default userRouter;

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <form method="post">
+            <input type="text" placeholder="닉네임" name="editNickName" value="<%=Users.NickName%>">
+            <input type="text" placeholder="비밀번호" name="editPCKName" value="">
+            <input type="text" placeholder="비밀번호변경" name="editPUPName" value="">
+
+            <select id="editYearId" name="editYearName">
+                <option>1995</option>
+                <option>1996</option>
+                <option>2021</option>
+                <option>2022</option>
+            </select>
+            <select id="editMonthId" name="editMonthName">
+                <option>1</option>
+                <option>2</option>
+                <option>9</option>
+                <option>10</option>
+            </select>
+            <select id="editDayId" name="editDayName">
+                <% for(let day = 1; day < 31; day++) {%>
+                    <option><%=day%></option>
+                <% } %>
+            </select>
+            <input type="submit" value="확인">
+            
+        </form>
+        <form method="post" action="./delete">
+            <input type="submit" value="탈퇴하기">
+        </form>
+    </body>
+    <script type="text/javascript">
+        const uYear = "<%-Users.BirthDay.getFullYear()%>";
+        const uMonth = "<%-Users.BirthDay.getMonth() + 1%>";
+        const uDay = "<%-Users.BirthDay.getDate()%>";
+        
+        let year = document.getElementById("editYearId");
+        let month = document.getElementById("editMonthId");
+        let day = document.getElementById("editDayId");
+
+        for(let i = 0; i < month.length; i++) {
+            if(year[i].value == uYear){
+                year[i].selected = true;
+                break;
+            }
+        }
+
+        for(let i = 0; i < year.length; i++) {
+            if(month[i].value == uMonth){
+                month[i].selected = true;
+                break;
+            }
+        }
+
+        for(let i = 0; i < day.length; i++) {
+            if(day[i].value == uDay){
+                day[i].selected = true;
+                break;
+            }
+        }
+    </script>
+</html>

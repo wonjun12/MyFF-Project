@@ -5,12 +5,12 @@ import checkToken from "../jwt/check";
 
 const boardRouter = express.Router();
 
-boardRouter.get("/1", boardSee);
+boardRouter.get("/:id(\\d+)", boardSee);
 boardRouter.route("/write").get(boardWriteGet).post(boardWritePost);
-boardRouter.route("/1/edit").get(boardEditGet).post(boardEditPost);
-boardRouter.post("/1/delete", boardDelte);
-boardRouter.post("/1/commt", boardCommt);
-boardRouter.post("/1/commt/edit", boardCommtEdit);
+boardRouter.route("/:id(\\d+)/edit").get(boardEditGet).post(boardEditPost);
+boardRouter.post("/:id(\\d+)/delete", boardDelte);
+boardRouter.post("/:id(\\d+)/commt", boardCommt);
+boardRouter.post("/:id(\\d+)/commt/edit", boardCommtEdit);
 
 
 export default boardRouter;

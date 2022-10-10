@@ -3,6 +3,12 @@
     <head>
         <script type='text/javascript' src='//dapi.kakao.com/v2/maps/sdk.js?appkey=521294d17a784996932d8159a1766a95&libraries=services,clusterer'> 
         </script>
+        <script>
+            window.onload =  function() {
+                const a = document.getElementById("selectdId");
+                a[1].selected = true;
+            }
+        </script>
     </head>
     <body>
         <form method="post" action="./join">
@@ -10,7 +16,7 @@
             <input type="text" name="joinPwdName" placeholder="비밀번호">
             <input name="joinNameName" placeholder="이름">
             <input name="joinNickName" placeholder="닉네임">
-            <select name="joinYearName">
+            <select name="joinYearName" id="selectdId">
                 <option>1995</option>
                 <option>1996</option>
             </select>
@@ -31,18 +37,26 @@
             <input type="submit" value="로그인" />
         </form>
         <br>
-        <form action="/user/1/logout" method="POST">
+        <form action="/user/<%=UID%>/logout" method="POST">
             <input type="submit" value="로그아웃">
         </form>
-        <a href="/user/<%=UID%>">정보 보기</a>
+        <a href="/user/<%=UID%>">정보 보기</a> <br>
+        <a href="/user/<%=UID%>/edit">정보 수정</a>
         <div id="kakaoDivId" style="width:500px; height:400px"></div>
-        <script>
-            let container = document.getElementById("kakaoDivId");
-            let options = {
+        <br>
+        <a href="/board/write">
+            <input type="button" value="글쓰기">
+        </a>
+        <a href="/board/8">
+            1번째 글 보기
+        </a>
+    </body>
+    <script>
+        let container = document.getElementById("kakaoDivId");
+        let options = {
             center: new kakao.maps.LatLng(33.450701, 126.570667),
             level: 5
-            };
-            let map = new kakao.maps.Map(container, options);
-        </script>
-    </body>
+        };
+        let map = new kakao.maps.Map(container, options);
+    </script>
 </html>

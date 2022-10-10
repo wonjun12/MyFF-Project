@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <%=Board.BID%>
+        <%=Board.Location%>
+        <%=Board.Content%>
+        <%=Board.Star%>
+         <br>
+        <%=Picture[0].Poto%>
+
+        <a href="<%=Board.BID%>/edit">수정하기</a>
+        <form method="POST" action="<%=Board.BID%>/delete">
+            <input type="submit" value="삭제하기">
+        </form>
+    </body>
+</html>
