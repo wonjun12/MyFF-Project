@@ -1,0 +1,35 @@
+let geocoder = new kakao.maps.services.Geocoder();
+            geocoder.addressSearch(address, (result, status) => {
+                if(status === kakao.maps.services.Status.OK){
+                    let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    let content = "<div>여기에 테스트가 생긴다</div>";
+
+                    let position = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    //마커 이미지
+                    const imageSrc = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile1.uf.tistory.com%2Fimage%2F2238D14B57BA6C9B13DFD5",
+                    imageSize = new kakao.maps.Size(35,35), imageOption ={offset:new kakao.maps.Point(17,40)};
+                    
+                    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+                    let maker = new kakao.maps.Marker({
+                        map: map,
+                        position: position,
+                        image: markerImage
+                    });
+
+                    //해당 위치 메시지 출력
+                    let customOverlay = new kakao.maps.CustomOverlay({
+                        map: map,
+                        position: position,
+                        content: content,
+                        yAnchor: 1
+                    });
+                    //해당 위치 눌렀을때 이벤트
+                    kakao.maps.event.addListener(maker, 'click',function(){
+                        var position = this.getPosition();
+                        alert("이거 눌럿네?");
+                    });
+                    map.setCenter(coords);
+                }
+            })

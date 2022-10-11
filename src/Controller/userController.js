@@ -73,13 +73,6 @@ export const userJoin = async (req, res) => {
     }
 };
 
-//로그 아웃
-export const userLogout = (req, res) => {
-    res.clearCookie("MyAccess");
-    return res.redirect("/");
-};
-
-
 //유저 정보 보기
 export const userSee = async (req, res) => {
     const {id} = req.params;
@@ -158,6 +151,13 @@ export const userDelete = async (req, res) => {
     await models.Users.destroy({
         where: {UID: req.UID}
     })
+    res.clearCookie("MyAccess");
+    return res.redirect("/");
+};
+
+
+//로그 아웃
+export const userLogout = (req, res) => {
     res.clearCookie("MyAccess");
     return res.redirect("/");
 };

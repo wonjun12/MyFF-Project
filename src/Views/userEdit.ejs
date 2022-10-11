@@ -40,21 +40,21 @@
         let month = document.getElementById("editMonthId");
         let day = document.getElementById("editDayId");
 
-        for(let i = 0; i < month.length; i++) {
+        for(let i in month) {
             if(year[i].value == uYear){
                 year[i].selected = true;
                 break;
             }
         }
 
-        for(let i = 0; i < year.length; i++) {
+        for(let i in year) {
             if(month[i].value == uMonth){
                 month[i].selected = true;
                 break;
             }
         }
 
-        for(let i = 0; i < day.length; i++) {
+        for(let i in day) {
             if(day[i].value == uDay){
                 day[i].selected = true;
                 break;

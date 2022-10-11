@@ -9,6 +9,7 @@
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.8",
     "express-fileupload": "^1.4.0",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
