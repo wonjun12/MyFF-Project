@@ -37,9 +37,9 @@
 
 ### mysql create user  
 
-    create user 'Locept'@'localhost' identified by 'Loceept0705';
+    create user 'Locept'@'localhost' identified by 'Locept0705';
 
-### mysql grant user
+### mysql grant user 
 
     grant all privileges on myff_db.* to 'Locept'@'localhost';
 
@@ -95,11 +95,11 @@
     8. 더미 유저 생성 구현  
     8. 유저 정보 DB 뼈대 구현 (보기, 수정 ,삭제)  
     9. 게시글 DB 뼈대 구현 (생성, 보기, 수정, 삭제)  
+    10. 비동기 사진 글 추출  
 
 ------------  
 ## [진행 중]  
-    1. 비동기 사진 글 추출  
-    2. 지도 API를 위해 React 공부  
-    3. locaton DB 구현  
-    4. 지도 API (div 화면만 구현) 
+    1. 지도 API를 위해 React 공부  
+    2. locaton DB 구현  
+    3. 지도 API (div 화면만 구현) 
     (보류) 좋아요 구현   
