@@ -75,56 +75,68 @@
                 });
             }
         </script>
-    <script>
-        //마크 만들기 함수
-        function mapSearch(address){ 
-                        let geocoder = new kakao.maps.services.Geocoder();
-                        //주소를 입력받아 검색한다.
-                        geocoder.addressSearch(address, (result, stat) => {
-                            //기존 마크 삭제
-                            //메인화면에서는 적요하면 안됨
-                            if(makers.length > 0){
-                                for(let i in makers){
-                                    makers[i].setMap(null);
-                                }
-                            }
-                            //해당 검색한 주소중 x, y 좌표를 설정해서 가져온다
-                            let position = new kakao.maps.LatLng(result[0].y, result[0].x);
-                            //위치 마크 이미지 설정
-                            const img = "getMaker";
-                            //위치 마크 이미지 크기 설정
-                            const imgSize = new kakao.maps.Size(35, 35);
-                            //위치 마크 이미지 위치에서 얼마나 이동할것인지
-                            const imgOption = {offset: new kakao.maps.Point(17, 40)};
+        <script>
+            //마크 만들기 함수
+            function mapSearch(address){ 
+                            let geocoder = new kakao.maps.services.Geocoder();
+                            //주소를 입력받아 검색한다.
+                            geocoder.addressSearch(address.Location, (result, stat) => {
+                                //해당 검색한 주소중 x, y 좌표를 설정해서 가져온다
+                                let position = new kakao.maps.LatLng(result[0].y, result[0].x);
+                                //위치 마크 이미지 설정
+                                const img = "getMaker";
+                                //위치 마크 이미지 크기 설정
+                                const imgSize = new kakao.maps.Size(70, 70);
+                                //위치 마크 이미지 위치에서 얼마나 이동할것인지
+                                const imgOption = {offset: new kakao.maps.Point(17, 40)};
+    
+                                //마크 이미지 설정
+                                const markImg = new kakao.maps.MarkerImage(img, imgSize, imgOption);
+    
+                                //위치 마크 만들기
+                                const mark = new kakao.maps.Marker({
+                                    map: map,
+                                    position: position,
+                                    image: markImg
+                                });
 
-                            //마크 이미지 설정
-                            const markImg = new kakao.maps.MarkerImage(img, imgSize, imgOption);
+                                //클릭시 이벤트 발동
+                                kakao.maps.event.addListener(mark, 'click',function(){
+                                    //해당 게시글로 이동
+                                    location.replace('./board/'+address.BID);
+                                });
 
-                            //위치 마크 만들기
-                            makers.push(new kakao.maps.Marker({
-                                map: map,
-                                position: position,
-                                image: markImg
-                            }));
-                            
-                            //검색한 주소를 중앙으로 위치해준다.
-                            map.setCenter(position);
-                            
-                        })
-                    }
-    </script>
-
-
+                                makers.push(mark);
+                                
+                                //검색한 주소를 중앙으로 위치해준다.
+                                map.setCenter(position);
+                                
+                            })
+                        }
+        </script>
     <script>
         //지도 생성
         let container = document.getElementById("kakaoDivId");
         let options = {
             center: new kakao.maps.LatLng(33.450701, 126.570667),
-            level: 5
+            level: 7
         };
         let map = new kakao.maps.Map(container, options);
         //마크 저장
         //함수를 사용할것기에 미리 선언
         var makers = [];
+        $.ajax({
+                    type: "post", //보낼 방식
+                    url: "/location", //보낼 URL
+                    //보낸것이 성공한다면 실행
+                    success: function (address){
+                        for(let i in address){
+                            mapSearch(address[i]);
+                        }
+                    },
+                    error: function(req, stat, error){
+                        console.log(error);
+                    }
+                });
     </script>
 </html>

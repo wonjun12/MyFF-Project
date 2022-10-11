@@ -28,6 +28,21 @@ export const locationPage = (req, res) => {
     res.send("location page");
 };
 
+export const getLocation = async (req, res) => {
+    const {MyAccess} = req.cookies;
+    
+    if(MyAccess){
+        const user = await jwt.verify(MyAccess);
+        req.UID = user.UID;
+
+        await models.Board.findAll({
+            where: {UID: req.UID}
+        }).then((data) => {
+            return res.json(data);
+        })
+    }
+}
+
 export const getLetter = async (req, res) => {
     try {
         //지역 이름 설정
