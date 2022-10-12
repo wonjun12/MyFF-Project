@@ -102,5 +102,6 @@
 ## [진행 중]  
     1. 지도 API를 위해 React 공부  
     2. locaton DB 구현  
-    3. 지도 API (div 화면만 구현) 
+    3. 지도 API (div 화면만 구현)
+    4. DB 로직 inner join 구현 
     (보류) 좋아요 구현   
