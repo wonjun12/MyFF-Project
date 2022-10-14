@@ -2,6 +2,7 @@ import models from "../models";
 import jwt from "../jwt/jwt";
 import tesseract from "node-tesseract-ocr";
 import fs from "fs";
+import { ok } from "assert";
 
 export const mainPage = async (req, res) => {
     let Users;
@@ -84,6 +85,6 @@ export const makerImg = async (req, res) => {
         if(error) {
             console.log(error);
         }
-        return res.send(data);
+        return res.json({result: "ok", img:data});
     })
 }

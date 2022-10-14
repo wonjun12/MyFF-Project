@@ -24,16 +24,16 @@ models.sequelize.sync().then(() => {
 
 
 
-//html > ejs 변환
+//html > ejs 변환하긔
 app.set("view engine", "ejs");
 app.set('views', process.cwd() +"/src/Views/");
 app.engine("html", require("ejs").renderFile);
 
-//쿠키 사용
+//쿠키 사용하긔
 app.use(cookieParser());
-//파일 업로드를 해석해준다.
+//파일 업로드를 해석해준다잉.
 app.use(fileupload());
-//html body 해석
+//html body 해석하긔
 app.use(express.urlencoded({extended: true}));
 
 //초기 기준 url

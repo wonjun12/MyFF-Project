@@ -10,9 +10,9 @@
                                 for(let i in makers){
                                     makers[i].setMap(null);
                                 }
-                            }
-                            //해당 검색한 주소중 x, y 좌표를 설정해서 가져온다
-                            let position = new kakao.maps.LatLng(result[0].y, result[0].x);
+                            }해당 검색한 주소중 x, y 좌표를 설정해서 가져온다
+                            
+                            //let position = new kakao.maps.LatLng(result[0].y, result[0].x);
                             //위치 마크 이미지 설정
                             const img = "getMaker";
                             //위치 마크 이미지 크기 설정
