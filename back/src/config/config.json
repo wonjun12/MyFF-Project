@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "Locept",
+    "password": "Locept0705",
+    "database": "myff_db",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  }
+}

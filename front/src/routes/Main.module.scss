@@ -1,0 +1,68 @@
+.container{
+    background-color: rgb(241, 241, 241);
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 130px;
+    padding-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .mapDiv{
+        margin-bottom: 20px;
+        margin-left: 250px;
+        img{
+            width: 950px;
+            height: 400px;
+        }
+    }
+    .boardContainer{
+        width: 96%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        .boardDiv{
+            height: 400px;
+            padding: 15px;
+            background-color: white;
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 10px;
+            box-shadow: 5PX 5px 5px -5px rgb(208, 208, 208);
+            .userDiv{
+                width: 25%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-right: 20px;
+                margin-top: 40px;
+                img{
+                    width: 100%;
+                    margin-bottom: 15px;
+                }
+                h1{
+                    font-size: 20px;
+                }
+            }
+            .boardimgDiv{
+                width: 70%;
+                img{
+                    width: 100%;
+                    height: 250px;
+                }
+            }
+            .contentsDiv{
+                width: 100%;
+                height: 160px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                h1{
+                    font-size: 20px;
+                }
+                .star{
+                    margin-right: 20px;
+                }
+            }
+        }
+    }
+}
