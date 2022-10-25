@@ -5,13 +5,13 @@ import Modal from 'react-awesome-modal';
 import axios from "axios";
 const SERVER_URL = "http://localhost:4000/";
 function loginTest() {
-    const id ="집돌이";
-    const pwd = "123456789";
+    const id ="밖돌이";
+    const pwd = "abcdefg";
     
-    axios.post(SERVER_URL,{
-      id: id,
-      pwd: pwd
-    }).then(res => {
+    axios.post(SERVER_URL + "login",{
+      loginENName: id,
+      loginPwdName: pwd
+    }, {withCredentials: true}).then(res => {
         console.log(res.data);
     });
   }

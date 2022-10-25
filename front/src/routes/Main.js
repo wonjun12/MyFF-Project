@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Styles from "./Main.module.scss";
 import useIntersect from "../hooks/useIntersect";
-
+import {kakaoMap, boardMapSearch, mainMapSearch} from "./kakaoMap";
+axios.defaults.withCredentials = true;
 
 
 function Main() {
@@ -15,69 +16,60 @@ function Main() {
   //useIntersect
   const [state, setState] = useState({ itemCount: 0, isLoading: false });
   //const [loading, setLoading] = useState(false);
+  const [img, setImg] = useState();
 
+  // const fatchData = async () => {
+  //   setState(prev => ({ ...prev, isLoading: true }));
 
-  const fatchData = async () => {
-    setState(prev => ({ ...prev, isLoading: true }));
-
-    // await axios.get(SERVER_URL)
-    //   .then((res) => {
-    //     setUsers(res.data);
-    //     //setLoading(true);
-    //   });
-    //   setState(prev => ({
-    //     itemCount: prev.itemCount + 4,
-    //     isLoading: false
-    //   }));
-  };
+  //   await axios.get(SERVER_URL)
+  //     .then((res) => {
+  //       setUsers(res.data);
+  //     });
+  // };
 
   useEffect(() => {
     // fatchData();
+    kakaoMap(6);
     
+    axios.get(SERVER_URL).then(res => {
+      const {Board, Photo, User} = res.data;
+
+      setUsers(Board);
+      setImg(Photo)
+      
+      for(let i in Board){
+        mainMapSearch(Board[i], Photo[i]);
+      }
+
+    })
   }, []);
-
-  const { itemCount, isLoading } = state;
-
-  const [_, setRef] = useIntersect(async (entry, observer) => {
-    observer.unobserve(entry.target);
-    // fatchData();
-    observer.observe(entry.target);
-
-  }, {});
-
-
-  if (!itemCount) return null;
-
+  console.log(users);
   return (
     <div className={Styles.container}>
-      <div className={Styles.mapDiv}>
-        <img src="map.PNG"></img>
+      <div id="myMap" className={Styles.mapDiv} >
       </div>
       <div className={Styles.boardContainer}>
 
-        {users?.map((user, index) => index < itemCount ? (
-          <div key={user.id} className={Styles.boardDiv}>
+        {/* {users?.map((user, index) => index < itemCount ? ( */}
+        {users?.map((user) => 
+          <div key={user.BID} className={Styles.boardDiv}>
             <div className={Styles.userDiv}>
               <img></img>
-              <h1>{user.id}</h1>
+              <h1>{user.Location}</h1>
             </div>
             <div className={Styles.boardimgDiv}>
-              <img className={Styles.boardImg} src="test.jfif"></img>
+              <img className={Styles.boardImg} src={`data:image;base64, ${img[0]}`}></img>
             </div>
             <div className={Styles.contentsDiv}>
               <h1>식당이름 - 위치</h1>
-              <p>{user.text}</p>
+              <p>{user.Content}</p>
               <div className={Styles.starDiv}>
                 <span className={Styles.star}>⭐4.5</span>
                 <span className={Styles.tag}> #태그 #태그</span>
               </div>
             </div>
           </div>
-        ) : null)}
-
-        <div ref={setRef} className={Styles.loadingDiv}>
-          {isLoading && "Loading..."}
-        </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 //DB 모델
 import models from "./models";
-import { Op } from "sequelize";
+//파일을 업로드, 다운로드 필요한 모듈
+import fileupload from "express-fileupload";
+//route 연결
+import homeRouter from "./router/homeRouter";
+import userRouter from "./router/userRouter";
+import boardRouter from "./router/boardRouter";
+
 
 
 const app = express();
@@ -33,51 +39,25 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 
-import crypto from "crypto";
-
-//hash 단반향 변환 함수
-function addHash(pwd, salt){
-    return crypto.createHash("sha512").update(pwd + salt).digest("hex");
-}
-
-//랜덤성 부여 함수
-function addSalt() {
-    return Math.round((new Date().valueOf() * Math.random())) + "";
-}
-const boardRouter = express.Router();
-// app.get("/", () => {}
-// );
-boardRouter.post("/", async (req, res) => {
-    const {id, pwd} = req.body;
+//초기 url
+app.use("/", homeRouter);
+app.use("/user", userRouter);
+app.use("/board", boardRouter);
 
 
-    try {
-        const Users = await models.Users.findOne({
-            where: {NickName: id}
-        });
-        
-        const {Salt, Pwd} = Users;
-        //hash 단방향 변환
-        const hashPassword = addHash(pwd, Salt);
 
-        if(hashPassword === Pwd){
-            console.log("로그인 성공");
 
-            res.status(201).json({result: 'ok', UID: Users}).end();
 
-            // return res.redirect("/");
-        }else{
-            console.log("로그인 실패");
-            res.json({result:"faild"}).end();
-        }
 
-    } catch (error) {
-        console.log(error);
-        res.json();
-    }
-    
-});
-app.use("/",boardRouter);
+
+
+
+
+
+
+
+
+
 
 
 app.listen(PORT, () => {
