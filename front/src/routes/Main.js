@@ -31,22 +31,22 @@ function Main() {
     // fatchData();
     kakaoMap(6);
     
-    axios.get(SERVER_URL).then(res => {
-      const {Board, Photo, User} = res.data;
+    // axios.get(SERVER_URL).then(res => {
+    //   const {Board, Photo, User} = res.data;
 
-      setUsers(Board);
-      setImg(Photo)
+    //   setUsers(Board);
+    //   setImg(Photo)
       
-      for(let i in Board){
-        mainMapSearch(Board[i], Photo[i]);
-      }
+    //   for(let i in Board){
+    //     mainMapSearch(Board[i], Photo[i]);
+    //   }
 
-    })
+    // })
   }, []);
   console.log(users);
   return (
     <div className={Styles.container}>
-      <div id="myMap" className={Styles.mapDiv} >
+      <div className={Styles.mapDiv} id="myMap">
       </div>
       <div className={Styles.boardContainer}>
 

@@ -25,10 +25,14 @@ function Header() {
   const openModal = () =>{
     setvisible(true);
     document.body.style = 'overflow: hidden';
+    document.getElementById("myMap").setAttribute("hidden", "hidden");
   }
   const closeModal = () =>{
     setvisible(false);
     document.body.style = 'overflow: auto';
+    document.getElementById("myMap").removeAttribute("hidden");
+    
+    
   }
 
   //테스트
