@@ -12,6 +12,9 @@ export const mainPage = async (req, res) => {
         req.UID = user.UID;
     }
 
+    if(req.UID == undefined || req.UID == null){
+        res.json({result:"filed"}).end();
+    }
 
     try {
         let boardArray = [];
