@@ -3,34 +3,40 @@ import jwt from "../jwt/jwt";
 import fs from "fs";
 
 export const mainPage = async (req, res) => {
-    let Users;
     const {MyAccess} = req.cookies;
+
+    const page = parseInt(req.query.page);
 
     if(MyAccess){
         const user = await jwt.verify(MyAccess);
         req.UID = user.UID;
     }
 
+
     try {
-        
-        // Users = await models.Users.findOne({
-        //     where: {UID: req.UID}
-        // });
-        const User = await models.Users.findOne({
-            where: {UID : req.UID}
-        })
-        const Board = await models.Board.findAll({
-            where: {UID: User.UID}
+        let boardArray = [];
+
+        models.Board.findAll({
+            where: {UID: req.UID},
+            include: [{
+                        model: models.Users,
+                        required: true,
+                        attributes: ['UID', 'Email', 'NickName']
+                    }]
+        }).then(board => {
+            
+            for(let i=page*4; i<4*(page+1); i++){
+                if(board.length > i){
+                    boardArray.push(board[i]);
+                }
+            }
+            // console.log(boardArray);
+            res.json({result:"ok", boardArray}).end();
+        }).catch(err => {
+            console.log(err);
         });
-        let Photo = [];
-        for(let i in Board){
-            Photo.push(await models.Picture.findOne({
-                where : {BID: Board[i].BID}
-            }).then(Photo => {
-                return Photo.Photo.toString('base64');
-            }))
-        }
-        res.json({Board, Photo, User}).end();
+
+       
 
         // fs.readFile("./src/Views/poto.jpg", (error, data) => {
         //     if(error) {
@@ -41,9 +47,10 @@ export const mainPage = async (req, res) => {
         //     return res.status(201).json({result:"ok", addr:Board, img:data.toString('base64')}).end();
         // })
         
-    } catch (error) {
-        // res.render("home.html", {UID: Users});
-    } 
+        } catch (error) {
+            // res.render("home.html", {UID: Users});
+        } 
+
 };
 
 export const locationPage = (req, res) => {
@@ -56,21 +63,23 @@ export const getLetter = async (req, res) => {
     // res.json(req.files.filenamename.data);
 }
 
-export const mainPagging = async (req, res) => {
-    const {maxPage} = req.query;
+// export const mainPagging = async (req, res) => {
 
-    let a = [];
+//     const page = parseInt(req.query.page);
+    
+//     console.log(typeof(page));
 
-    for(let i =0; i < 999 ; i++){
-        a.push(i);
-    }
+//     let boardArray = [];
 
-    let page = [];
-    for(let i = maxPage - 5; i < maxPage; i++){
-        page.push(a[i]);
-    }
+//     models.Board.findAll({
+//         where: {UID: 1}
 
-    res.json({result:"ok", page});
-
-
-}
+//     }).then(board => {
+//         for(let i=page*4; i<4*(page+1); i++){
+//             if(board.length > i){
+//                 boardArray.push(board[i]);
+//             }
+//         }
+//         res.json({result: "ok", boardArray}).end(); 
+//     });
+// }

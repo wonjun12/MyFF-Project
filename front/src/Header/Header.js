@@ -1,41 +1,25 @@
 import React, { useState } from "react";
 import Styles from "./Header.module.scss";
-import Modal from 'react-awesome-modal';
+import Login from "./Login";
 
-import axios from "axios";
-const SERVER_URL = "http://localhost:4000/";
-function loginTest() {
-    const id ="밖돌이";
-    const pwd = "abcdefg";
-    
-    axios.post(SERVER_URL + "login",{
-      loginENName: id,
-      loginPwdName: pwd
-    }, {withCredentials: true}).then(res => {
-        console.log(res.data);
-    });
-  }
-
-
-
+import {Link} from "react-router-dom";
 
 function Header() {
 
-  const [visible, setvisible] = useState(false);
-  const openModal = () =>{
-    setvisible(true);
-    document.body.style = 'overflow: hidden';
-    document.getElementById("myMap").setAttribute("hidden", "hidden");
-  }
-  const closeModal = () =>{
-    setvisible(false);
-    document.body.style = 'overflow: auto';
-    document.getElementById("myMap").removeAttribute("hidden");
-    
-    
-  }
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  //테스트
+  const openLoginModal = () => {
+    
+    setLoginModalOpen(true);
+
+    
+    document.getElementById("myMap")?.setAttribute("hidden", "hidden");
+  }
+  const closeLoginModal = () => {
+    setLoginModalOpen(false);
+
+    document.getElementById("myMap")?.removeAttribute("hidden");
+  }
   
   
   return (
@@ -57,36 +41,18 @@ function Header() {
           <a href="/best">
             <h3>Best</h3>
           </a>
-          <a href="/new">
+          {/* <a href="/new">
             <h3>New</h3>
-          </a>
-          <div>
-            <a onClick={openModal}>
-              <h3>Login</h3>
-            </a>
-
-            <Modal onClickAway={closeModal} visible={visible} width="400" height="300" effect="fadeInDown">
-              <div>
-                <div className={Styles.modalHead}>
-                  <h1 className={Styles.loginText}>로그인</h1>
-                  <input className={Styles.exitBtn} value="X" type="button" onClick={closeModal}/>
-                </div>
-                <div className={Styles.modalContent}>
-                  아이디 <input type="text" placeholder="아이디"/>
-                  비밀번호 <input type="text" placeholder="아이디"/>
-                </div>
-                <div>
-                  <a href="#">아이디찾기</a>
-                  <a href="#">비밀번호찾기</a>
-                </div>
-                <div className={Styles.modalBtn}>
-                  <input className={Styles.loginBtn} type="button" value="로그인" onClick={loginTest}/>
-                  <input className={Styles.joinBtn} type="button" value="회원가입" />
-                </div>
-             </div>
-            </Modal>
-          </div>
+          </a> */}
+          <Link to="/board/write">
+            글쓰기
+          </Link>
           
+          <a>
+            <h3 id="inHearderLoginText" onClick={openLoginModal}>Login</h3>
+            {loginModalOpen && <Login close={closeLoginModal}></Login>}
+          </a>
+
         </div>
       </div>
     </div>

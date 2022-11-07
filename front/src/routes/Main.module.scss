@@ -7,18 +7,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    //지도
     .mapDiv{
         margin-bottom: 20px;
         margin-left: 250px;
         width: 950px;
         height: 400px;
-
     }
+
     .boardContainer{
         width: 96%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
+
+        //게시글 간략보기
         .boardDiv{
             height: 400px;
             padding: 15px;

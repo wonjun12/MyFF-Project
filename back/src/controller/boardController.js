@@ -1,10 +1,10 @@
 import models from "../models";
 
 //사진 넣기 함수
-async function createPicture(BID, Poto){
+async function createPicture(BID, Photo){
     await models.Picture.create({
         BID: BID,
-        Poto: Poto
+        Photo: Photo
     })
 }
 
@@ -31,23 +31,27 @@ export const boardWriteGet = async (req, res) => {
 
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
-    const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
-
+    // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
+    const {writeAddrName, writeCommName} = JSON.parse(req.body.bodys);
+    const {files} = req.files;
+    console.log(files.data);
     try {
-        //DB에 넣으면서 BID를 가져옴
+        // DB에 넣으면서 BID를 가져옴
         const {BID} = await models.Board.create({
             UID: req.UID,
             Location: writeAddrName,
             Content: writeCommName,
-            Star: writeStarName,
-        })
+            // Star: writeStarName,
+        });
+        
+        createPicture(BID, files.data);
 
         //사진 넣기 함수 넣으면 됨
-
-        return res.redirect("/");
+        res.json({result: "ok"}).end();
         
     } catch (error) {
-        return res.redirect('back');
+        console.log(error);
+        res.json({result:"error"}).end();
     }
 };
 

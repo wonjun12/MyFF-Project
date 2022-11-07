@@ -12,6 +12,9 @@ import homeRouter from "./router/homeRouter";
 import userRouter from "./router/userRouter";
 import boardRouter from "./router/boardRouter";
 
+//token check
+import checkToken from "./jwt/check";
+
 
 
 const app = express();
@@ -37,26 +40,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 //쿠키 사용
 app.use(cookieParser());
+//파일 업로드를 해석해준다.
+app.use(fileupload());
 
 
 //초기 url
 app.use("/", homeRouter);
 app.use("/user", userRouter);
-app.use("/board", boardRouter);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.use("/board",checkToken ,boardRouter);
 
 
 

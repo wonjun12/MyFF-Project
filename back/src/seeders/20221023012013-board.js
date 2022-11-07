@@ -49,6 +49,17 @@ module.exports = {
       }
     ],{},)
 
+    for(let i = 0; i < 50; i++){
+      await queryInterface.bulkInsert("boards", [
+        {
+          UID: 1,
+          Location: "게시판 주소 : " + i,
+          Content: "글 내용 : " + i,
+          Star : 3
+        }
+      ]
+      ,{})
+    }
   },
 
   async down (queryInterface, Sequelize) {

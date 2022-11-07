@@ -16,6 +16,7 @@ function addSalt() {
 //로그인
 export const userLogin  = async (req, res) => {
     const {loginENName, loginPwdName} = req.body;
+    console.log(req.body);
 
     try {
         const Users = await models.Users.findOne({
@@ -33,30 +34,33 @@ export const userLogin  = async (req, res) => {
             console.log("로그인 성공");
             const {token} = await jwt.sign(Users);
             
-            res.cookie("MyAccess", token, {httpOnly:true, sameSite:"none", secure:true});
-            res.status(201).json({result: 'ok', UID: Users.UID});
+            res.cookie("MyAccess", token, {httpOnly:true});
+            res.status(201).json({result: 'ok', UID: Users.UID}).end();
 
             // return res.redirect("/");
         }else{
-            return res.redirect("/");
+            return res.json({result:"error", reason:"뭔가 틀림"}).end();
         }
 
     } catch (error) {
-        return res.redirect("/");
+        return res.json({result:"error", reason:"뭔가 틀림"}).end();
     }
 };
 
 //회원 가입
 export const userJoin = async (req, res) => {
-    const {joinPwdName, joinYearName, joinMonthName, joinDayName, joinEmailName, joinNameName, joinNickName} 
+
+    // , joinYearName, joinMonthName, joinDayName
+    const {joinPwdName, joinEmailName, joinNameName, joinNickName} 
             = req.body;
+    console.log(req.body);
 
     //현재 날짜에 의거하여 랜덤 부여
     const salt = addSalt();
     //hash 단방향 변환 (salt를 추가하여 변환)
     const hashPassword = addHash(joinPwdName, salt);
 
-    const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
+    // const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
 
     try {
         await models.Users.create({
@@ -65,12 +69,12 @@ export const userJoin = async (req, res) => {
             Pwd: hashPassword,
             Salt: salt,
             Name: joinNameName,
-            BirthDay: birthDay
+            // BirthDay: birthDay
         })
 
-        return res.redirect("/");
+        return res.json({result:"ok"}).end();
     } catch (error) {
-        return res.redirect("/");
+        return res.json({result:"error"}).end();
     }
 };
 
