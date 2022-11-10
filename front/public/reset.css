@@ -66,3 +66,40 @@ input, textarea{
     color: black;
     font-size: 12px;
 }
+
+/* 소진 추가 */
+input[type=button], input[type=submit]{
+    cursor: pointer;
+}
+
+/* 메인페이지 지도 CSS 추가 */
+
+.mapImage{
+    width: 70px; 
+    height: 70px;
+}
+.mapImgDiv{
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mapImgDivF{
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mapImgDiv:not(:hover){
+    z-index: 0;
+}
+.mapImgDiv:hover{
+    transform: scale(1.5);
+    z-index: 10;
+}

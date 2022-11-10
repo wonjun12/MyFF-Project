@@ -52,9 +52,15 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Board.associate = (models) => {
-    Board.hasMany(models.Comment);
-    Board.hasMany(models.Picture);
-    Board.hasMany(models.BoardLike);
+    Board.hasMany(models.Comment, {
+      foreignKey: "BID"
+    });
+    Board.hasMany(models.Picture,{
+      foreignKey: "BID"
+    });
+    Board.hasMany(models.BoardLike, {
+      foreignKey: "BID"
+    });
     Board.belongsTo(models.Users, {
       foreignKey: "UID"
     });

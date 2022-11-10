@@ -6,8 +6,9 @@
     background-color: white;
     box-shadow: 0 5px 5px -5px rgb(208, 208, 208);
     position: fixed;
-    left: 50%;
-    margin-left: -600px;
+    //left: 50%;
+    //margin-left: -600px;
+    z-index: 10;
 
     .logoDiv{
         display: flex;

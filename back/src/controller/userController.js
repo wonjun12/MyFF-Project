@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { Op } from "sequelize";
 import models from "../models";
 import jwt from "../jwt/jwt";
+import { rmSync } from "fs";
 
 //hash 단반향 변환 함수
 function addHash(pwd, salt){
@@ -26,7 +27,7 @@ export const userLogin  = async (req, res) => {
             }
         });
         
-        const {Salt, Pwd} = Users;
+        const {Salt, Pwd, NickName} = Users;
         //hash 단방향 변환
         const hashPassword = addHash(loginPwdName, Salt);
 
@@ -35,23 +36,22 @@ export const userLogin  = async (req, res) => {
             const {token} = await jwt.sign(Users);
             
             res.cookie("MyAccess", token, {httpOnly:true});
-            res.status(201).json({result: 'ok', UID: Users.UID}).end();
+            res.status(201).json({result: 'ok', UID: Users.UID, NickName}).end();
 
             // return res.redirect("/");
         }else{
-            return res.json({result:"error", reason:"뭔가 틀림"}).end();
+            return res.json({result:"error", reason:"뭔가 틀림1"}).end();
         }
 
     } catch (error) {
-        return res.json({result:"error", reason:"뭔가 틀림"}).end();
+        return res.json({result:"error", reason:"뭔가 틀림2"}).end();
     }
 };
 
 //회원 가입
 export const userJoin = async (req, res) => {
 
-    // , joinYearName, joinMonthName, joinDayName
-    const {joinPwdName, joinEmailName, joinNameName, joinNickName} 
+    const {joinPwdName, joinEmailName, joinNameName, joinNickName, joinYearName, joinMonthName, joinDayName} 
             = req.body;
     console.log(req.body);
 
@@ -60,7 +60,7 @@ export const userJoin = async (req, res) => {
     //hash 단방향 변환 (salt를 추가하여 변환)
     const hashPassword = addHash(joinPwdName, salt);
 
-    // const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
+    const birthDay = joinYearName + "-" + joinMonthName + "-" + joinDayName;
 
     try {
         await models.Users.create({
@@ -69,7 +69,7 @@ export const userJoin = async (req, res) => {
             Pwd: hashPassword,
             Salt: salt,
             Name: joinNameName,
-            // BirthDay: birthDay
+            BirthDay: birthDay
         })
 
         return res.json({result:"ok"}).end();
@@ -80,8 +80,9 @@ export const userJoin = async (req, res) => {
 
 //로그 아웃
 export const userLogout = (req, res) => {
+
     res.clearCookie("MyAccess");
-    return res.redirect("/");
+    res.json({result: 'ok'}).end();
 };
 
 
@@ -99,7 +100,7 @@ export const userSee = async (req, res) => {
         req.UID = user.UID;
     }
 
-    return res.render("userTest.html", {Users, reqId: req.UID});
+    // return res.render("userTest.html", {Users, reqId: req.UID});
 };
 
 //유저 수정 정보 가져오기

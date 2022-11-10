@@ -42,14 +42,14 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Follwer',
   });
 
-  Follwer.associate = (models) => {
-    Follwer.belongsTo(models.Users, {
-      foreignKey: "MyUID"
-    });
-    Follwer.belongsTo(models.Users, {
-      foreignKey: "FUID"
-    });
-  };
+  // Follwer.associate = (models) => {
+  //   Follwer.belongsTo(models.Users, {
+  //     foreignKey: "MyUID"
+  //   });
+  //   Follwer.belongsTo(models.Users, {
+  //     foreignKey: "FUID"
+  //   });
+  // };
 
 
   return Follwer;

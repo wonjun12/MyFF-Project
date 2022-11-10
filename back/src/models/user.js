@@ -54,10 +54,25 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = (models) => {
-    User.hasMany(models.Follwer);
-    User.hasMany(models.Board);
-    User.hasMany(models.Comment);
-    User.hasMany(models.BoardLike);
+    User.belongsToMany(models.Users, {
+      through: 'Follwer',
+      as: 'Follwers',
+      foreignKey: 'MyUID'
+    });
+    User.belongsToMany(models.Users, {
+      through: 'Follwer',
+      as: 'Follwings',
+      foreignKey: 'FUID'
+    });
+    User.hasMany(models.Board, {
+      foreignKey: "UID"
+    });
+    User.hasMany(models.Comment, {
+      foreignKey: "UID"
+    });
+    User.hasMany(models.BoardLike, {
+      foreignKey: "UID"
+    });
   };  
 
   return User;

@@ -2,6 +2,7 @@ const {kakao} = window;
 
 let map;
 let searchMakers = [];
+let mainImg = [];
 
 
 function resetMakers() {
@@ -15,9 +16,11 @@ export function kakaoMap(zoom) {
     const container = document.getElementById("myMap");
     const options = {
         center : new kakao.maps.LatLng(33, 126),
-        level: zoom
+        level: zoom,
     };
     map = new kakao.maps.Map(container, options);
+    
+    map.setZoomable(false);  
 }
 
 //글쓰기 주소 찾기
@@ -53,8 +56,15 @@ export function boardMapSearch(addr) {
 }
 
 //메인 화면 출력
-export function mainMapSearch(boards, img) {
+export function mainMapSearch(boards, img, index, sessionUID) {
+    if(index === 0){
+        for(let i in mainImg){
+            mainImg[i].setMap(null);
+        }
+    }
+
     const {UID, Location} = boards;
+    console.log(UID, sessionUID);
 
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -62,14 +72,20 @@ export function mainMapSearch(boards, img) {
 
         const position = new kakao.maps.LatLng(result[0].y, result[0].x);
         
-        let content = '<img src="data:image;base64,'+ img +'" style="width: 70px; height: 70px;" onclick="this.remove()" />';
+        let content = '<img class="mapImage" src="data:image;base64,'+ img +'"/>';
+
+        let contentDiv = 
+            `<div class="${(UID === sessionUID)? "mapImgDiv" : "mapImgDivF"}" onclick="this.remove()">` + content 
+                + '</div>';
 
         const customOverlay = new kakao.maps.CustomOverlay({
             map: map,
             position: position,
-            content: content,
+            content: contentDiv,
             yAnchor: 1
         });
+
+        mainImg.push(customOverlay);
 
         map.setCenter(position);
     });

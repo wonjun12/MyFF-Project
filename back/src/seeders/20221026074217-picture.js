@@ -57,7 +57,13 @@ module.exports = {
       },
     ],{},)
 
-
+    for(let i = 9; i <= 58; i++){
+      await queryInterface.bulkInsert("pictures", [
+        {
+          BID: i,
+          Photo: photoDummy[0]
+        }],{},)
+    }
   },
 
   async down (queryInterface, Sequelize) {

@@ -15,11 +15,17 @@
 .modalContainer{
     
     width: 480px;
-    height: 300px;
+    height: 500px;
     background-color: white;
     position: relative;
     box-sizing: border-box;
     margin: 230px auto;
     padding: 20px;
     background: #fff; 
+}
+
+.msgP{
+    font-size: 15px;
+    color: red;
+    //display: none;
 }

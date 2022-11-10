@@ -49,8 +49,6 @@ app.use("/", homeRouter);
 app.use("/user", userRouter);
 app.use("/board",checkToken ,boardRouter);
 
-
-
 app.listen(PORT, () => {
     console.log(`Server open ${PORT}`);
 })

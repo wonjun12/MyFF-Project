@@ -33,8 +33,8 @@ export const boardWriteGet = async (req, res) => {
 export const boardWritePost = async (req, res) => {
     // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
     const {writeAddrName, writeCommName} = JSON.parse(req.body.bodys);
-    const {files} = req.files;
-    console.log(files.data);
+    const {file} = req.files;
+
     try {
         // DB에 넣으면서 BID를 가져옴
         const {BID} = await models.Board.create({
@@ -43,8 +43,17 @@ export const boardWritePost = async (req, res) => {
             Content: writeCommName,
             // Star: writeStarName,
         });
+        const arrayCheck = Array.isArray(file);
+
+        if(arrayCheck){
+            for(let i in file){
+                createPicture(BID, file[i].data);
+            }
+        }else{
+            createPicture(BID, file.data);
+        }
         
-        createPicture(BID, files.data);
+        
 
         //사진 넣기 함수 넣으면 됨
         res.json({result: "ok"}).end();
@@ -60,15 +69,28 @@ export const boardSee = async (req, res) => {
     const {id} = req.params;
     
     const Board = await models.Board.findOne({
-        where: {BID: id}
-    })
-
-    const Picture = await models.Picture.findAll({
-        where: {BID: id}
+        where: {BID: id},
+        include: [{
+            model: models.Users,
+            required: true,
+            attributes: ['UID', 'Email', 'NickName']
+        },{
+            model: models.Picture,
+            required: true,
+        },{
+            model: models.Comment,
+            include:[{
+                model: models.Users,
+                require: true
+            }]
+        }]
     })
     //게시글 유무 확인
     if(Board != null){
-        return res.render("boardSee.html",{Board, Picture});    
+        // return res.render("boardSee.html",{Board, Picture});    
+        
+        // 조회 결과 보내줌
+        res.json({result:"ok", Board, UID:req.UID}).end();
     }else {
         return res.redirect("/");
     }
@@ -175,10 +197,56 @@ export const boardDelte = async (req, res) => {
     return res.redirect("/");
 };
 
-export const boardCommt = (req, res) => {
-    res.send("board commt");
+export const boardCommt = async (req, res) => {
+
+    //댓글을 작성하는 게시글 ID 
+    const {id} = req.params;
+
+    const { userID, commtName } = req.body;
+
+    try {
+        await models.Comment.create({
+            BID: id,
+            UID: userID,
+            comm: commtName,
+        });
+        
+        res.json({result: "ok"}).end();
+        
+    } catch (error) {
+        console.log(error);
+        res.json({result:"error"}).end();
+    }
 };
 
-export const boardCommtEdit = (req, res) => {
-    res.send("board commt edit");
+export const boardCommtEdit = async(req, res) => {
+
+    //const {id} = req.params;
+    const { commtID, action, commtEditText } = req.body;
+    console.log(req.body);
+    if(action === "delete"){
+        try {
+            await models.Comment.destroy({
+                where: {CID: commtID}
+            });
+            res.json({result: "ok"}).end();
+        } catch (error) {
+            console.log(error);
+            res.json({result: "error"}).end();
+        }
+    } else if(action === "edit"){
+        try {
+            await models.Comment.update({
+                comm: commtEditText
+            },{
+                where: {CID: commtID}
+            });
+            res.json({result: "ok"}).end();
+        } catch (error) {
+            console.log(error);
+            res.json({result: "error"}).end();
+        }
+    } else {
+        res.json({result: "No Action"}).end();
+    }
 };
