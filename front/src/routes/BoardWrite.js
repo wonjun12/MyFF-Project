@@ -2,13 +2,16 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
+import { kakaoMap, boardMapSearch } from "./kakaoMap";
 
-const SERVER_URL = "http://localhost:4000/";
+const SERVER_URL = "/api/board";
 //별점 스타일
 const colors = {
   orange: "#FFBA5A",
   grey: "#a9a9a9",
 };
+
+
 const starStyle = {
   container: {
     display: "flex",
@@ -16,6 +19,14 @@ const starStyle = {
     alignItems: "left",
   },
 };
+
+const config = {
+  Headers: {
+    "content-type": "multipart/form-data",
+  },
+};
+
+
 const BoardWrite = () => {
   axios.defaults.withCredentials = true;
 
@@ -36,12 +47,6 @@ const BoardWrite = () => {
         writeStarName: currentValue,
       };
 
-      const config = {
-        Headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
-
       const formData = new FormData();
 
       for (let i = 0; i < imageFiles.length; i++) {
@@ -51,7 +56,7 @@ const BoardWrite = () => {
 
       formData.append("bodys", JSON.stringify(data));
 
-      axios.post(SERVER_URL + "board/write", formData, config).then((res) => {
+      axios.post(`${SERVER_URL}/write`, formData, config).then((res) => {
         console.log(res.data);
         const { result } = res.data;
 
@@ -66,6 +71,33 @@ const BoardWrite = () => {
       alert("이미지를 업로드 해주세요");
     }
   };
+
+  //img 주소 추출
+  const imgLocation = async (e) => {
+    const {files} = e.target;
+
+    const formData = new FormData();
+
+    formData.append("imgFile", files[0]);
+
+    const res = await axios.post('/api/home/getLetter', formData, config);
+    
+    setLocationValue(res.data);
+
+    boardMapSearch(res.data);
+  };
+
+  //주소 입력 
+  const [locationValue, setLocationValue] = useState('');
+
+  //카카오 주소 찾기 
+  const locationSearch = (e) => {    
+    const location = e.target.value;
+    setLocationValue(location);
+
+    boardMapSearch(location);
+  };
+
 
   // input 으로 파일을 선택하면 image State에 담는다
   const saveImage = (e) => {
@@ -95,7 +127,7 @@ const BoardWrite = () => {
 
   // 이미지 전체 삭제
   const deleteAll = () => {
-    console.log("dsdd");
+
     setImageFiles([]);
   };
   //별점
@@ -115,6 +147,7 @@ const BoardWrite = () => {
 
   // 이미지 state 초기화 및 파일 추가 시 실행
   useEffect(() => {
+    kakaoMap(5);
     const images = [],
       fileReaders = [];
     let isCancel = false;
@@ -154,9 +187,15 @@ const BoardWrite = () => {
       <div style={{ paddingTop: "130px" }}>
         <label htmlFor="writeMapId"> 지도 </label>
         <div>
-          <input type="text" placeholder="위치 검색" name="locationName" />
-          <input type="button" value="영수증으로 위치 검색" />
-          <div>지도 들어감</div>
+          <input type="text" id="boardLocationId" onChange={locationSearch} value={locationValue}  placeholder="위치 검색" name="locationName" />
+          <input type="file" accept="image/*" onChange={imgLocation}/>
+          <div className={Styles.mapMaindiv}>
+            <ul id="locationSearch" hidden>
+            </ul>
+              <div className={Styles.mapDiv} id="myMap">
+                지도 들어감
+              </div>
+          </div>
         </div>
 
         {/*====================Image View=======================*/}

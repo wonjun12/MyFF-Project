@@ -45,9 +45,9 @@ app.use(fileupload());
 
 
 //초기 url
-app.use("/", homeRouter);
-app.use("/user", userRouter);
-app.use("/board",checkToken ,boardRouter);
+app.use("/api/home", homeRouter);
+app.use("/api/user", userRouter);
+app.use("/api/board",checkToken ,boardRouter);
 
 app.listen(PORT, () => {
     console.log(`Server open ${PORT}`);

@@ -1,6 +1,6 @@
 import models from "../models";
 import jwt from "../jwt/jwt";
-import fs from "fs";
+import tesseract from "node-tesseract-ocr";
 
 export const mainPage = async (req, res) => {
     const {MyAccess} = req.cookies;
@@ -49,6 +49,7 @@ export const mainPage = async (req, res) => {
                 }]
             }]
         }).then(board => {
+            console.log(board);
             let boardCount = [];
         
             boardCount = board.Boards;
@@ -66,24 +67,14 @@ export const mainPage = async (req, res) => {
         
             const minPage = page * 4, 
                 maxPage = (boardCount.length < (page + 1) * 4)? boardCount.length : (page + 1) * 4;
-
-            console.log(page, minPage, maxPage);
             
             const boardArray = boardCount.slice(minPage, maxPage);
         
             res.json({result:"ok", boardArray, follwers: board.Follwers}).end();
+
         }).catch(err => {
             console.log(err);
         });
-
-        // fs.readFile("./src/Views/poto.jpg", (error, data) => {
-        //     if(error) {
-        //         console.log(error);
-        //     }
-        //     console.log(data);
-            
-        //     return res.status(201).json({result:"ok", addr:Board, img:data.toString('base64')}).end();
-        // })
         
         } catch (error) {
             // res.render("home.html", {UID: Users});
@@ -96,28 +87,36 @@ export const locationPage = (req, res) => {
 };
 
 export const getLetter = async (req, res) => {
-    console.log(req.files);
-    return res.json({result: "ok", img : req.files.imgUpload.data});
-    // res.json(req.files.filenamename.data);
-}
+    try {
+        //지역 이름 설정
+        const region = ['서울', '인천', '부산', '대구', '광주', '대전', 
+            '울산', '세종', '경기', '강원', '충청', '경상', '전라', '제주'];
+            //이미지 파일을 가져온다.
+            const imgFile = req.files.imgFile.data; //filenamename <= 실험용 파일 이름
+            //추출할때 설정 역할
+            const config = {
+                lang: "kor",
+                oem: 1,
+                psm: 1, //1 or 12 BEST
+            }
 
-// export const mainPagging = async (req, res) => {
-
-//     const page = parseInt(req.query.page);
+            //이미지 글 추출
+            await tesseract.recognize(imgFile, config).then(reulst => {
+                //추출된 글자들을 엔터친 기준으로 나눈다.
+                const PhotoText = reulst.split("\r\n");
+                for(let imgText of PhotoText){
+                    for(let i of region){
+                        //지역 이름이 맨 앞에 있는걸을 추출해 주소를 예측하여 보낸다.
+                        if(imgText.length > 3 && imgText.indexOf(i) != -1 && imgText.indexOf(i) == 0){
+                            return res.json(imgText);
+                        }
+                    }
+                }
+                
+                return res.json("주소를 찾을수 없습니다.");
+            })  
+    } catch (error) {
+        return res.json("오류");
+    }
     
-//     console.log(typeof(page));
-
-//     let boardArray = [];
-
-//     models.Board.findAll({
-//         where: {UID: 1}
-
-//     }).then(board => {
-//         for(let i=page*4; i<4*(page+1); i++){
-//             if(board.length > i){
-//                 boardArray.push(board[i]);
-//             }
-//         }
-//         res.json({result: "ok", boardArray}).end(); 
-//     });
-// }
+}

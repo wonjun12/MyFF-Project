@@ -1,11 +1,12 @@
 import  express from "express";
 import {mainPage, locationPage, getLetter} from "../controller/homeController";
-import {userLogin, userJoin} from "../controller/userController";
+import {userLogin, userJoin, userLoginCk, userJoinEmailCk, userJoinNickCk} from "../controller/userController";
+import checkToken from "../jwt/check";
 
 const homeRouter = express.Router();
 
 homeRouter.get("/", mainPage);
-homeRouter.post("/login", userLogin);
+homeRouter.route('/login').get(checkToken, userLoginCk).post(userLogin);
 homeRouter.post("/join", userJoin);
 homeRouter.post("/getLetter", getLetter);
 homeRouter.get("/location/:id(\\d+)",locationPage);

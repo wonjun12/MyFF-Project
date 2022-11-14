@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
 
-const SERVER_URL = "http://localhost:4000/board/";
+const SERVER_URL = "/api/board";
 
 //별점 스타일
 const colors = {
@@ -32,7 +32,7 @@ const BoardSee = () => {
   const [images, setImages] = useState([]); //미리보기 이미지
 
   const dataFetch = () => {
-    axios.get(SERVER_URL + id + "/edit").then((res) => {
+    axios.get(`${SERVER_URL}/${id}/edit`).then((res) => {
       setBoard(res.data.Board);
       setPictures(res.data.Board.Pictures);
       setUserID(res.data.UID);
@@ -66,7 +66,7 @@ const BoardSee = () => {
 
       formData.append("bodys", JSON.stringify(data));
 
-      axios.post(SERVER_URL + id + "/edit", formData, config).then((res) => {
+      axios.post(`${SERVER_URL}/${id}/edit`, formData, config).then((res) => {
         // console.log(res.data);
         const { result } = res.data;
         if (result === "ok") {

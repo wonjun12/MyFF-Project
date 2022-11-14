@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import Styles from "./Main.module.scss";
-import { kakaoMap, boardMapSearch, mainMapSearch } from "./kakaoMap";
+import { kakaoMap, mainMapSearch } from "./kakaoMap";
 import useBoardData from "../hooks/useBoardData";
 import { Buffer } from "buffer";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Main() {
 
@@ -38,7 +39,6 @@ function Main() {
 
   useEffect(() => {
     kakaoMap(6);
-    
   }, []);
 
 

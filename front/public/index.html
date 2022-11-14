@@ -24,7 +24,7 @@
     -->
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=521294d17a784996932d8159a1766a95&libraries=services,clusterer">
     </script>
-
+  
     <link rel="stylesheet" href="%PUBLIC_URL%/reset.css" />
     <title>React App</title>
   </head>
@@ -43,3 +43,25 @@
     -->
   </body>
 </html>
+
+
+<script type="text/javascript">
+  function boardFnc (board) {
+      window.location.href = `/board/${board}`;
+  }
+
+  function clickSearchKeyword(key){
+            let listEl = document.getElementById("locationSearch");
+            const place = document.getElementById("placeName" + key);
+            const ppp = document.getElementById("placeId"+ key);
+            const pCl = document.getElementsByClassName("placeCl");
+
+            let locationId = document.getElementById("boardLocationId");
+
+            locationId.value = place.innerText;
+            var event = new Event('change', { bubbles: true });
+            locationId.dispatchEvent(event);
+
+            listEl.setAttribute('hidden', 'hidden');
+        }
+  </script>

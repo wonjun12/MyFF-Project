@@ -87,6 +87,7 @@ input[type=button], input[type=submit]{
     align-items: center;
     justify-content: center;
 }
+
 .mapImgDivF{
     position: absolute;
     width: 75px;
@@ -96,10 +97,21 @@ input[type=button], input[type=submit]{
     align-items: center;
     justify-content: center;
 }
-.mapImgDiv:not(:hover){
-    z-index: 0;
+.mapImgDiv:hover {
+    transform: scale(1.4);
+    background-color: rgb(80, 236, 74);
 }
-.mapImgDiv:hover{
-    transform: scale(1.5);
-    z-index: 10;
+.mapImgDivF:hover{
+    transform: scale(1.4);
+    background-color: rgb(80, 236, 74);
+    /* z-index: 10; */
+}
+.placeCl:hover {
+    background-color: #E6E6E6;
+}
+#locationSearch{
+    position: absolute;
+    width: 350px;
+    z-index: 5;
+    background-color: rgba(red, red, red, 0.3);
 }

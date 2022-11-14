@@ -4,7 +4,7 @@ import Styles from "./Login.module.scss";
 import Join from "./Join";
 import axios from "axios";
 
-const SERVER_URL = "http://localhost:4000/";
+const SERVER_URL = "/api/home";
 
 
 const Login = (props) => {
@@ -48,7 +48,7 @@ const Login = (props) => {
     }
             
     
-    function loginFnc(e){   //회원가입 submit
+    function loginFnc(e){   //로그인 submit
         e.preventDefault();
 
         const loginConfig = loginConfirmFnc();
@@ -56,7 +56,7 @@ const Login = (props) => {
         if(loginConfig) {
             const {inputLoginPwd, inputLoginNickNEmail} = e.target;
 
-            axios.post(SERVER_URL + "login",{
+            axios.post(`${SERVER_URL}/login`,{
                 loginENName: inputLoginNickNEmail.value,
                 loginPwdName: inputLoginPwd.value,
             }, {withCredentials: true}).then(res => {

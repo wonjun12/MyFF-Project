@@ -13,6 +13,22 @@ function addHash(pwd, salt){
 function addSalt() {
     return Math.round((new Date().valueOf() * Math.random())) + "";
 }
+//로그인 체크
+export const userLoginCk = async (req, res) => {
+    const {MyAccess} = req.cookies;
+
+    const user = await jwt.verify(MyAccess);
+    
+
+    const Users = await models.Users.findOne({
+            where: {
+                UID: user.UID
+            }
+    });
+
+    res.status(200).json({UID: Users.UID, NickName: Users.NickName}).end();
+};
+
 
 //로그인
 export const userLogin  = async (req, res) => {
@@ -155,8 +171,6 @@ export const userEditPost = async (req, res) => {
     }else {
         return res.render("userEdit",{Users})
     }
-
-
 };
 
 //유저 삭제

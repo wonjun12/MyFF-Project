@@ -3,7 +3,7 @@ import Styles from "./Join.module.scss";
 import { useState } from "react";
 import axios from "axios";
 
-const SERVER_URL = "http://localhost:4000/";
+const SERVER_URL = "/api/home";
 
 const Join = (props) => {
     axios.defaults.withCredentials = true;
@@ -58,7 +58,7 @@ const Join = (props) => {
         if(!emailRegEx.test(e.currentTarget.value)){
             setEmailMsg("이메일 양식을 확인해주세요");
         }else{
-            axios.post(SERVER_URL + 'emailCk',{     //유효성 검사 통과되면 중복검사
+            axios.post(`${SERVER_URL}/emailCk`,{     //유효성 검사 통과되면 중복검사
                 joinEmail: e.currentTarget.value,
             }).then(res => {
                 console.log(res.data);
@@ -81,7 +81,7 @@ const Join = (props) => {
             setNickMsg('2~8자의 영문, 한글, 숫자만 사용 가능합니다');
         }else{
             
-            axios.post(SERVER_URL + 'nickCk', {
+            axios.post(`${SERVER_URL}/nickCk`, {
                 joinNick: e.currentTarget.value,
             }).then(res => {
                 const {result} = res.data;
@@ -137,7 +137,7 @@ const Join = (props) => {
         const {joinEmailName, joinNickName, joinPwdName, joinNameName
             , joinYearName, joinMonthName,joinDayName} = e.target;
 
-        axios.post(SERVER_URL + "join",{
+        axios.post(`${SERVER_URL}/join`,{
             joinEmailName: joinEmailName.value,
             joinNickName: joinNickName.value,
             joinPwdName: joinPwdName.value,

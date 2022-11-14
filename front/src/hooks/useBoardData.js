@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const SERVER_URL = "/api/home";
+
 const useBoardData = (pageNum) => {
     axios.defaults.withCredentials = true;
 
@@ -20,9 +22,7 @@ const useBoardData = (pageNum) => {
             setLoading(true);
             setError(false);
 
-            axios({
-                method: "GET",
-                url: "http://localhost:4000/",
+            axios.get(`${SERVER_URL}/`,{
                 params: { page: pageNum },
                 cancelToken: source.token,
             }).then(res => {

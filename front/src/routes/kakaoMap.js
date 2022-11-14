@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const {kakao} = window;
 
 let map;
@@ -25,6 +26,11 @@ export function kakaoMap(zoom) {
 
 //글쓰기 주소 찾기
 export function boardMapSearch(addr) {
+
+    let ps = new kakao.maps.services.Places();
+
+    ps.keywordSearch(addr, placesSearchCB);
+
     const geocoder = new kakao.maps.services.Geocoder();
 
     geocoder.addressSearch(addr, (result, stat) => {
@@ -35,7 +41,7 @@ export function boardMapSearch(addr) {
 
         const position = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        const img = "img/maker.png";
+        const img = "/img/maker.png";
 
         const imgSize = new kakao.maps.Size(70, 70);
 
@@ -55,6 +61,7 @@ export function boardMapSearch(addr) {
     });
 }
 
+
 //메인 화면 출력
 export function mainMapSearch(boards, img, index, sessionUID) {
     if(index === 0){
@@ -63,19 +70,20 @@ export function mainMapSearch(boards, img, index, sessionUID) {
         }
     }
 
-    const {UID, Location} = boards;
-    console.log(UID, sessionUID);
+    const {UID, Location, BID} = boards;
 
     const geocoder = new kakao.maps.services.Geocoder();
 
     geocoder.addressSearch(Location, (result, stat) => {
 
         const position = new kakao.maps.LatLng(result[0].y, result[0].x);
-        
+        const className = (UID === sessionUID)? "mapImgDiv" : "mapImgDivF";
+        const boardBID = BID
+
         let content = '<img class="mapImage" src="data:image;base64,'+ img +'"/>';
 
         let contentDiv = 
-            `<div class="${(UID === sessionUID)? "mapImgDiv" : "mapImgDivF"}" onclick="this.remove()">` + content 
+            `<div class="${className}" onclick="boardFnc(${boardBID})">` + content 
                 + '</div>';
 
         const customOverlay = new kakao.maps.CustomOverlay({
@@ -85,8 +93,59 @@ export function mainMapSearch(boards, img, index, sessionUID) {
             yAnchor: 1
         });
 
+        $(`.${className}`).mouseover(function(){
+            $(this).parent('div').css('z-index', '100');
+        });
+        $(`.${className}`).mouseleave(function(){
+            $(this).parent('div').css('z-index', '0');
+        });
+
         mainImg.push(customOverlay);
 
         map.setCenter(position);
     });
 }
+
+
+function placesSearchCB (data, status, pagination){
+    if(status === kakao.maps.services.Status.OK){
+        displayPlaces(data);
+    }else{
+        const listEl = document.getElementById("locationSearch");
+        removeAllChildNods(listEl);
+    }
+}
+
+function displayPlaces(places){
+    let listEl = document.getElementById("locationSearch"),
+    fragment = document.createDocumentFragment();
+    removeAllChildNods(listEl);
+    for(let i = 0; i < places.length; i++){
+        const itemEl = getListItem(i, places[i]);
+
+        fragment.appendChild(itemEl);
+    }
+    
+    listEl.appendChild(fragment);
+    listEl.removeAttribute("hidden");
+}
+
+function getListItem(i, places){
+    let el = document.createElement('li');
+    let itemStr = '<div class="placeCl" id="placeId'+ i +'" style="border-bottom:1px black solid;" onclick="clickSearchKeyword('+ i +')">'
+                +   '<div>' + places.place_name +'</div>'
+                +   '<div id="placeName' + i + '">' + places.address_name +'</div>'
+                +   '</div>';
+
+    el.innerHTML = itemStr;
+
+    return el;
+}
+
+function removeAllChildNods(el)  {   
+    while (el.hasChildNodes()) {
+        el.removeChild (el.lastChild);
+    }
+    el.setAttribute("hidden", "hidden");
+}
+

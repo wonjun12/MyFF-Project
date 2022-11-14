@@ -5,7 +5,7 @@ import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
 import { kakaoMap, boardMapSearch, mainMapSearch } from "./kakaoMap";
 
-const SERVER_URL = "http://localhost:4000/board/";
+const SERVER_URL = '/api/board';
 
 const BoardDetail = () => {
   axios.defaults.withCredentials = true;
@@ -21,10 +21,7 @@ const BoardDetail = () => {
   const [userID, setUserID] = useState("");
 
   const dataFetch = () => {
-    axios({
-      method: "GET",
-      url: SERVER_URL + id
-    }).then(res => {
+    axios.get(`${SERVER_URL}/${id}`).then(res => {
       //console.log(res.data.Board);
       //console.log(res.data.Picture);
       setBoard(res.data.Board);
@@ -52,7 +49,7 @@ const BoardDetail = () => {
 
     // 댓글을 입력한 경우만 post 요청
     if (userComment.value !== "") {
-      axios.post(SERVER_URL + id + "/commt", {
+      axios.post(`${SERVER_URL}/${id}/commt`, {
         userID, 
         commtName: userComment.value
       }, { withCredentials: true }).then(res => {
@@ -67,7 +64,7 @@ const BoardDetail = () => {
 
   const commtDeleteFnc = (commtID) => {
     //console.log(commtID);
-    axios.post(SERVER_URL + id + "/commt/edit", {
+    axios.post(`${SERVER_URL}/${id}/commt/edit`, {
       commtID,
       action: "delete"
     }, { withCredentials: true}).then(res => {
@@ -83,7 +80,7 @@ const BoardDetail = () => {
     //console.log(commtID);
     //console.log(commtEditText);
     if(commtEditText !== ""){
-      axios.post(SERVER_URL + id + "/commt/edit", {
+      axios.post(`${SERVER_URL}/${id}/commt/edit`, {
         commtID,
         commtEditText,
         action: "edit"
