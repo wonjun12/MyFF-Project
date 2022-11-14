@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
-import { kakaoMap, boardMapSearch } from "./kakaoMap";
+import { kakaoMap, boardMapSearch,  boardMapSearchButton} from "./kakaoMap";
 
 const SERVER_URL = "/api/board";
 //별점 스타일
@@ -83,8 +83,6 @@ const BoardWrite = () => {
     const res = await axios.post('/api/home/getLetter', formData, config);
     
     setLocationValue(res.data);
-
-    boardMapSearch(res.data);
   };
 
   //주소 입력 
@@ -94,8 +92,12 @@ const BoardWrite = () => {
   const locationSearch = (e) => {    
     const location = e.target.value;
     setLocationValue(location);
-
     boardMapSearch(location);
+  };
+
+  const locationSearchButton = () => {
+    const location = document.getElementById('boardLocationId').value;
+    boardMapSearchButton(location);
   };
 
 
@@ -192,6 +194,7 @@ const BoardWrite = () => {
           <div className={Styles.mapMaindiv}>
             <ul id="locationSearch" hidden>
             </ul>
+            <button type="button" onClick={locationSearchButton}> 검색 </button>
               <div className={Styles.mapDiv} id="myMap">
                 지도 들어감
               </div>

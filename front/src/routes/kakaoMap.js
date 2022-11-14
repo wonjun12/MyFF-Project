@@ -23,13 +23,14 @@ export function kakaoMap(zoom) {
     
     map.setZoomable(false);  
 }
-
-//글쓰기 주소 찾기
-export function boardMapSearch(addr) {
-
+export function boardMapSearch(addr){
     let ps = new kakao.maps.services.Places();
 
     ps.keywordSearch(addr, placesSearchCB);
+}
+
+//글쓰기 주소 찾기
+export function boardMapSearchButton(addr) {
 
     const geocoder = new kakao.maps.services.Geocoder();
 

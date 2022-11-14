@@ -59,8 +59,6 @@
             let locationId = document.getElementById("boardLocationId");
 
             locationId.value = place.innerText;
-            var event = new Event('change', { bubbles: true });
-            locationId.dispatchEvent(event);
 
             listEl.setAttribute('hidden', 'hidden');
         }
