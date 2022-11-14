@@ -1,0 +1,86 @@
+.Header{
+    width: 1200px;
+    height: 130px;
+    //background-image: url("../img/headerBg.png");
+    background-size: 100%;
+    background-color: white;
+    box-shadow: 0 5px 5px -5px rgb(208, 208, 208);
+    position: fixed;
+    //left: 50%;
+    //margin-left: -600px;
+    z-index: 10;
+
+    .logoDiv{
+        display: flex;
+        justify-content: center;
+        .logoText{
+            font-size: 50px;
+            color: rgb(249, 87, 0);
+            background-color: white;
+        }
+    }
+    
+    .mainNav{
+        display: flex;
+        justify-content: space-between;
+
+        .searchDiv{
+            height: 100%;
+            margin-top: 30px;
+            margin-left: 20px;
+
+            .searchForm{
+                width: 300px;
+                display: flex;
+                justify-content: space-between;
+
+                .searchBtn{
+                    width: 100px;
+                    background-color: rgb(249, 87, 0);
+                    color: white;
+                    border-radius: 3px;
+                }
+            }
+        }
+    }
+    
+    
+    .btnDiv{
+        font-size: 25px;
+        height: 40px;
+        width: 250px;
+        margin-top: 20px;
+        margin-right: 20px;
+        display: flex;
+        justify-content: space-between;
+        background-color: white;
+    }
+    
+    .modalHead{
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        
+        .loginText{
+            margin-left: 150px;
+            margin-top: 10px;
+            width: 100px;
+           
+        }
+        .exitBtn{
+            font-size: 15px;
+            font-weight: bold;
+            width: 20px;
+            background-color: white;
+            text-decoration: none;
+            border: none;
+            margin-top: 5px;
+            margin-left: 90px;
+            cursor: pointer;
+           
+        }
+}
+}
+
+
+

@@ -1,9 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
 
-const SERVER_URL = "http://localhost:4000/";
+const SERVER_URL = "http://localhost:4000/board/";
+
 //별점 스타일
 const colors = {
   orange: "#FFBA5A",
@@ -16,15 +18,28 @@ const starStyle = {
     alignItems: "left",
   },
 };
-const BoardWrite = () => {
+
+const BoardSee = () => {
   axios.defaults.withCredentials = true;
 
-  //이미지 뷰 ref, state
+  const { id } = useParams();
+  const [board, setBoard] = useState("");
+  const [pictures, setPictures] = useState([]);
+  const [userID, setUserID] = useState("");
+
   const inputRef = useRef(null); //input file
   const [imageFiles, setImageFiles] = useState([]); //전송할 이미지 파일
   const [images, setImages] = useState([]); //미리보기 이미지
 
-  const boardSubmit = (e) => {
+  const dataFetch = () => {
+    axios.get(SERVER_URL + id + "/edit").then((res) => {
+      setBoard(res.data.Board);
+      setPictures(res.data.Board.Pictures);
+      setUserID(res.data.UID);
+    });
+  };
+
+  const boardEditSubmit = (e) => {
     e.preventDefault();
 
     //imageFile 이 있는 경우만 게시물 작성 가능
@@ -51,10 +66,9 @@ const BoardWrite = () => {
 
       formData.append("bodys", JSON.stringify(data));
 
-      axios.post(SERVER_URL + "board/write", formData, config).then((res) => {
-        console.log(res.data);
+      axios.post(SERVER_URL + id + "/edit", formData, config).then((res) => {
+        // console.log(res.data);
         const { result } = res.data;
-
         if (result === "ok") {
           window.location.href = "/";
         } else if (result === "error") {
@@ -98,23 +112,10 @@ const BoardWrite = () => {
     console.log("dsdd");
     setImageFiles([]);
   };
-  //별점
-  const stars = Array(5).fill(0);
-  const [currentValue, setCurrentValue] = React.useState(0);
-  const [hoverValue, setHoverValue] = React.useState(undefined);
-
-  const handleClick = (value) => {
-    setCurrentValue(value);
-  };
-  const handleMouseOver = (newHoverValue) => {
-    setHoverValue(newHoverValue);
-  };
-  const handleMouseLeave = () => {
-    setHoverValue(undefined);
-  };
 
   // 이미지 state 초기화 및 파일 추가 시 실행
   useEffect(() => {
+    dataFetch();
     const images = [],
       fileReaders = [];
     let isCancel = false;
@@ -149,8 +150,29 @@ const BoardWrite = () => {
     };
   }, [imageFiles]);
 
+  //별점
+  const stars = Array(5).fill(0);
+  const [currentValue, setCurrentValue] = React.useState(0);
+  const [hoverValue, setHoverValue] = React.useState(undefined);
+
+  const handleClick = (value) => {
+    setCurrentValue(value);
+  };
+  const handleMouseOver = (newHoverValue) => {
+    setHoverValue(newHoverValue);
+  };
+  const handleMouseLeave = () => {
+    setHoverValue(undefined);
+  };
+
+  const [value, setValue] = useState("");
+
+  const change = (e) => {
+    setValue(e.target.value);
+  };
+
   return (
-    <form onSubmit={boardSubmit}>
+    <form onSubmit={boardEditSubmit}>
       <div style={{ paddingTop: "130px" }}>
         <label htmlFor="writeMapId"> 지도 </label>
         <div>
@@ -196,9 +218,12 @@ const BoardWrite = () => {
         <label htmlFor="writeCommId">글쓰기</label>
         <div>
           <div>
-            <textarea name="contentName" placeholder="내용 입력"></textarea>
+            <textarea
+              name="contentName"
+              placeholder="내용 입력"
+              defaultValue={board.Content}
+            ></textarea>
           </div>
-
           <div style={starStyle.container}>
             <span style={starStyle.stars}>
               별점:
@@ -213,7 +238,7 @@ const BoardWrite = () => {
                       cursor: "pointer",
                     }}
                     color={
-                      (hoverValue || currentValue) > index
+                      (hoverValue || currentValue || board.Star) > index
                         ? colors.orange
                         : colors.grey
                     }
@@ -232,5 +257,4 @@ const BoardWrite = () => {
     </form>
   );
 };
-
-export default BoardWrite;
+export default BoardSee;

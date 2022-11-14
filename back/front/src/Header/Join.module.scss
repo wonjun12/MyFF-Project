@@ -1,0 +1,38 @@
+
+.joinModal{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6); 
+
+    p{
+        cursor: pointer;
+    }
+    a{
+        cursor: pointer;
+    }
+    
+}
+
+.joinModalContainer{
+    
+    width: 480px;
+    height: 650px;
+    background-color: white;
+    position: relative;
+    box-sizing: border-box;
+    margin: 200px auto;
+    padding: 20px;
+    background: #fff; 
+}
+
+.joinFormWrapper{
+    p{
+        color: red;
+        font-size: 15px;
+    }
+}
+
+
