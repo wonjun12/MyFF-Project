@@ -6,11 +6,12 @@ import axios from "axios";
 
 const SERVER_URL = "http://localhost:4000/";
 
+
 const Login = (props) => {
 
     const [joinModalOpen, setJoinModalOpen] = useState(false);  //회원가입모달 스위치
-    const [Idmsg, setIdMsg] = useState("");
-    const [Pwdmsg, setPwdMsg] = useState("");
+    const [msg, setMsg] = useState("");     //로그인 유효성 검사 에러 메세지
+    
 
     const openJoinModal = () => {
         setJoinModalOpen(true);
@@ -22,35 +23,36 @@ const Login = (props) => {
     const { isOpen, close } = props;    //헤더에서 받아오는 모달 스위치
 
     function loginConfirmFnc(){    //로그인 유효성검사
+        
         const inputId = document.getElementsByName('inputLoginNickNEmail')[0];
         const inputPwd = document.getElementsByName('inputLoginPwd')[0];
         
         if(inputId.value === '' || inputPwd.value === ''){
             if(inputId.value === '' && inputPwd.value === ''){
-                setIdMsg("이메일 또는 닉네임을 입력하세요");
+                setMsg("이메일 또는 닉네임을 입력하세요");
                 inputId.focus();
             }else if(inputId.value === ''){
-                setIdMsg("이메일 또는 닉네임을 입력하세요");
+                setMsg("이메일 또는 닉네임을 입력하세요");
                 inputId.focus();
             }else if(inputPwd.value === '' && inputId.value !== ''){
-                setIdMsg('');
-                setPwdMsg("비밀번호를 입력하세요");
+                
+                setMsg("비밀번호를 입력하세요");
                 inputPwd.focus();
             }
             return false;
         }else{
-            setIdMsg('');
-            setPwdMsg('');
+            setMsg('');
+            
             return true;
         }
     }
+            
     
     function loginFnc(e){   //회원가입 submit
         e.preventDefault();
 
         const loginConfig = loginConfirmFnc();
-
-
+        
         if(loginConfig) {
             const {inputLoginPwd, inputLoginNickNEmail} = e.target;
 
@@ -76,7 +78,7 @@ const Login = (props) => {
     return(
         <>
         {/* 외부영역클릭시 모달 닫힘 */}
-        {joinModalOpen? <Join joinClose={close}></Join> :   
+        {joinModalOpen? <Join joinClose={closeJoinModal} allClose={close}></Join> :   
         (<div onClick={close}> 
             <div className={Styles.loginModal}>
                 <div className={Styles.modalContainer} onClick={(e) => e.stopPropagation()}>
@@ -94,7 +96,7 @@ const Login = (props) => {
                                 type="password" 
                                 name="inputLoginPwd"
                                 placeholder="비밀번호"/>
-                            <div className={Styles.msgP}>{Idmsg}{Pwdmsg}</div>
+                            <div className={Styles.msgP}>{msg}</div>
                             <input type="submit" value="로그인"/>
                         </form>
                     </div>

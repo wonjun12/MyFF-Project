@@ -10,4 +10,7 @@ homeRouter.post("/join", userJoin);
 homeRouter.post("/getLetter", getLetter);
 homeRouter.get("/location/:id(\\d+)",locationPage);
 
+homeRouter.post("/emailCk", userJoinEmailCk);
+homeRouter.post("/nickCk", userJoinNickCk);
+
 export default homeRouter;

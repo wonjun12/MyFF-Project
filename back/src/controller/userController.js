@@ -167,3 +167,34 @@ export const userDelete = async (req, res) => {
     res.clearCookie("MyAccess");
     return res.redirect("/");
 };
+
+//이메일 중복확인
+export const userJoinEmailCk = async (req, res) => {
+    const {joinEmail} = req.body;
+    //console.log('여기보세요' + joinEmail);
+    const Users = await models.Users.findOne({
+        where: {Email: joinEmail}
+
+    });
+
+    if(Users){
+        res.status(201).json({result: 'no'}).end();    
+    }else{
+        res.status(201).json({result: 'yes'}).end();
+    }
+};
+
+//닉네임 중복확인
+export const userJoinNickCk = async (req, res) =>{
+    const {joinNick} = req.body;
+    const Users = await models.Users.findOne({
+        where: {NickName: joinNick}
+    });
+
+    if(Users){
+        res.status(201).json({result: 'no'}).end();
+    }else{
+        res.status(201).json({result: 'yes'}).end();
+    }
+
+};
