@@ -4,7 +4,6 @@ import { kakaoMap, mainMapSearch } from "./kakaoMap";
 import useBoardData from "../hooks/useBoardData";
 import { Buffer } from "buffer";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 function Main() {
 
