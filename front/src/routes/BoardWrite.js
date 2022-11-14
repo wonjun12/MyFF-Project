@@ -196,7 +196,7 @@ const BoardWrite = () => {
             </ul>
             <button type="button" onClick={locationSearchButton}> 검색 </button>
               <div className={Styles.mapDiv} id="myMap">
-                지도 들어감
+
               </div>
           </div>
         </div>

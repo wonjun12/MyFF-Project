@@ -35,7 +35,7 @@ export const boardWriteGet = async (req, res) => {
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
   // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
-  const { writeAddrName, writeCommName } = JSON.parse(req.body.bodys);
+  const { writeAddrName, writeCommName, writeStarName } = JSON.parse(req.body.bodys);
   const { file } = req.files;
 
   try {
@@ -44,8 +44,9 @@ export const boardWritePost = async (req, res) => {
       UID: req.UID,
       Location: writeAddrName,
       Content: writeCommName,
-      // Star: writeStarName,
+      Star: writeStarName,
     });
+    
     const arrayCheck = Array.isArray(file);
 
     if (arrayCheck) {
@@ -138,12 +139,13 @@ export const boardEditPost = async (req, res) => {
   const { writeAddrName, writeCommName, writeStarName, writeImgName } =
     req.body;
 
+
   //게시글 수정
   await models.Board.update(
     {
       Location: writeAddrName,
       Content: writeCommName,
-      Star: writeStarName,
+      Star: parseInt(writeStarName),
     },
     {
       where: { BID: id },
