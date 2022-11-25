@@ -1,0 +1,86 @@
+.mapDetails{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    position:fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(65, 62, 62, 0.486);
+    z-index: 10;
+
+    .settingMap{
+        z-index: 11;
+        width: 70%;
+        height: 70%;
+    }
+    button:nth-child(2){
+        position: absolute;
+        z-index: 12;
+        top: 15.3%;
+        right: 15.3%;
+        width: 100px;
+        height: 30px;
+        border-radius: 10px;
+        border: 1px solid black;
+        font-size: 15px;
+        background-color: rgba(152, 152, 187, 0.575);
+        &:hover{
+            background-color: rgba(184, 197, 187, 0.596);
+        }
+    }
+    .selectDiv{
+        position: absolute;
+        display: flex;
+        width: 200px;
+        height: 22px;
+        top: 20%;
+        right: 15%;
+        z-index: 12;
+
+        .selectView{
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: rgba(152, 152, 187, 0.788);
+            width: 100%;
+            height: 100%;
+            
+            button{
+                position: absolute;
+                top: 0%;
+                right: 0%;
+                width: 100%;
+                border-radius: 10px;
+                border: 1px solid black;
+                background-color: rgba(166, 193, 233, 0.555);
+                &:hover{
+                    background-color: rgba(184, 197, 187, 0.596);
+                }
+            }
+            ul{
+                position: absolute;
+                margin-top: 27px;
+                width: 200px;
+                
+                li{
+                    margin-top: 10px;
+                    border-radius: 5px;
+                    font-size: 20px;
+                    background-color: rgba(168, 164, 170, 0.678);
+                    div{
+                        display: flex;
+                        justify-content: space-between;
+                        input{
+                            width: 20px;
+                            margin-right: 10px;
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}

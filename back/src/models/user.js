@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     BirthDay: DataTypes.DATE,
     Salt: DataTypes.STRING,
+    ProFile: DataTypes.BLOB("long"),
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,

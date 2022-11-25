@@ -106,17 +106,39 @@ export const userLogout = (req, res) => {
 export const userSee = async (req, res) => {
     const {id} = req.params;
     const {MyAccess} = req.cookies;
-    
-    const Users = await models.Users.findOne({
-        where: {UID: id}
-    });
     //토큰 유무 확인(자신인지 아닌지 판별 가능)
-    if(MyAccess){
+    if(!!MyAccess){
         const user = await jwt.verify(MyAccess);
         req.UID = user.UID;
     }
 
-    // return res.render("userTest.html", {Users, reqId: req.UID});
+    const Users = await models.Users.findOne({
+        where: {UID: id},
+        include: [{
+            model: models.Board,
+            include: [{
+                model: models.Picture,
+                require: true
+            }]
+        },{
+            model: models.Users, 
+            as: 'Follwings',
+            attributes: ["UID"],
+        },{
+            model: models.Users, 
+            as: 'Follwers',
+            attributes: ["UID"],
+        },
+    ]
+    });
+    console.log(Users);
+
+    const follwer = await models.Follwer.findOne({
+        where: {FUID: id, MyUID: req.UID}
+    });
+
+
+    return res.json({Users, reqId: req.UID, isFollwer: !!follwer});
 };
 
 //유저 수정 정보 가져오기
@@ -126,35 +148,34 @@ export const userEditGet = async (req, res) => {
         where: {UID: req.UID}
     }); 
 
-    return res.render("userEdit",{Users})
+    return res.json({Users});
 };
 
 
 //유저 정보 수정
 export const userEditPost = async (req, res) => {
-    const {editPCKName} = req.body;
-    const Users = await models.Users.findOne({
-        where: {UID: req.UID}
-    });
+    const { editPCKName, editNickName, editPUPName, editYearName, editMonthName, editDayName } = req.body;
 
-    const {Salt, Pwd} = Users;
-    const hashPassword = addHash(editPCKName, Salt);
+    //비밀번호 확인
+    const pwdckFnc = async () => {
+        const Users = await models.Users.findOne({
+            where: { UID: req.UID }
+        });
+        const { Salt, Pwd } = Users;
+        const hashPassword = addHash(editPCKName, Salt);
 
-    //변경시 비밀번호 확인
-    if(Pwd === hashPassword){
-        const {editNickName, editPUPName, editYearName, editMonthName ,editDayName}
-        = req.body;
-        const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
+        //변경시 비밀번호 확인
+        if (Pwd === hashPassword) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        await models.Users.update({
-            NickName: editNickName,
-            BirthDay: birthDay
-        },{
-            where: {UID: req.UID}
-        })
-
+    //비밀번호 변경
+    const pwdEditFnc = async () => {
         //비밀번호 변경 입력 여부 확인
-        if(editPUPName != ""){
+        if (editPUPName != "") {
             //비밀번호 변경 원할 시 hash 재설정
             const salt = addSalt();
             const hashPassword = addHash(editPUPName, salt);
@@ -163,13 +184,36 @@ export const userEditPost = async (req, res) => {
                 Salt: salt,
                 Pwd: hashPassword
             }, {
-                where: {UID: req.UID}
+                where: { UID: req.UID }
             })
         }
-        
+    }
+    
+    const pwdck = pwdckFnc(); //비밀번호가 일치확인
+
+    if (pwdck) { //비밀번호가 일치하면 실행
+        const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
+        try {
+            const { file } = req.files; 
+            await models.Users.update({
+                NickName: editNickName,
+                BirthDay: birthDay,
+                Profile: file.data,
+            }, {
+                where: { UID: req.UID }
+            })
+            pwdEditFnc();
+        } catch (error) {
+            await models.Users.update({
+                NickName: editNickName,
+                BirthDay: birthDay,
+            }, {
+                where: { UID: req.UID }
+            })
+        }
         return res.redirect("/");
     }else {
-        return res.render("userEdit",{Users})
+        res.json({ result: '비밀번호 틀림' }).end();
     }
 };
 
@@ -179,7 +223,7 @@ export const userDelete = async (req, res) => {
         where: {UID: req.UID}
     })
     res.clearCookie("MyAccess");
-    return res.redirect("/");
+    // return res.redirect("/");
 };
 
 //이메일 중복확인
@@ -211,4 +255,44 @@ export const userJoinNickCk = async (req, res) =>{
         res.status(201).json({result: 'yes'}).end();
     }
 
+};
+
+//팔로우, 언팔로우
+export const userFollwer = async (req, res) => {
+    const {id} = req.params;
+
+   
+    try {
+        const follwer = await models.Follwer.findOne({
+            where:{
+                MyUID: req.UID,
+                FUID: parseInt(id)
+            }
+        });
+
+        if(!!follwer){
+            await models.Follwer.destroy({
+                where: {
+                    MyUID: req.UID,
+                    FUID: parseInt(id)
+                }
+            });
+
+            res.json({result: 'unfollow'}).end();
+
+        }else{
+            await models.Follwer.create({
+                MyUID: req.UID,
+                FUID: parseInt(id)
+            });
+
+            res.json({result: 'follow'}).end();
+        }
+ 
+    } catch (error) {
+       console.log(error);
+        
+        
+    }
+    
 };

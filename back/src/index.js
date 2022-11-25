@@ -15,6 +15,9 @@ import boardRouter from "./router/boardRouter";
 //token check
 import checkToken from "./jwt/check";
 
+//소켓 통신
+import socketIO from "./socket/socket";
+
 
 
 const app = express();
@@ -47,12 +50,13 @@ app.use(fileupload());
 //초기 url
 app.use("/api/home", homeRouter);
 app.use("/api/user", userRouter);
-app.use("/api/board",checkToken ,boardRouter);
+app.use("/api/board", boardRouter);
 
-app.listen(PORT, () => {
+const server =  app.listen(PORT, () => {
     console.log(`Server open ${PORT}`);
-})
+});
 
+socketIO(server);
 
 
 

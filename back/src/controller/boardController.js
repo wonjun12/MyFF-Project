@@ -27,15 +27,12 @@ async function deletePicture(PID) {
   });
 }
 
-//게시판 작성 html
-export const boardWriteGet = async (req, res) => {
-  res.status(201).json({ result: "ok", UID: req.UID });
-};
 
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
   // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
-  const { writeAddrName, writeCommName, writeStarName } = JSON.parse(req.body.bodys);
+  const { writeAddrName, writeCommName, writeStarName, writeHashtag } =
+    JSON.parse(req.body.bodys);
   const { file } = req.files;
 
   try {
@@ -44,9 +41,9 @@ export const boardWritePost = async (req, res) => {
       UID: req.UID,
       Location: writeAddrName,
       Content: writeCommName,
-      Star: writeStarName,
+      Star: parseInt(writeStarName),
     });
-    
+
     const arrayCheck = Array.isArray(file);
 
     if (arrayCheck) {
@@ -55,6 +52,21 @@ export const boardWritePost = async (req, res) => {
       }
     } else {
       createPicture(BID, file.data);
+    }
+
+    const tagArrCheck = Array.isArray(writeHashtag);
+    if (tagArrCheck) {
+      for (let i in writeHashtag) {
+        await models.Hashtag.create(
+          {
+            title: writeHashtag[i],
+            BID: BID,
+          },
+          {
+            where: { BID: BID },
+          }
+        );
+      }
     }
 
     //사진 넣기 함수 넣으면 됨
@@ -97,11 +109,12 @@ export const boardSee = async (req, res) => {
     // return res.render("boardSee.html",{Board, Picture});
 
     // 조회 결과 보내줌
-    res.json({ result: "ok", Board, UID: req.UID }).end();
+    res.json({ result: "ok", Board}).end();
   } else {
     return res.redirect("/");
   }
 };
+
 
 //게시글 수정 화면 보기
 export const boardEditGet = async (req, res) => {
@@ -119,26 +132,21 @@ export const boardEditGet = async (req, res) => {
         model: models.Picture,
         required: true,
       },
+      {
+        model: models.Hashtag,
+        require: true,
+      },
     ],
   });
-
-  //해당 게시글이 자신의 글인지 확인
-  if (Board.UID === req.UID) {
-    const Picture = await models.Picture.findAll({
-      where: { BID: id },
-    });
-
-    return res.json({ Board, Picture, UID: req.UID }).end();
-  }
-  return res.redirect("back");
+  console.log(Board);
+  return res.json({ Board, UID: req.UID }).end();
 };
 
 //게시글 수정하기
 export const boardEditPost = async (req, res) => {
   const { id } = req.params;
-  const { writeAddrName, writeCommName, writeStarName, writeImgName } =
-    req.body;
-
+  const { writeAddrName, writeCommName, writeStarName, writeHashtag } =
+    JSON.parse(req.body.bodys);
 
   //게시글 수정
   await models.Board.update(
@@ -152,54 +160,29 @@ export const boardEditPost = async (req, res) => {
     }
   );
 
-  //사진 배열 여부 확인 (2개 이상일 경우만 배열로 적용됨)
-  const arrayCheck = Array.isArray(writeImgName);
-  //해당 게시글 사진 조회
-  await models.Picture.findAll({
-    where: { BID: id },
-  }).then((data) => {
-    //사진 수정
+  try {
+    const { file } = req.files;
+
+    const arrayCheck = Array.isArray(file);
+
     if (arrayCheck) {
-      const MAX_DATA = data.length;
-      const MAX_IMG = writeImgName.length;
-      //DB 사진 갯수와 입력한 사진 갯수 비교
-      if (MAX_IMG > MAX_DATA) {
-        for (let i in writeImgName) {
-          if (i >= MAX_DATA) {
-            //넣은 사진이 많다면 사진을 추가함
-            createPicture(id, writeImgName[i]);
-          } else {
-            //넣은 사진 까지는 사진 수정
-            updatePicture(data[i].PID, writeImgName[i]);
-          }
-        }
-      } else {
-        for (let i in data) {
-          if (i >= MAX_IMG) {
-            //넣은 사진이 DB의 갯수보다 적다면 삭제
-            deletePicture(data[i].PID);
-          } else {
-            //넣은 사진 만큼 수정
-            //DB갯수와 넣은 사진의 갯수가 동일할 경우 모두 수정됨
-            updatePicture(data[i].PID, writeImgName[i]);
-          }
-        }
+      for (let i in file) {
+        createPicture(id, file[i].data);
       }
     } else {
-      //넣은 사진이 하나일 경우
-      for (let i in data) {
-        if (i > 0) {
-          //DB에 저장된게 2개 이상일경우 전부 삭제
-          deletePicture(data[i].PID);
-        } else {
-          //한개의 사진만 수정
-          updatePicture(data[i].PID, writeImgName);
-        }
-      }
+      createPicture(id, file.data);
     }
-  });
 
-  return res.redirect("../" + id);
+    // const tagArrCheck =Array.isArray(writeHashtag);
+    // if(tagArrCheck){
+    //   for()
+    // }
+  } catch {
+    res.json({ result: "error" }).end();
+  }
+
+  //사진 배열 여부 확인 (2개 이상일 경우만 배열로 적용됨)
+  // const arrayCheck = Array.isArray(writeImgName);
 };
 
 //게시글 삭제
@@ -271,3 +254,22 @@ export const boardCommtEdit = async (req, res) => {
     res.json({ result: "No Action" }).end();
   }
 };
+
+
+export const boardLike = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await models.BoardLike.create({
+      BID: parseInt(id),
+      UID: req.UID
+    })
+  } catch (error) {
+    await models.BoardLike.destroy({
+      where: {
+        BID: parseInt(id),
+        UID: req.UID
+      }
+    })
+  }
+  return res.end();
+}

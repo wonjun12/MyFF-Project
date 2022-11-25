@@ -43,23 +43,3 @@
     -->
   </body>
 </html>
-
-
-<script type="text/javascript">
-  function boardFnc (board) {
-      window.location.href = `/board/${board}`;
-  }
-
-  function clickSearchKeyword(key){
-            let listEl = document.getElementById("locationSearch");
-            const place = document.getElementById("placeName" + key);
-            const ppp = document.getElementById("placeId"+ key);
-            const pCl = document.getElementsByClassName("placeCl");
-
-            let locationId = document.getElementById("boardLocationId");
-
-            locationId.value = place.innerText;
-
-            listEl.setAttribute('hidden', 'hidden');
-        }
-  </script>

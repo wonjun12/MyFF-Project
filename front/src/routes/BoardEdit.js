@@ -3,8 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
+import { Buffer } from "buffer";
 
-const SERVER_URL = "/api/board";
+const SERVER_URL = "/api/board/";
 
 //별점 스타일
 const colors = {
@@ -19,26 +20,31 @@ const starStyle = {
   },
 };
 
-const BoardSee = () => {
+const BoardEdit = () => {
   axios.defaults.withCredentials = true;
 
   const { id } = useParams();
   const [board, setBoard] = useState("");
   const [pictures, setPictures] = useState([]);
-  const [userID, setUserID] = useState("");
 
   const inputRef = useRef(null); //input file
   const [imageFiles, setImageFiles] = useState([]); //전송할 이미지 파일
-  const [images, setImages] = useState([]); //미리보기 이미지
+  const [images, setImages] = useState([]);
+  //미리보기 이미지
+
+  const [hashtag, setHashtag] = useState([]);
 
   const dataFetch = () => {
-    axios.get(`${SERVER_URL}/${id}/edit`).then((res) => {
+    axios.get(SERVER_URL + id + "/edit").then((res) => {
+
       setBoard(res.data.Board);
       setPictures(res.data.Board.Pictures);
-      setUserID(res.data.UID);
+      setHashtag(res.data.Board.Hashtags);
+      setCurrentValue(res.data.Board.Star);
     });
   };
-
+  console.log(hashtag, "해시태그");
+  console.log(pictures, "이미지");
   const boardEditSubmit = (e) => {
     e.preventDefault();
 
@@ -50,7 +56,6 @@ const BoardSee = () => {
         writeCommName: contentName.value,
         writeStarName: currentValue,
       };
-
       const config = {
         Headers: {
           "content-type": "multipart/form-data",
@@ -63,10 +68,9 @@ const BoardSee = () => {
         //console.log(imgFile[i]);
         formData.append("file", imageFiles[i]);
       }
-
       formData.append("bodys", JSON.stringify(data));
 
-      axios.post(`${SERVER_URL}/${id}/edit`, formData, config).then((res) => {
+      axios.post(SERVER_URL + id + "/edit", formData, config).then((res) => {
         // console.log(res.data);
         const { result } = res.data;
         if (result === "ok") {
@@ -100,7 +104,6 @@ const BoardSee = () => {
       setImageFiles((prev) => [...prev, ...[files[0]]]);
     }
   };
-
   // 이미지 개별 삭제
   const imgDelete = (idx) => {
     console.log(idx);
@@ -118,6 +121,7 @@ const BoardSee = () => {
     dataFetch();
     const images = [],
       fileReaders = [];
+
     let isCancel = false;
     if (imageFiles.length) {
       imageFiles.forEach((file) => {
@@ -135,6 +139,7 @@ const BoardSee = () => {
         };
         //console.log(file);
         fileReader.readAsDataURL(file);
+        // fileReader.readAsArrayBuffer(blobImg);
       });
     } else {
       setImages([]);
@@ -171,19 +176,69 @@ const BoardSee = () => {
     setValue(e.target.value);
   };
 
+  //태그
+  const [tagItem, setTagItem] = useState("");
+  const [tagList, setTagList] = useState([]);
+
+  const onKeyPress = (e) => {
+    if (e.target.value.length !== 0 && e.key === "Enter") {
+      submitTagItem();
+      e.preventDefault();
+    }
+  };
+
+  const submitTagItem = () => {
+    tagList.push(tagItem);
+    setTagList([...tagList]);
+    setTagItem("");
+  };
+
+  const deleteTagItem = (idx) => {
+    setTagList(tagList.filter((_, tagIdx) => tagIdx !== idx));
+  };
+
   return (
     <form onSubmit={boardEditSubmit}>
       <div style={{ paddingTop: "130px" }}>
+        <input type="checkbox" id="writeMapId" />
         <label htmlFor="writeMapId"> 지도 </label>
         <div>
-          <input type="text" placeholder="위치 검색" name="locationName" />
-          <input type="button" value="영수증으로 위치 검색" />
+          <input
+            type="text"
+            placeholder="위치 검색"
+            name="locationName"
+            className={Styles.searchInput}
+          />
+          <input
+            type="button"
+            value="영수증으로 위치 검색"
+            className={Styles.searchInput}
+          />
           <div>지도 들어감</div>
         </div>
 
         {/*====================Image View=======================*/}
+        <input type="checkbox" id="writeImgId" />
         <label htmlFor="writeImgId">사진</label>
         <div>
+          {pictures.length > 0 ? (
+            <div className={Styles.imgDiv}>
+              {pictures.map((image, idx) => {
+                const img = Buffer.from(image.Photo.data).toString("base64");
+                return (
+                  <span key={idx} className={Styles.imgSpan}>
+                    {/* <p onClick={() => prevImgDelete(idx, image)}>X</p> */}
+                    <img
+                      className={Styles.imgView}
+                      src={`data:image;base64,${img}`}
+                      alt=""
+                    />
+                  </span>
+                );
+              })}
+            </div>
+          ) : null}
+
           {images.length > 0 ? (
             <div className={Styles.imgDiv}>
               {images.map((image, idx) => {
@@ -213,8 +268,9 @@ const BoardSee = () => {
             Delete
           </button>
         </div>
-        {/*========================================================*/}
 
+        {/*========================================================*/}
+        <input type="checkbox" id="writeCommId" />
         <label htmlFor="writeCommId">글쓰기</label>
         <div>
           <div>
@@ -222,6 +278,7 @@ const BoardSee = () => {
               name="contentName"
               placeholder="내용 입력"
               defaultValue={board.Content}
+              className={Styles.content}
             ></textarea>
           </div>
           <div style={starStyle.container}>
@@ -238,7 +295,7 @@ const BoardSee = () => {
                       cursor: "pointer",
                     }}
                     color={
-                      (hoverValue || currentValue || board.Star) > index
+                      (hoverValue || currentValue) > index
                         ? colors.orange
                         : colors.grey
                     }
@@ -250,6 +307,30 @@ const BoardSee = () => {
               })}
             </span>
           </div>
+          <div>
+            {tagList.map((tagItem, idx) => {
+              return (
+                <span key={idx}>
+                  <span>{tagItem}</span>
+                  <button
+                    type="button"
+                    onClick={() => deleteTagItem(idx, tagItem)}
+                    className={Styles.deleteTagBtn}
+                  >
+                    X
+                  </button>
+                </span>
+              );
+            })}
+            <input
+              type="text"
+              placeholder="엔터 누르면 태그 추가"
+              tabIndex={2}
+              value={tagItem}
+              onChange={(e) => setTagItem(e.target.value)}
+              onKeyPress={onKeyPress}
+            />
+          </div>
         </div>
 
         <input type="submit" value="전송"></input>
@@ -257,4 +338,4 @@ const BoardSee = () => {
     </form>
   );
 };
-export default BoardSee;
+export default BoardEdit;

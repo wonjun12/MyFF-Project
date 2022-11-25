@@ -1,0 +1,26 @@
+.editModal{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6); 
+    z-index: 11;
+}
+
+.modalContainer{
+    width: 480px;
+    height: 600px;
+    background-color: white;
+    position: relative;
+    box-sizing: border-box;
+    margin: 180px auto;
+    padding: 20px;
+    background: #fff; 
+}
+.profileEditImg{
+    img{
+    width: 200px;
+    height: 200px;
+    }
+}

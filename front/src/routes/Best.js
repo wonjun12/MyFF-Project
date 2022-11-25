@@ -3,22 +3,14 @@ import Styles from "./Main.module.scss";
 import useBoardData from "../hooks/useBoardData";
 import { Buffer } from "buffer";
 import { Link } from "react-router-dom";
-import { SetMap } from "../kakao/kakaoAPI";
-import CreateMain from "../kakao/kakaoCreateMain";
 
-function Main({mapView}) {
-  
-  let sessionId = sessionStorage.getItem('loginUID');
+const Best = () => {
 
   const [page, setPage] = useState({
-    path: 'main',
+    path: 'best',
     num: 0,
-    style: {
-      paddingTop: '0px'
-    }
   });
-  const [loading, error, boards, hasMore, user] = useBoardData(page);
-
+  const [loading, error, boards, hasMore] = useBoardData(page);
   const lastElementRef = useCallback(
     (node) => {
       if (loading) return;
@@ -43,63 +35,13 @@ function Main({mapView}) {
     [loading, hasMore]
   );
 
-
-  useEffect(() => {
-    if(sessionId === null || sessionId === 'undefined' || sessionId === ''){
-      setPage({
-        ...page,
-        path: 'best',
-        style: {
-          paddingTop: '20px'
-        }
-      });
-    }
-  },[]);
-
-  const mapViewDetails = () => {
-    mapView(true);
-  }
-
-  return (
-    <div className={Styles.container} style={page.style}>
-
-      {page.path === 'main' && 
-        <div className={Styles.userMapDiv}>
-          {/* 팔로우유저, 지도 보여주는 영역 */}
-          <div className={Styles.fwUserDiv}>
-            {user?.map((fUser, index) => {
-              return (
-                <Link to={`/user/${fUser.UID}`} key={index}>
-                  <div className={Styles.profileDiv} >
-                    <img src="./img/profile.png"></img>
-                    <span>{fUser.NickName}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          <SetMap />
-          <button onClick={mapViewDetails}> 지도 상세보기</button>
-        </div>
-      }
-      
-
+  return(
+    <div className={Styles.container} style={{paddingTop: '20px'}}>
       {/* 게시글 간략보기 */}
       <div className={Styles.boardContainer}>
-
         {boards?.map((board, index) => {
-
           //이미지 변환
-          let profile = "./img/profile.png";
-          if(board.User.Profile){
-            console.log(board.User.Profile);
-            profile = Buffer.from(board.User.Profile).toString('base64');
-          }
           const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
-
-          //지도 이미지 출력
-          page.path === 'main' && CreateMain(board, img, index, parseInt(sessionId));
-
 
           //마지막 item에 ref
           if (board.length !== 0 && boards.length === index + 1) {
@@ -108,10 +50,7 @@ function Main({mapView}) {
 
                 <div ref={lastElementRef} className={Styles.boardDiv}>
                   <div className={Styles.userDiv}>
-
-                    <img src={(board.User.Profile) ? 
-                      `data:image;base64,${profile}` : profile}></img>
-
+                    <img src="./img/profile.png"></img>
                     <h1>{board.User.NickName}</h1>
                   </div>
                   <div className={Styles.boardimgDiv}>
@@ -121,7 +60,7 @@ function Main({mapView}) {
                     <h1>{board.Location}</h1>
                     <p>{board.Content}</p>
                     <div className={Styles.starDiv}>
-                      <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
+                      <span className={Styles.like}><span>❤</span>{board.BoardLikes.length}</span>
                       <span className={Styles.star}>⭐{board.Star}</span>
                       <span className={Styles.tag}> #태그 #태그</span>
                     </div>
@@ -136,9 +75,8 @@ function Main({mapView}) {
 
                 <div key={Math.random()} className={Styles.boardDiv}>
                   <div className={Styles.userDiv}>
-                  <img src={(board.User.Profile) ? 
-                      `data:image;base64,${profile}` : profile}></img>
-                      
+                    <img src="./img/profile.png"></img>
+                    {/* <img src="data:image;base64,'+ img +'" style="width: 70px; height: 70px;" onclick="this.remove()" /> */}
                     <h1>{board.User.NickName}</h1>
                   </div>
                   <div className={Styles.boardimgDiv}>
@@ -149,7 +87,7 @@ function Main({mapView}) {
                     
                     <p>{(board.Content.length > 35) ? board.Content.substr(0, 30) + '...' : board.Content}</p>
                     <div className={Styles.starDiv}>
-                    <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
+                      <span className={Styles.like}><span>❤</span>{board.BoardLikes.length}</span>
                       <span className={Styles.star}>⭐{board.Star}</span>
                       {/* <span className={Styles.tag}> #태그 #태그</span> */}
                     </div>
@@ -168,4 +106,4 @@ function Main({mapView}) {
   );
 }
 
-export default Main;
+export default Best;

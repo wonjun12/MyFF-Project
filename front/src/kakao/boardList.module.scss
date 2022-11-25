@@ -1,0 +1,37 @@
+.boardList {
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 60%;
+    height: 65%;
+    z-index: 4;
+    overflow-y: auto;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-left: 5px;
+    padding-right: 5px;
+    &::-webkit-scrollbar{
+        width: 10px;
+    }
+    &::-webkit-scrollbar-thumb{
+        border-radius: 13px;
+        background-color: black;
+    }
+    &::-webkit-scrollbar-track{
+        border-radius: 13px;
+        background-color: gray;
+    }
+    li {
+        border-radius: 15px;
+        margin-top: 5px;
+        width: 100%;
+        background-color: rgba(140, 143, 143, 0.507);
+        &:hover{
+            background-color: rgba(146, 189, 135, 0.274);
+        }
+    }
+}

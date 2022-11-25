@@ -23,14 +23,14 @@ export const mainPage = async (req, res) => {
             include: [{
                 model:models.Users,
                 as: 'Follwers',
-                attributes: ['UID', 'Email', 'NickName'],
+                attributes: ['UID', 'Email', 'NickName', 'Profile'],
                 include: [{
                     model: models.Board,
                     order: [['BID', 'DESC']],
                     include: [{
                         model: models.Users,
                         require: true,
-                        attributes: ['UID', 'Email', 'NickName']
+                        attributes: ['UID', 'Email', 'NickName', 'Profile']
                     },{
                         model: models.Picture,
                         required: true,
@@ -42,14 +42,17 @@ export const mainPage = async (req, res) => {
                 include: [{
                     model: models.Users,
                     require: true,
-                    attributes: ['UID', 'Email', 'NickName']
+                    attributes: ['UID', 'Email', 'NickName', 'Profile']
                 },{
                     model: models.Picture,
                     required: true,
+                },{
+                    model: models.BoardLike,
+                    require: true
                 }]
             }]
         }).then(board => {
-            console.log(board);
+            // console.log(board);
             let boardCount = [];
         
             boardCount = board.Boards;
@@ -82,8 +85,90 @@ export const mainPage = async (req, res) => {
 
 };
 
-export const locationPage = (req, res) => {
-    res.send("location page");
+export const bestPage = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const board = await models.Board.findAll({
+        include: [{
+            model: models.Users,
+            require: true,
+            attributes: ['UID', 'NickName']
+        },{
+            model: models.Picture,
+            require: true
+        },{
+            model: models.BoardLike,
+            require: true
+        }]
+    })
+    
+    await board.sort((a, b) => {
+        if(a.BoardLikes.length < b.BoardLikes.length) return 1;
+        if(a.BoardLikes.length > b.BoardLikes.length) return -1;
+    });
+
+    const boards = await board.filter((item) => {
+
+        // if(item.BoardLikes.length !== 0){
+            return item;
+        // }
+    });
+    
+    const minPage = page * 6, 
+        maxPage = (board.length < (page + 1) * 6)? board.length : (page + 1) * 6;
+
+    const boardArray = board.slice(minPage, maxPage);
+
+    
+    res.json({result:"ok", boardArray}).end();
+}
+///////////////////////////////////////////////////////////////
+
+//지도 상세보기
+export const locationPage = async (req, res) => {
+    const {name} = req.query;
+
+    if(name === '0'){
+        const board = await models.Board.findAll({
+            where: {UID: req.UID},
+            include: [{
+                model: models.Users,
+                require: true,
+                attributes: ['NickName']
+            },{
+                model: models.Picture,
+                require: true,
+                limit: 1
+            }]
+        })
+
+        res.json({result: 0, board}).end();
+
+    }else if(name === '1'){
+        const follwer = await models.Users.findOne({
+            where: {UID: req.UID},
+            require:true,
+            attributes: ['UID'],
+            include: [{
+                model:models.Users,
+                as: 'Follwers',
+                attributes: ['UID'],
+                include: [{
+                    model: models.Board,
+                    include: [{
+                        model: models.Users,
+                        require: true,
+                        attributes: ['UID', 'NickName']
+                    },{
+                        model: models.Picture,
+                        required: true,
+                        limit: 1
+                    }]
+                }]
+            }]
+        });
+        
+        res.json({result: 1, follwer}).end();
+    }
 };
 
 export const getLetter = async (req, res) => {

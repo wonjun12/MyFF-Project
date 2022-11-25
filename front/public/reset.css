@@ -2,14 +2,30 @@
 
 /* 폰트 등록 */
 @font-face {
-    font-family: '나눔고딕';
-    src: url('../font/NanumGothic.woff') format('woff');
+    font-family: 'Nanum';
+    src: url('./font/NanumGothic.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'NanumBold';
+    src: url('./font/NanumGothicBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'NanumExtra';
+    src: url('./font/NanumGothicExtraBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'NamumLight';
+    src: url('./font/NanumGothicLight.woff') format('woff');
 }
 
 /* 화면 비율 */
 #root{
     width: 1200px;
     margin: 0 auto;
+    font-family: 'Nanum';
 }
 
 /* CSS 초기 셋팅 */
@@ -70,48 +86,4 @@ input, textarea{
 /* 소진 추가 */
 input[type=button], input[type=submit]{
     cursor: pointer;
-}
-
-/* 메인페이지 지도 CSS 추가 */
-
-.mapImage{
-    width: 70px; 
-    height: 70px;
-}
-.mapImgDiv{
-    position: absolute;
-    width: 75px;
-    height: 75px;
-    background-color: red;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mapImgDivF{
-    position: absolute;
-    width: 75px;
-    height: 75px;
-    background-color: blue;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.mapImgDiv:hover {
-    transform: scale(1.4);
-    background-color: rgb(80, 236, 74);
-}
-.mapImgDivF:hover{
-    transform: scale(1.4);
-    background-color: rgb(80, 236, 74);
-    /* z-index: 10; */
-}
-.placeCl:hover {
-    background-color: #E6E6E6;
-}
-#locationSearch{
-    position: absolute;
-    width: 350px;
-    z-index: 5;
-    background-color: rgba(red, red, red, 0.3);
 }

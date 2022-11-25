@@ -24,15 +24,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
-    },
   }, {
     charset: 'utf8',
     collate: 'utf8_general_ci',
     sequelize,
+    timestamps: false,
     modelName: 'BoardLike',
   });
 

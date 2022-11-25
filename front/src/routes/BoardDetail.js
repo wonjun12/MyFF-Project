@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
-import { kakaoMap, boardMapSearch, mainMapSearch } from "./kakaoMap";
+import { SetMap } from "../kakao/kakaoAPI";
 
 const SERVER_URL = '/api/board';
 
@@ -11,7 +11,7 @@ const BoardDetail = () => {
   axios.defaults.withCredentials = true;
 
   const { id } = useParams();
-  const [board, setBoard] = useState([]);
+  const [board, setBoard] = useState({});
   const [pictures, setPictures] = useState([]);
   const [comments, setComments] = useState([]);
   const [imgPage, setImgPage] = useState(1);
@@ -19,15 +19,25 @@ const BoardDetail = () => {
   const [commtEditID, setCommtEditID] = useState(0);
   const [commtEditText, setCommtEditText] = useState("");
   const [userID, setUserID] = useState("");
+  const [like, setLike] = useState({
+    length: 0,
+    isLike: false
+  });
 
   const dataFetch = () => {
     axios.get(`${SERVER_URL}/${id}`).then(res => {
-      //console.log(res.data.Board);
-      //console.log(res.data.Picture);
+      console.log(res.data.Board);
       setBoard(res.data.Board);
       setPictures(res.data.Board.Pictures);
       setComments(res.data.Board.Comments);
-      setUserID(res.data.UID);
+      setUserID(res.data.UID); 
+      res.data.Board.BoardLikes.forEach(({UID})=>{
+        (UID === parseInt(sessionStorage.getItem('loginUID'))) 
+          && setLike({
+            ...like,
+            isLike: true
+          });
+      });
     });
   }
 
@@ -95,10 +105,24 @@ const BoardDetail = () => {
     }
   }
 
+  const boardLikeFnc = ()=> {
+    axios.post(`${SERVER_URL}/${id}/like`);
+    setLike({
+      ...like,
+      isLike: (!like.isLike)
+    });
+  }
+
+  const boardStar = ()=> {
+    let arr = [];
+    for (let i=0; i<parseInt(board.Star); i++){
+      arr.push(<div className={Styles.star}>★</div>);
+    }
+    return arr;
+  }
+
   useEffect(() => {
     dataFetch();
-    kakaoMap(5);
-    // boardMapSearch(board.Location);
   }, []);
 
   return (
@@ -113,7 +137,9 @@ const BoardDetail = () => {
 
         {/*==== Map ====*/}
         <div className={Styles.mapDiv}>
-          <div className={Styles.map} id="myMap"></div>
+          <div className={Styles.map}>
+            <SetMap/>
+          </div>
           <p>{board.Location}</p>
         </div>
       </div>
@@ -141,8 +167,14 @@ const BoardDetail = () => {
 
       {/*==== Content ====*/}
       <div className={Styles.contentDiv}>
+        <div className={Styles.likeStarDiv}>
+          <div onClick={boardLikeFnc} className={like.isLike ? Styles.like : Styles.unlike}>
+            ❤
+          </div>
+          <div className={Styles.likeNumber}>{board.BoardLikes?.length}</div>
+          {boardStar()}
+        </div>
         <p>{board.Content}</p>
-        <p>{board.Star}</p>
         <p>{board.updatedAt}</p>
       </div>
 

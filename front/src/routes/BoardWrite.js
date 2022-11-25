@@ -2,7 +2,10 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
-import { kakaoMap, boardMapSearch,  boardMapSearchButton} from "./kakaoMap";
+import { SetMap } from "../kakao/kakaoAPI";
+import SearchBoard from "../kakao/kakaoSearchBoard";
+import CreateMaker from "../kakao/kakaoCreateMarker";
+import { socket } from "../socket/socket";
 
 const SERVER_URL = "/api/board";
 //별점 스타일
@@ -10,7 +13,6 @@ const colors = {
   orange: "#FFBA5A",
   grey: "#a9a9a9",
 };
-
 
 const starStyle = {
   container: {
@@ -25,7 +27,6 @@ const config = {
     "content-type": "multipart/form-data",
   },
 };
-
 
 const BoardWrite = () => {
   axios.defaults.withCredentials = true;
@@ -45,6 +46,7 @@ const BoardWrite = () => {
         writeAddrName: locationName.value,
         writeCommName: contentName.value,
         writeStarName: currentValue,
+        writeHashtag: tagList,
       };
 
       const formData = new FormData();
@@ -61,6 +63,7 @@ const BoardWrite = () => {
         const { result } = res.data;
 
         if (result === "ok") {
+          socket.emit('boardCreate');
           window.location.href = "/";
         } else if (result === "error") {
           alert("로그인 하고 하셈");
@@ -74,30 +77,15 @@ const BoardWrite = () => {
 
   //img 주소 추출
   const imgLocation = async (e) => {
-    const {files} = e.target;
+    const { files } = e.target;
 
     const formData = new FormData();
 
     formData.append("imgFile", files[0]);
 
-    const res = await axios.post('/api/home/getLetter', formData, config);
-    
+    const res = await axios.post("/api/home/getLetter", formData, config);
+
     setLocationValue(res.data);
-  };
-
-  //주소 입력 
-  const [locationValue, setLocationValue] = useState('');
-
-  //카카오 주소 찾기 
-  const locationSearch = (e) => {    
-    const location = e.target.value;
-    setLocationValue(location);
-    boardMapSearch(location);
-  };
-
-  const locationSearchButton = () => {
-    const location = document.getElementById('boardLocationId').value;
-    boardMapSearchButton(location);
   };
 
 
@@ -129,7 +117,6 @@ const BoardWrite = () => {
 
   // 이미지 전체 삭제
   const deleteAll = () => {
-
     setImageFiles([]);
   };
   //별점
@@ -147,9 +134,29 @@ const BoardWrite = () => {
     setHoverValue(undefined);
   };
 
+  //태그
+  const [tagItem, setTagItem] = useState("");
+  const [tagList, setTagList] = useState([]);
+
+  const onKeyPress = (e) => {
+    if (e.target.value.length !== 0 && e.key === "Enter") {
+      submitTagItem();
+      e.preventDefault();
+    }
+  };
+
+  const submitTagItem = () => {
+    tagList.push(tagItem);
+    setTagList([...tagList]);
+    setTagItem("");
+  };
+
+  const deleteTagItem = (idx) => {
+    setTagList(tagList.filter((_, tagIdx) => tagIdx !== idx));
+  };
+
   // 이미지 state 초기화 및 파일 추가 시 실행
   useEffect(() => {
-    kakaoMap(5);
     const images = [],
       fileReaders = [];
     let isCancel = false;
@@ -184,20 +191,45 @@ const BoardWrite = () => {
     };
   }, [imageFiles]);
 
+
+  //주소 입력 
+  const [locationValue, setLocationValue] = useState('');
+  const [locationName, setLocationName] = useState('');
+
+  const locationSearch = (v) => {
+    const {value} = v.target;
+    setLocationValue(value);
+    
+  }
+
+  useEffect(() => {
+    CreateMaker(locationValue);
+  }, [locationValue])
+
   return (
     <form onSubmit={boardSubmit}>
       <div style={{ paddingTop: "130px" }}>
         <label htmlFor="writeMapId"> 지도 </label>
         <div>
-          <input type="text" id="boardLocationId" onChange={locationSearch} value={locationValue}  placeholder="위치 검색" name="locationName" />
-          <input type="file" accept="image/*" onChange={imgLocation}/>
-          <div className={Styles.mapMaindiv}>
-            <ul id="locationSearch" hidden>
-            </ul>
-            <button type="button" onClick={locationSearchButton}> 검색 </button>
-              <div className={Styles.mapDiv} id="myMap">
-
-              </div>
+          <input
+            type="text"
+            id="boardLocationId"
+            onChange={locationSearch}
+            value={locationValue}
+            placeholder="위치 검색"
+            name="locationName"
+          />
+          <input type="file" accept="image/*" onChange={imgLocation} />
+          <div>
+            <ul id="locationSearch" hidden></ul>
+            <button type="button">
+              {" "}
+              검색{" "}
+            </button>
+            <div className={Styles.mapDiv}>
+                  <SearchBoard  addr={locationValue} setAddr={setLocationValue} setPlace={setLocationName}/>
+                  <SetMap/>
+            </div>
           </div>
         </div>
 
@@ -266,6 +298,30 @@ const BoardWrite = () => {
                 );
               })}
             </span>
+          </div>
+          <div>
+            {tagList.map((tagItem, idx) => {
+              return (
+                <span key={idx}>
+                  <span>{tagItem}</span>
+                  <button
+                    type="button"
+                    onClick={() => deleteTagItem(idx, tagItem)}
+                    className={Styles.deleteTagBtn}
+                  >
+                    X
+                  </button>
+                </span>
+              );
+            })}
+            <input
+              type="text"
+              placeholder="엔터 누르면 태그 추가"
+              tabIndex={2}
+              value={tagItem}
+              onChange={(e) => setTagItem(e.target.value)}
+              onKeyPress={onKeyPress}
+            />
           </div>
         </div>
 

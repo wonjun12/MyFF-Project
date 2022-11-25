@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING
     },
+    PlaceName : DataTypes.STRING,
     Content: DataTypes.STRING,
     Star: DataTypes.INTEGER,
     Views: {
@@ -63,6 +64,9 @@ module.exports = (sequelize, DataTypes) => {
     });
     Board.belongsTo(models.Users, {
       foreignKey: "UID"
+    });
+    Board.belongsTo(models.Hashtag, {
+      foreignKey: 'BID'
     });
   };
 

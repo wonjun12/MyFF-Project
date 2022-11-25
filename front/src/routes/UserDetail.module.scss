@@ -1,0 +1,48 @@
+.userInfoDiv{
+    width: 1160px; 
+    height: 150px;
+    padding: 20px;
+    background-color: rgb(241, 241, 241);
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+    
+    
+}
+.userMNB{
+    width: 1200px;
+    height: 650px;
+    display: flex;
+    //grid-template-columns: repeat(2, 1fr);
+    margin-right: 0px;
+}
+.userMapDiv{
+    width: 50%;
+    
+}
+.userPhotoDiv{
+    overflow-y: auto;
+    width: 50%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    
+    
+}
+
+.img{
+    width: 100%;
+    
+}
+.profileContent{
+    img{
+        width: 50px;
+    }
+}
+.profileImg{
+    img{
+    width: 100px;
+}
+}

@@ -1,176 +1,201 @@
 .container {
     width: 1160px;
     padding: 20px;
-    padding-top: 150px;
     background-color: rgb(241, 241, 241);
     display: flex;
     flex-direction: column;
     align-items: center;
-
+  
     //user + map
     .userMap {
-        width: 100%;
-        height: 200px;
+      width: 100%;
+      height: 200px;
+      display: flex;
+      justify-content: space-between;
+  
+      .userDiv {
         display: flex;
-        justify-content: space-between;
-
-        .userDiv {
-            display: flex;
-            width: 570px;
-            background-color: white;
-            border-radius: 10px;
-
-            img {
-                width: 160px;
-                height: 160px;
-                align-self: center;
-                margin-left: 20px;
-
-            }
-
-            h1 {
-                align-self: center;
-                margin-left: 20px;
-                font-size: 30px;
-            }
+        width: 570px;
+        background-color: white;
+        border-radius: 10px;
+  
+        img {
+          width: 160px;
+          height: 160px;
+          align-self: center;
+          margin-left: 20px;
+  
         }
-
-        .mapDiv {
-            background-color: white;
-            border-radius: 10px;
-            width: 570px;
-
-            .map {
-                width: 100%;
-                height: 90%;
-                border-top-left-radius: 10px;
-                border-top-right-radius: 10px;
-            }
+  
+        h1 {
+          align-self: center;
+          margin-left: 20px;
+          font-size: 30px;
         }
+      }
+  
+      .mapDiv {
+        background-color: white;
+        border-radius: 10px;
+        width: 570px;
+  
+        .map {
+          width: 100%;
+          height: 90%;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+        }
+      }
     }
-
+  
     //user + map
-
+  
     //image
     .imageDiv {
-        width: 100%;
+      width: 100%;
+      height: 700px;
+      margin-top: 20px;
+      border-radius: 10px;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      span {
+        cursor: pointer;
+      }
+  
+      .prev {
+        color: white;
+        font-size: 100px;
+      }
+  
+      .next {
+        color: white;
+        font-size: 100px;
+      }
+  
+      .pictureSpan {
+        width: 600px;
         height: 700px;
-        margin-top: 20px;
-        border-radius: 10px;
-        background-color: black;
+        display: flex;
+        align-items: center;
+  
+        img {
+          width: 100%;
+          height: 95%;
+        }
+      }
+    }
+  
+    //image
+  
+    .contentDiv {
+      height: 200px;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+      background-color: white;
+      .likeStarDiv{
+        display: flex;
+        .like {
+          font-size: 50px;
+          color: red;
+          margin-left: 10px;
+        }
+        .unlike {
+          font-size: 50px;
+          color: rgba($color: #000000, $alpha: 0.3);
+          margin-left: 10px;
+        }
+        .likeNumber {
+          font-size: 25px;
+          display: flex;
+          align-items: center;
+          margin: 0 50px 0 10px;
+        }
+        .star {
+          font-size: 50px;
+          color: rgb(235, 215, 39);
+        }
+      }
+      
+    }
+  
+    //content
+  
+    .commentDiv {
+      height: 100%;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+      background-color: white;
+  
+      //댓글 작성
+      .newCommDiv {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px;
+  
+        span {
+          font-size: 20px;
+          font-weight: bold;
+        }
+  
+        input[type=text] {
+          width: 80%;
+        }
+  
+        input[type=submit] {
+          width: 100px;
+          background-color: rgb(249, 87, 0);
+          color: white;
+          border-radius: 3px;
+        }
+      }
+  
+      //댓글 보기, 접기
+      .commSetDiv {
         display: flex;
         justify-content: center;
-        align-items: center;
-
-        span {
-            cursor: pointer;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+  
+      //전체 댓글
+      .commDiv {
+        display: flex;
+        flex-direction: column;
+        margin: 20px;
+        border-bottom: 1px solid lightgray;
+        padding-bottom: 20px;
+        position: relative;
+  
+        p:nth-child(1) {
+          font-size: 20px;
+          font-weight: bold;
         }
-
-        .prev {
+  
+        //댓글 수정, 삭제
+        .commtEditDiv {
+          width: 160px;
+          display: flex;
+          justify-content: space-between;
+          position: absolute;
+          right: 0;
+          bottom: 20px;
+  
+          input {
+            width: 70px;
+            background-color: rgb(249, 87, 0);
             color: white;
-            font-size: 100px;
+            border-radius: 3px;
+          }
         }
-
-        .next {
-            color: white;
-            font-size: 100px;
-        }
-
-        .pictureSpan {
-            width: 600px;
-            height: 700px;
-            display: flex;
-            align-items: center;
-
-            img {
-                width: 100%;
-                height: 95%;
-            }
-        }
+      }
+  
     }
-
-    //image
-
-    .contentDiv {
-        height: 200px;
-        width: 100%;
-        margin-top: 20px;
-        border-radius: 10px;
-        background-color: white;
-    }
-
-    //content
-
-    .commentDiv {
-        height: 100%;
-        width: 100%;
-        margin-top: 20px;
-        border-radius: 10px;
-        background-color: white;
-
-        //댓글 작성
-        .newCommDiv {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px;
-
-            span {
-                font-size: 20px;
-                font-weight: bold;
-            }
-
-            input[type=text] {
-                width: 80%;
-            }
-
-            input[type=submit] {
-                width: 100px;
-                background-color: rgb(249, 87, 0);
-                color: white;
-                border-radius: 3px;
-            }
-        }
-
-        //댓글 보기, 접기
-        .commSetDiv {
-            display: flex;
-            justify-content: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        //전체 댓글
-        .commDiv {
-            display: flex;
-            flex-direction: column;
-            margin: 20px;
-            border-bottom: 1px solid lightgray;
-            padding-bottom: 20px;
-            position: relative;
-
-            p:nth-child(1) {
-                font-size: 20px;
-                font-weight: bold;
-            }
-
-            //댓글 수정, 삭제
-            .commtEditDiv {
-                width: 160px;
-                display: flex;
-                justify-content: space-between;
-                position: absolute;
-                right: 0;
-                bottom: 20px;
-                input {
-                    width: 70px;
-                    background-color: rgb(249, 87, 0);
-                    color: white;
-                    border-radius: 3px;
-                }
-            }
-        }
-
-    }
-
+  
     //comment
-}
+  
+  }
