@@ -4,11 +4,12 @@ import Login from "./Login";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import HeaderSearch from "./HeaderSearch";
 
 
 const SERVER_URL = "/api/user";
 
-function Header() {
+function Header({mapView}) {
 
   const loginCk = () => {
     axios.get(`/api/home/login`)
@@ -26,20 +27,25 @@ function Header() {
   const headerDiv = useRef();
   const location = useLocation();
 
+  //가로 스크롤 => 헤더이동
   const windowScroll = () => {
-    
-    //가로 스크롤 => 헤더이동
     if (window.scrollX > 0 && headerDiv.current) {
       headerDiv.current.style.marginLeft = `${0 - window.scrollX}px`;
     } else if (window.scrollX === 0 && headerDiv.current) {
       headerDiv.current.style.margin = '0 auto';
     }
   }
+
+  //스크롤 이벤트 적용
   useEffect(() => {
     loginCk();
     window.addEventListener("scroll", windowScroll);
-  }, [])
-  //////////////////////////////////////////////////////
+  }, []);
+
+  //지도 상세 보기
+  const mapViewDetails = () => {
+    mapView(true);
+  }
 
   const [sessionId, setSessionId] = useState('');
   const [sessionUId, setSessionUId] = useState('');
@@ -70,6 +76,29 @@ function Header() {
   const closeLoginModal = () => {
     setLoginModalOpen(false);
   }
+  
+  const userCkFnc = (e) => {
+    const userID = sessionStorage.getItem("loginUID");
+    if(userID === null || userID === 'undefined' || userID === ""){
+      alert(userID);
+      e.preventDefault();
+    }
+  }
+
+  //메인 화면 검색 기능 스위치
+  const [searchValue, setSearchValue] = useState(null);
+
+  const search = async (e) => {
+    e.preventDefault();
+    const {value} = e.target.search;
+    if(value.length > 0){
+      const res = await axios.post('/api/home/search', {value});
+
+      if(res.data.result === 'ok'){
+        setSearchValue(res.data.user);
+      }
+    }
+  }
 
   return (
     <div className={Styles.headerWrap}>
@@ -80,21 +109,24 @@ function Header() {
         </div>
         <div className={Styles.mainNav}>
           <div className={Styles.searchDiv}>
-            <form className={Styles.searchForm}>
+            <form onSubmit={search} className={Styles.searchForm}>
               <select>
                 <option>USER</option>
               </select>
-              <input type="text"></input>
+              <input name="search" type="text"></input>
               <input className={Styles.searchBtn} type="submit" value="검색"></input>
             </form>
           </div>
           <div className={Styles.btnDiv}>
             {/* 헤더 메뉴 수정 */}
             <ol>
-              <Link to='/best'><li>BEST</li></Link>
-              <Link to='/bestuser'><li>USER</li></Link>
-              <Link to={`/user/${sessionUId}`}><li style={{cursor:'pointer'}}>MYPAGE</li></Link>
-              <Link to='/board/write'><li>글쓰기</li></Link>
+              <Link to='/best'><li>BEST<img src={`${process.env.PUBLIC_URL}/img/like.png`}></img></li></Link>
+              <Link to='/bestuser'><li>BEST<img src={`${process.env.PUBLIC_URL}/img/profile.png`}></img></li></Link>
+              <li onClick={mapViewDetails}>MAP<img src={`${process.env.PUBLIC_URL}/img/maker.png`}></img></li>
+              <Link to={`/user/${sessionUId}`} onClick={userCkFnc}>
+                <li style={{cursor:'pointer'}}>MYPAGE<img src={`${process.env.PUBLIC_URL}/img/profile.png`}></img></li>
+              </Link>
+              <Link to='/board/write' onClick={userCkFnc}><li>글쓰기<img src={`${process.env.PUBLIC_URL}/img/write.png`}></img></li></Link>
               
             </ol>
             {(sessionId !== null && sessionId !== 'undefined' && sessionId !== '') ?
@@ -115,6 +147,8 @@ function Header() {
           </div>
         </div>
       </div>
+      {/* 검색 기능 */}
+      {(!!searchValue)? <HeaderSearch searchValue={searchValue} setSearchValue={setSearchValue} /> : null }
     </div>
   );
 }

@@ -34,6 +34,8 @@ export const mainPage = async (req, res) => {
                     },{
                         model: models.Picture,
                         required: true,
+                    },{
+                        model: models.BoardLike,
                     }]
                 }]
             }, {
@@ -48,7 +50,6 @@ export const mainPage = async (req, res) => {
                     required: true,
                 },{
                     model: models.BoardLike,
-                    require: true
                 }]
             }]
         }).then(board => {
@@ -85,13 +86,14 @@ export const mainPage = async (req, res) => {
 
 };
 
+//베스트 게시물
 export const bestPage = async (req, res) => {
     const page = parseInt(req.query.page);
     const board = await models.Board.findAll({
         include: [{
             model: models.Users,
             require: true,
-            attributes: ['UID', 'NickName']
+            attributes: ['UID', 'NickName', 'Profile']
         },{
             model: models.Picture,
             require: true
@@ -108,20 +110,69 @@ export const bestPage = async (req, res) => {
 
     const boards = await board.filter((item) => {
 
-        // if(item.BoardLikes.length !== 0){
+        if(item.BoardLikes?.length !== 0){
             return item;
-        // }
+        }
     });
     
     const minPage = page * 6, 
         maxPage = (board.length < (page + 1) * 6)? board.length : (page + 1) * 6;
 
-    const boardArray = board.slice(minPage, maxPage);
+    const boardArray = boards.slice(minPage, maxPage);
 
     
     res.json({result:"ok", boardArray}).end();
 }
-///////////////////////////////////////////////////////////////
+
+//베스트 유저
+export const bestUserPage = async (req, res) => {
+
+    const page = parseInt(req.query.page);
+    console.log(page)
+    const user = await models.Users.findAll({
+        attributes: ["UID", "NickName", "Profile", "createdAt"],
+        include: [{
+            model: models.Board,
+            require: true,
+            order: [['BID', 'DESC']],
+            include: [{
+                model: models.Picture,
+                require: true,
+            },{
+                model: models.BoardLike,
+            }],
+            limit: 8,
+        },{
+            model: models.Users, 
+            as: 'Follwings',
+            attributes: ["UID"],
+        },{
+            model: models.Users, 
+            as: 'Follwers',
+            attributes: ["UID"],
+        }]
+    });
+    
+    await user.sort((a, b) => {
+        if(a.Follwings.length < b.Follwings.length) return 1;
+        if(a.Follwings.length > b.Follwings.length) return -1;
+    });
+
+    const users = await user.filter((item) => {
+
+        // if(item.Follwings.length !== 0){
+            return item;
+        // }
+    });
+    
+    const minPage = page * 4, 
+        maxPage = (user.length < (page + 1) * 4)? user.length : (page + 1) * 4;
+
+    const userArray = users.slice(minPage, maxPage);
+
+    
+    res.json({result:"ok", userArray}).end();
+}
 
 //지도 상세보기
 export const locationPage = async (req, res) => {

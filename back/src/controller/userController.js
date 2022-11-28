@@ -107,10 +107,7 @@ export const userSee = async (req, res) => {
     const {id} = req.params;
     const {MyAccess} = req.cookies;
     //토큰 유무 확인(자신인지 아닌지 판별 가능)
-    if(!!MyAccess){
-        const user = await jwt.verify(MyAccess);
-        req.UID = user.UID;
-    }
+    
 
     const Users = await models.Users.findOne({
         where: {UID: id},
@@ -131,14 +128,18 @@ export const userSee = async (req, res) => {
         },
     ]
     });
-    console.log(Users);
 
-    const follwer = await models.Follwer.findOne({
-        where: {FUID: id, MyUID: req.UID}
-    });
+    let follwer = false;
 
+    if(!!MyAccess){
+        const user = await jwt.verify(MyAccess);
 
-    return res.json({Users, reqId: req.UID, isFollwer: !!follwer});
+        follwer = await models.Follwer.findOne({
+            where: {FUID: id, MyUID: user.UID}
+        });
+    }
+
+    return res.json({Users, isFollwer: !!follwer}).end();
 };
 
 //유저 수정 정보 가져오기

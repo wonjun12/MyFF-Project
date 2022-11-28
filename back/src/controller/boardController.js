@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import models from "../models";
 
 //사진 넣기 함수
@@ -87,7 +88,16 @@ export const boardSee = async (req, res) => {
       {
         model: models.Users,
         required: true,
-        attributes: ["UID", "Email", "NickName"],
+        attributes: ["UID", "Email", "NickName", "Profile"],
+        include: [{
+          model: models.Users, 
+            as: 'Follwings',
+            attributes: ["UID"],
+          },{
+            model: models.Users, 
+            as: 'Follwers',
+            attributes: ["UID"],
+          }]
       },
       {
         model: models.Picture,
@@ -102,14 +112,19 @@ export const boardSee = async (req, res) => {
           },
         ],
       },
+      {
+        model: models.BoardLike,
+        attributes: ['UID']
+      }
     ],
   });
+
+  //console.log(req.UID);
   //게시글 유무 확인
   if (Board != null) {
-    // return res.render("boardSee.html",{Board, Picture});
-
     // 조회 결과 보내줌
-    res.json({ result: "ok", Board}).end();
+    res.json({ result: "ok", Board }).end();
+
   } else {
     return res.redirect("/");
   }
@@ -201,8 +216,8 @@ export const boardDelte = async (req, res) => {
   return res.redirect("/");
 };
 
+//댓글 작성
 export const boardCommt = async (req, res) => {
-  //댓글을 작성하는 게시글 ID
   const { id } = req.params;
 
   const { userID, commtName } = req.body;
@@ -221,6 +236,7 @@ export const boardCommt = async (req, res) => {
   }
 };
 
+//댓글 수정
 export const boardCommtEdit = async (req, res) => {
   //const {id} = req.params;
   const { commtID, action, commtEditText } = req.body;
@@ -256,6 +272,7 @@ export const boardCommtEdit = async (req, res) => {
 };
 
 
+
 export const boardLike = async (req, res) => {
   const { id } = req.params;
   try {
@@ -271,5 +288,41 @@ export const boardLike = async (req, res) => {
       }
     })
   }
-  return res.end();
+  return res.json({result:true}).end();
+}
+
+//메인페이지 검색 기능
+export const mainSearch = async (req, res) => {
+  const {value}  = req.body;
+
+  const user = await models.Users.findAll({
+      where : {
+          [Op.or] : [
+              {
+                  NickName : {
+                      [Op.like] : `%${value}%`
+                  }
+              },
+              {
+                  Name : {
+                      [Op.like] : `%${value}%`
+                  }
+              }
+          ]
+      },
+      attributes : ['UID', 'NickName', 'Name', 'ProFile'],
+      include : [{
+          model: models.Users,
+          as: 'Follwings',
+          attributes: ['UID']
+      },{
+          model: models.Board,
+          attributes: ['BID', 'createdAt'],
+          order: [['BID', 'DESC']],
+          limit: 1
+      }]
+  });
+
+  res.json({result: 'ok', user}).end();
+
 }

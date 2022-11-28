@@ -71,10 +71,13 @@ const UserDetail = ()=>{
                     <p>게시글: {user.Boards?.length}</p>
                     <p>팔로워 {countFollwer}</p>
                     <p>팔로잉 {countFollwing}</p>
-                    {(sessionId === id)? <button onClick={openEditModal}>프로필 편집</button>
-                    : (isFollwing === true)? <button onClick={followFnc}>언팔로우</button> 
-                    : <button onClick={followFnc}>팔로우</button>}
-                    {editModalOpen && <UserEdit close={closeEditModal}></UserEdit>}   
+                    {(sessionId === 'undefined')?  
+                        (sessionId === id)? <button onClick={openEditModal}>프로필 편집</button>
+                            : (isFollwing)? <button onClick={followFnc}>언팔로우</button> 
+                                : <button onClick={followFnc}>팔로우</button>
+                    : null }
+                    
+                   {editModalOpen && <UserEdit close={closeEditModal}></UserEdit>}  
                     {/* 로그인된 sessionId와 params로 받아오는 id 가 같으면(내프로필이면) 프로필편집버튼, 다르면 팔로우/언팔버튼 */}
                 </div>
         </div> 

@@ -23,11 +23,11 @@ import socketIO from "./socket/socket";
 const app = express();
 const PORT = 4000;
 
-models.sequelize.sync().then(() => {
-    console.log("DB 연결");
-}).catch(err => {
-    console.log(err);
-});
+// models.sequelize.sync().then(() => {
+//     console.log("DB 연결");
+// }).catch(err => {
+//     console.log(err);
+// });
 
 
 //정책 설정

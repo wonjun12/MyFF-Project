@@ -9,24 +9,36 @@
 
     .userMapDiv{
         width: 1160px;
-        height: 500px;
+        height: 400px;
         padding: 20px;
         display: flex;
 
         //팔로워
         .fwUserDiv{
-            overflow-y: auto;
-            width: 280px;
+            width: 300px;
             margin-right: 20px;
+            padding-right: 10px;
             display: grid;
             column-gap: 20px;
             row-gap: 20px;
             grid-template-columns: repeat(2,1fr);
             grid-auto-rows: 115px;
+        
+            overflow-y: auto;
+            &::-webkit-scrollbar{
+                width: 10px;
+            }
+            &::-webkit-scrollbar-thumb{
+                background-color: lightgray;
+                border-radius: 5px;
+            }
+
             .profileDiv{
                 text-align: center;
                 img{
-                    width: 100%;
+                    width: 106px;
+                    height: 106px;
+                    border-radius: 53px;
                 }
                 span{
                     width: 100%;
@@ -37,12 +49,11 @@
         .mapDiv{
             width: 100%;
             height: 100%;
-            border-radius: 10px;
         }
     }
     
     .boardContainer{
-        width: 96%;
+        width: 96.5%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
@@ -57,7 +68,7 @@
             border-radius: 10px;
             box-shadow: 5PX 5px 5px -5px rgb(208, 208, 208);
             .userDiv{
-                width: 25%;
+                width: 130px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -65,7 +76,9 @@
                 margin-top: 40px;
                 img{
                     width: 100%;
+                    height: 130px;
                     margin-bottom: 15px;
+                    border-radius: 65px;
                 }
                 h1{
                     font-size: 20px;

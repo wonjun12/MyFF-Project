@@ -6,6 +6,13 @@ export const  SetMap = ({zoom}) => {
     const mapElement =  useRef(null);
     const {kakao} = window;
     
+    const mapStyle = {
+        width:'100%', 
+        height:'100%', 
+        zIndex: '0',
+        borderRadius: '15px',
+        border: '2px solid orange'
+    }
 
     const createMap = () => {
         if(mapElement.current){
@@ -24,7 +31,7 @@ export const  SetMap = ({zoom}) => {
     },[]);
 
     return (
-            <div ref={mapElement} style={{width:'100%', height:'100%', zIndex: '0'}}>   
+            <div ref={mapElement} style={mapStyle}>   
             </div>
     );
 };

@@ -1,0 +1,19 @@
+$myffColor: rgb(249, 87, 0);
+$bg: rgb(241, 241, 241);
+
+%button{
+  cursor: pointer;
+  font-size: 20px; 
+  background-color: rgb(249, 87, 0);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  font-family: 'NanumExtra';
+}
+
+%drag{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}

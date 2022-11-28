@@ -3,6 +3,7 @@ import Header from './Header/Header';
 import Main from './routes/Main';
 
 import Best from './routes/Best';
+import BestUser from './routes/BestUser';
 
 import BoardWrite from "./routes/BoardWrite";
 import BoardEdit from "./routes/BoardEdit";
@@ -19,6 +20,8 @@ function App() {
 
   const [mapView, setMapView] = useState(false);
   const [newBoard, setNewBoard] = useState(false);
+
+  //socket 연결
   useEffect(() => {
     const MyUID = parseInt(window.sessionStorage.getItem('loginUID'))
     socketConnect(MyUID);
@@ -33,7 +36,7 @@ function App() {
   return (
     <BrowserRouter>
     {(newBoard)? <NewBoards setNewBoard={setNewBoard} /> : null}
-      <Header />
+      <Header mapView={setMapView}/>
       {/* 헤더 빈공간 추가 */}
       <div style={{height: '125px'}}></div>
       <Routes>
@@ -41,6 +44,7 @@ function App() {
         <Route path="/" element={<Main mapView={setMapView} />}></Route>
         
         <Route path="/best" element={<Best />}></Route>
+        <Route path="/bestuser" element={<BestUser />}></Route>
 
         {/*글쓰기*/}
         <Route path="/board/write" element={<BoardWrite />}></Route>

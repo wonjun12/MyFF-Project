@@ -35,12 +35,19 @@ const Best = () => {
     [loading, hasMore]
   );
 
+  //console.log(boards);
+
   return(
     <div className={Styles.container} style={{paddingTop: '20px'}}>
       {/* 게시글 간략보기 */}
       <div className={Styles.boardContainer}>
         {boards?.map((board, index) => {
           //이미지 변환
+          let profile = "./img/profile.png";
+          if (board.User.Profile) {
+            profile = Buffer.from(board.User.Profile).toString('base64');
+          }
+
           const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
 
           //마지막 item에 ref
@@ -50,7 +57,8 @@ const Best = () => {
 
                 <div ref={lastElementRef} className={Styles.boardDiv}>
                   <div className={Styles.userDiv}>
-                    <img src="./img/profile.png"></img>
+                  <img src={(board.User.Profile) ?
+                      `data:image;base64,${profile}` : profile}></img>
                     <h1>{board.User.NickName}</h1>
                   </div>
                   <div className={Styles.boardimgDiv}>
@@ -75,8 +83,8 @@ const Best = () => {
 
                 <div key={Math.random()} className={Styles.boardDiv}>
                   <div className={Styles.userDiv}>
-                    <img src="./img/profile.png"></img>
-                    {/* <img src="data:image;base64,'+ img +'" style="width: 70px; height: 70px;" onclick="this.remove()" /> */}
+                  <img src={(board.User.Profile) ?
+                      `data:image;base64,${profile}` : profile}></img>
                     <h1>{board.User.NickName}</h1>
                   </div>
                   <div className={Styles.boardimgDiv}>

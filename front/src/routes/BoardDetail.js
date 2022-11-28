@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
 import { SetMap } from "../kakao/kakaoAPI";
@@ -10,6 +10,8 @@ const SERVER_URL = '/api/board';
 const BoardDetail = () => {
   axios.defaults.withCredentials = true;
 
+  const userID = parseInt(sessionStorage.getItem("loginUID"));
+
   const { id } = useParams();
   const [board, setBoard] = useState({});
   const [pictures, setPictures] = useState([]);
@@ -18,27 +20,44 @@ const BoardDetail = () => {
   const [commView, setCommView] = useState(false);
   const [commtEditID, setCommtEditID] = useState(0);
   const [commtEditText, setCommtEditText] = useState("");
-  const [userID, setUserID] = useState("");
   const [like, setLike] = useState({
     length: 0,
     isLike: false
   });
 
-  const dataFetch = () => {
-    axios.get(`${SERVER_URL}/${id}`).then(res => {
-      console.log(res.data.Board);
-      setBoard(res.data.Board);
-      setPictures(res.data.Board.Pictures);
-      setComments(res.data.Board.Comments);
-      setUserID(res.data.UID); 
-      res.data.Board.BoardLikes.forEach(({UID})=>{
-        (UID === parseInt(sessionStorage.getItem('loginUID'))) 
-          && setLike({
-            ...like,
-            isLike: true
-          });
-      });
+  const [boardDate, setBoardDate] = useState({
+    create: "",
+    update: "",
+  });
+
+  const getDate = (str) => {
+    const date = new Date(str);
+    const year = date.getFullYear();
+    const month = date.getMonth()+1;
+    const day = date.getDate();
+    return `${year}-${month}-${day}`
+  }
+
+  const dataFetch = async () => {
+    const res = await axios.get(`${SERVER_URL}/${id}`);
+    //console.log(res.data.Board);
+    setBoard(res.data.Board);
+    setPictures(res.data.Board.Pictures);
+    setComments(res.data.Board.Comments);
+
+    res.data.Board.BoardLikes.forEach(({ UID }) => {
+      if(UID === parseInt(sessionStorage.getItem('loginUID'))){
+        like.isLike = true;
+      }
+      like.length++;
     });
+
+    setLike(like);
+
+    setBoardDate({
+      create: getDate(res.data.Board.createdAt),
+      update: getDate(res.data.Board.updatedAt),
+    })
   }
 
   const prevClick = () => {
@@ -56,11 +75,11 @@ const BoardDetail = () => {
   const commentAdd = (e) => {
     e.preventDefault();
     const { userComment } = e.target;
-
+    console.log(userID);
     // 댓글을 입력한 경우만 post 요청
-    if (userComment.value !== "") {
+    if (userComment.value !== "" && userID) {
       axios.post(`${SERVER_URL}/${id}/commt`, {
-        userID, 
+        userID,
         commtName: userComment.value
       }, { withCredentials: true }).then(res => {
         //console.log(res.data);
@@ -77,9 +96,9 @@ const BoardDetail = () => {
     axios.post(`${SERVER_URL}/${id}/commt/edit`, {
       commtID,
       action: "delete"
-    }, { withCredentials: true}).then(res => {
+    }, { withCredentials: true }).then(res => {
       //console.log(res.data);
-      if(res.data.result === "ok"){
+      if (res.data.result === "ok") {
         dataFetch();
         //console.log("OK");
       }
@@ -89,14 +108,14 @@ const BoardDetail = () => {
   const commtEditFnc = (commtID) => {
     //console.log(commtID);
     //console.log(commtEditText);
-    if(commtEditText !== ""){
+    if (commtEditText !== "") {
       axios.post(`${SERVER_URL}/${id}/commt/edit`, {
         commtID,
         commtEditText,
         action: "edit"
-      }, { withCredentials: true}).then(res => {
+      }, { withCredentials: true }).then(res => {
         //console.log(res.data);
-        if(res.data.result === "ok"){
+        if (res.data.result === "ok") {
           setCommtEditID(0);
           setCommtEditText("");
           dataFetch();
@@ -105,18 +124,21 @@ const BoardDetail = () => {
     }
   }
 
-  const boardLikeFnc = ()=> {
-    axios.post(`${SERVER_URL}/${id}/like`);
-    setLike({
-      ...like,
-      isLike: (!like.isLike)
-    });
+  const boardLikeFnc = async () => {
+    const {result} = await axios.post(`${SERVER_URL}/${id}/like`);
+
+    if(result){
+      setLike((prev) => ({
+        length: prev.isLike ? prev.length - 1 : prev.length + 1,
+        isLike: (!prev.isLike)
+      }));
+    }
   }
 
-  const boardStar = ()=> {
+  const boardStar = () => {
     let arr = [];
-    for (let i=0; i<parseInt(board.Star); i++){
-      arr.push(<div className={Styles.star}>★</div>);
+    for (let i = 0; i < parseInt(board.Star); i++) {
+      arr.push(<div key={i}>★</div>);
     }
     return arr;
   }
@@ -131,14 +153,30 @@ const BoardDetail = () => {
       <div className={Styles.userMap}>
         {/*==== User ====*/}
         <div className={Styles.userDiv}>
-          <img src="/img/profile.png"></img>
-          <h1>{board.User?.NickName}</h1>
+          {(board.User?.Profile) ? (
+            <img src={`data:image;base64,${Buffer.from(board.User.Profile).toString('base64')}`}></img>
+          ) : (
+            <img src="../../img/profile.png" />
+          )}
+          <div className={Styles.userInfo}>
+            <h1>{board.User?.NickName}</h1>
+            <div className={Styles.followerDiv}>
+              <span>{board.User?.Follwers.length}<p>팔로잉</p></span>
+              <span>{board.User?.Follwings.length}<p>팔로워</p></span>
+            </div>
+            <div className={Styles.btnDiv}>
+              <Link to={`/user/${board.User?.UID}`} >
+                <input className={Styles.userBtn} type="button" value="게시물보기" />
+              </Link>
+              <input className={Styles.userBtn} type="button" value="팔로우" />
+            </div>
+          </div>
         </div>
 
         {/*==== Map ====*/}
         <div className={Styles.mapDiv}>
           <div className={Styles.map}>
-            <SetMap/>
+            <SetMap />
           </div>
           <p>{board.Location}</p>
         </div>
@@ -158,24 +196,27 @@ const BoardDetail = () => {
                   </span>
                 )
               }
-
             })
           ) : null
         }
         <span className={Styles.next} onClick={nextClick}>▶</span>
       </div>
-
       {/*==== Content ====*/}
       <div className={Styles.contentDiv}>
         <div className={Styles.likeStarDiv}>
           <div onClick={boardLikeFnc} className={like.isLike ? Styles.like : Styles.unlike}>
             ❤
           </div>
-          <div className={Styles.likeNumber}>{board.BoardLikes?.length}</div>
-          {boardStar()}
+          <div className={Styles.likeNumber}>{like.length}</div>
         </div>
         <p>{board.Content}</p>
-        <p>{board.updatedAt}</p>
+        <div className={Styles.star}>
+          {boardStar()}
+        </div>
+        <p>{boardDate.create}</p>
+        {board.User?.UID === userID && 
+          <Link to={`/board/${board.BID}/edit`}><input className={Styles.boardEditBtn} type="button" value="수정하기"/></Link>
+        }
       </div>
 
       {/*==== Comm ====*/}
@@ -184,7 +225,7 @@ const BoardDetail = () => {
         {/* 댓글추가 */}
         <form onSubmit={commentAdd}>
           <div className={Styles.newCommDiv}>
-            <span>{board.User?.NickName}</span>
+            <span>{userID}</span>
             <input type="text" name="userComment"></input>
             <input type="submit" value="추가"></input>
           </div>
@@ -201,23 +242,24 @@ const BoardDetail = () => {
                 <p>{comment.User.NickName}</p>
                 {(commtEditID === comment.CID) ? (
                   <input type="text"
+                    className={Styles.editCommInput}
                     value={commtEditText}
                     onChange={(e) => setCommtEditText(e.target.value)}
                     autoComplete="off" //form 자동완성 OFF
                   />
-                ):(
+                ) : (
                   <p>{comment.comm}</p>
                 )}
-                
-                <p>{(comment.updatedAt === comment.createdAt)? comment.createdAt : comment.updatedAt + "(수정됨)"}</p>
+
+                <p>{(comment.updatedAt === comment.createdAt) ? comment.createdAt : comment.updatedAt + "(수정됨)"}</p>
 
                 {comment.UID === userID &&
                   <div className={Styles.commtEditDiv}>
                     <input type="text" value={comment.CID} readOnly hidden></input>
                     {(commtEditID === comment.CID) ? (
-                      <input type="button" value="저장" onClick={() => commtEditFnc(comment.CID)}></input>  
-                    ):(
-                      <input type="button" value="수정" 
+                      <input type="button" value="저장" onClick={() => commtEditFnc(comment.CID)}></input>
+                    ) : (
+                      <input type="button" value="수정"
                         onClick={() => {
                           setCommtEditID(comment.CID);
                           setCommtEditText(comment.comm);
