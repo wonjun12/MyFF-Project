@@ -125,15 +125,14 @@ const BoardDetail = () => {
   }
 
   const boardLikeFnc = async () => {
-    const {result} = await axios.post(`${SERVER_URL}/${id}/like`);
+    await axios.post(`${SERVER_URL}/${id}/like`);
 
-    if(result){
       setLike((prev) => ({
         length: prev.isLike ? prev.length - 1 : prev.length + 1,
         isLike: (!prev.isLike)
       }));
+    
     }
-  }
 
   const boardStar = () => {
     let arr = [];

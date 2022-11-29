@@ -288,7 +288,7 @@ export const boardLike = async (req, res) => {
       }
     })
   }
-  return res.json({result:true}).end();
+  return res.end();
 }
 
 //메인페이지 검색 기능

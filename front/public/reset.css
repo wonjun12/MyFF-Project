@@ -26,6 +26,11 @@
     width: 1200px;
     margin: 0 auto;
     font-family: 'Nanum';
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
 }
 
 /* CSS 초기 셋팅 */
