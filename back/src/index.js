@@ -12,9 +12,6 @@ import homeRouter from "./router/homeRouter";
 import userRouter from "./router/userRouter";
 import boardRouter from "./router/boardRouter";
 
-//token check
-import checkToken from "./jwt/check";
-
 //소켓 통신
 import socketIO from "./socket/socket";
 
@@ -38,6 +35,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// app.use(express.static(path.join(__dirname, "../../front/build")));
+
 //html body 해석
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -51,6 +50,10 @@ app.use(fileupload());
 app.use("/api/home", homeRouter);
 app.use("/api/user", userRouter);
 app.use("/api/board", boardRouter);
+
+// app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../../front/build", "index.html"));
+// });
 
 const server =  app.listen(PORT, () => {
     console.log(`Server open ${PORT}`);

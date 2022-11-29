@@ -1,4 +1,5 @@
-//-------------------------------//
+@import '../routes/button';
+
 .headerWrap {
   width: 100%;
   height: 125px;
@@ -8,23 +9,21 @@
   font-family: 'NanumExtra';
 }
 
-//-------------------------------//
-
 .Header {
   width: 1200px;
   height: 100%;
   margin: 0 auto;
-  //background-image: url("../img/headerBg.png");
   background-size: 100%;
   background-color: white;
   box-shadow: 0 5px 5px -5px rgb(208, 208, 208);
 
-  //------------------------------//
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  
+  select{
+    font-size: 18px;
+  }
   .logoDiv {
       display: flex;
       justify-content: center;
@@ -52,11 +51,8 @@
                 margin-left: 5px;
               }
               .searchBtn {
-                  font-size: 20px;
                   width: 100px;
-                  background-color: rgb(249, 87, 0);
-                  color: white;
-                  border-radius: 3px;
+                  @extend %button;
               }
           }
       }

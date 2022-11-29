@@ -246,11 +246,11 @@ export const boardDelte = async (req, res) => {
     where: { BID: id },
   });
 
-  await models.Board.destroy({
+  await models.Hashtag.destroy({
     where: { BID: id },
   });
 
-  await models.Hashtag.destroy({
+  await models.Board.destroy({
     where: { BID: id },
   });
 
@@ -272,14 +272,13 @@ export const boardCommt = async (req, res) => {
 
     res.json({ result: "ok" }).end();
   } catch (error) {
-    console.log(error);
+    
     res.json({ result: "error" }).end();
   }
 };
 
 //댓글 수정
 export const boardCommtEdit = async (req, res) => {
-  //const {id} = req.params;
   const { commtID, action, commtEditText } = req.body;
   console.log(req.body);
   if (action === "delete") {

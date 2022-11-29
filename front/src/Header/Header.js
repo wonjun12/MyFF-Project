@@ -23,7 +23,7 @@ function Header({mapView}) {
       });
   };
 
-  //////////////////////////////////////////////////////
+  
   const headerDiv = useRef();
   const location = useLocation();
 
@@ -80,7 +80,7 @@ function Header({mapView}) {
   const userCkFnc = (e) => {
     const userID = sessionStorage.getItem("loginUID");
     if(userID === null || userID === 'undefined' || userID === ""){
-      alert(userID);
+      alert('로그인 후 이용해주세요');
       e.preventDefault();
     }
   }
@@ -111,7 +111,9 @@ function Header({mapView}) {
           <div className={Styles.searchDiv}>
             <form onSubmit={search} className={Styles.searchForm}>
               <select>
-                <option>USER</option>
+                <option>이름</option>
+                <option>장소</option>
+                <option>태그</option>
               </select>
               <input name="search" type="text"></input>
               <input className={Styles.searchBtn} type="submit" value="검색"></input>
@@ -131,12 +133,10 @@ function Header({mapView}) {
             </ol>
             {(sessionId !== null && sessionId !== 'undefined' && sessionId !== '') ?
               (
-                
                   <div className={Styles.userDiv}>
                     <Link to={`/user/${sessionUId}`}><p>{sessionId}</p></Link>
                     <span onClick={logoutFnc}>Logout</span>
-                  </div>
-                
+                  </div> 
               ) : (
                 <div className={Styles.userDiv}>
                   <span onClick={openLoginModal}>Login</span>

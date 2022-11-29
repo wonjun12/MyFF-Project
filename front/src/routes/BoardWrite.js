@@ -6,6 +6,7 @@ import { SetMap } from "../kakao/kakaoAPI";
 import SearchBoard from "../kakao/kakaoSearchBoard";
 import CreateMaker from "../kakao/kakaoCreateMarker";
 import { socket } from "../socket/socket";
+import { Link } from "react-router-dom";
 
 const SERVER_URL = "/api/board";
 //별점 스타일
@@ -126,6 +127,7 @@ const BoardWrite = () => {
   };
 
   //태그
+  const tegDiv = useRef();
   const [tagItem, setTagItem] = useState("");
   const [tagList, setTagList] = useState([]);
 
@@ -140,6 +142,7 @@ const BoardWrite = () => {
     tagList.push(tagItem);
     setTagList([...tagList]);
     setTagItem("");
+    // tegDiv.current.scrollTop(this.width());
   };
 
   const deleteTagItem = (idx) => {
@@ -184,7 +187,7 @@ const BoardWrite = () => {
 
   //주소 입력
   const [locationValue, setLocationValue] = useState("");
-  const [location, setLocation] = useState({name:'', addr: ''});
+  const [location, setLocation] = useState({ name: "", addr: "" });
 
   const locationSearch = (v) => {
     const { value } = v.target;
@@ -213,7 +216,11 @@ const BoardWrite = () => {
               }
             }}
           />
+          <label htmlFor="fileBtn" className={Styles.fileLabel}>
+            영수증으로 주소찾기
+          </label>
           <input
+            id="fileBtn"
             type="file"
             accept="image/*"
             onChange={imgLocation}
@@ -222,7 +229,6 @@ const BoardWrite = () => {
 
           <div>
             <ul id="locationSearch" hidden></ul>
-            {/* <button type="button"> 검색 </button> */}
             <div className={Styles.mapDiv}>
               <SearchBoard
                 addr={locationValue}
@@ -231,6 +237,7 @@ const BoardWrite = () => {
               />
               <SetMap />
             </div>
+            {(location.name)? 
             <div className={Styles.locationInfo}>
               <div>
                 <p>이름:</p>
@@ -240,7 +247,8 @@ const BoardWrite = () => {
                 <p>{location.name}</p>
                 <p>{location.addr}</p>
               </div>
-            </div>
+            </div> : 
+            null }
           </div>
         </div>
 
@@ -288,11 +296,7 @@ const BoardWrite = () => {
         <label htmlFor="writeCommId">글쓰기</label>
         <div className={Styles.contentDiv}>
           <div className={Styles.content}>
-            <textarea
-              name="contentName"
-              placeholder="내용 입력"
-              
-            ></textarea>
+            <textarea name="contentName" placeholder="내용 입력"></textarea>
           </div>
 
           <div className={Styles.rate}>
@@ -322,40 +326,38 @@ const BoardWrite = () => {
             </span>
           </div>
           <div className={Styles.tagMain}>
-          <div className={Styles.tagDiv}>
-            <div>
-            {tagList.map((tagItem, idx) => {
-              return (
-                <span className={Styles.tagName} key={idx}>
-                  {tagItem}
-                  <button
-                    type="button"
-                    onClick={() => deleteTagItem(idx, tagItem)}
-                    className={Styles.deleteTagBtn}
-                  >
-                    X
-                  </button>
-                </span>
-              );
-            })}
+            <div className={Styles.tagDiv}>
+              <div ref={tegDiv}>
+                {tagList.map((tagItem, idx) => {
+                  return (
+                    <span className={Styles.tagName} key={idx}>
+                      {tagItem}
+                      <button
+                        type="button"
+                        onClick={() => deleteTagItem(idx, tagItem)}
+                        className={Styles.deleteTagBtn}
+                      >
+                        X
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+              <input
+                type="text"
+                placeholder="엔터 누르면 태그 추가"
+                tabIndex={2}
+                value={tagItem}
+                onChange={(e) => setTagItem(e.target.value)}
+                onKeyPress={onKeyPress}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="엔터 누르면 태그 추가"
-              tabIndex={2}
-              value={tagItem}
-              onChange={(e) => setTagItem(e.target.value)}
-              onKeyPress={onKeyPress}
-            />
+            <div className={Styles.buttons}>
+              <Link to='/'><button type="button"> 취소 </button> </Link>
+              <button type="submit">전송</button>
+            </div>
           </div>
-          <div className={Styles.buttons}>
-            <button type="button" > 뒤로 </button>
-            <button  type="submit">전송</button>
-          </div>
-          
-          </div>
-          
-        </div> 
+        </div>
       </div>
     </form>
   );

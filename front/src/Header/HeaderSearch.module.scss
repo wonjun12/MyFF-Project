@@ -32,12 +32,15 @@
         }
 
         .searchList{
-            width: 100%;
+            width: 97%;
             display: flex;
             margin-top: 5px;
+            margin-left: 5px;
             padding-bottom: 5px;
             border-radius: 15px;
-            background-color: rgba(248, 187, 106, 0.89);
+            background-color: white;
+            box-shadow: 3px 3px 3px gray;
+            opacity: 1;
 
             &:hover{
                 div:nth-child(3){
@@ -48,10 +51,11 @@
             
 
             img{
+                margin-top: 5px;
                 margin-left: 5px;
                 margin-bottom: 5px;
-                width: 100px;
-                height: 100px;
+                width: 95px;
+                height: 95px;
                 border-radius: 50px;
             }
             div:nth-child(2){
@@ -80,7 +84,7 @@
         position: absolute;
         top: 2%;
         right: 2.5%; 
-        border: 1px solid black;
+        border: none;
         @extend %button;
         transition: transform 0.45s;
         &:hover{

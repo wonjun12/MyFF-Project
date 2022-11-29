@@ -141,7 +141,7 @@ export const bestUserPage = async (req, res) => {
             },{
                 model: models.BoardLike,
             }],
-            limit: 8,
+            limit: 4,
         },{
             model: models.Users, 
             as: 'Follwings',
@@ -160,9 +160,9 @@ export const bestUserPage = async (req, res) => {
 
     const users = await user.filter((item) => {
 
-        // if(item.Follwings.length !== 0){
+        if(item.Follwings.length !== 0){
             return item;
-        // }
+        }
     });
     
     const minPage = page * 4, 
@@ -225,7 +225,7 @@ export const locationPage = async (req, res) => {
 export const getLetter = async (req, res) => {
     try {
         //지역 이름 설정
-        const region = ['서울', '인천', '부산', '대구', '광주', '대전', 
+        const region = ['[주','서울', '인천', '부산', '대구', '광주', '대전', 
             '울산', '세종', '경기', '강원', '충청', '경상', '전라', '제주'];
             //이미지 파일을 가져온다.
             const imgFile = req.files.imgFile.data; //filenamename <= 실험용 파일 이름
@@ -244,15 +244,15 @@ export const getLetter = async (req, res) => {
                     for(let i of region){
                         //지역 이름이 맨 앞에 있는걸을 추출해 주소를 예측하여 보낸다.
                         if(imgText.length > 3 && imgText.indexOf(i) != -1 && imgText.indexOf(i) == 0){
-                            return res.json(imgText);
+                            return res.json(imgText).end();
                         }
                     }
                 }
                 
-                return res.json("주소를 찾을수 없습니다.");
+                return res.json("주소를 찾을수 없습니다.").end();
             })  
     } catch (error) {
-        return res.json("오류");
+        return res.json("오류").end();
     }
     
 }

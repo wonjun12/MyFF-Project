@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Component, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useUserData from "../hooks/useUserData";
 import Styles from "./BestUser.module.scss";
@@ -32,88 +32,65 @@ const BestUser = () => {
 
   const userCkFnc = (e) => {
     const userID = sessionStorage.getItem("loginUID");
-    if(userID === null || userID === 'undefined' || userID === ""){
+    if (userID === null || userID === 'undefined' || userID === "") {
       alert(userID);
       e.preventDefault();
     }
   }
 
+  const userComponet = (user) => {
+
+    //프로필 이미지 변환
+    let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
+    if (user.Profile) {
+      profile = Buffer.from(user.Profile).toString('base64');
+    }
+    return (
+      <>
+        <div className={Styles.userDiv}>
+          <Link to={`/user/${user.UID}`}>
+            <img src={(user.Profile) ?
+              `data:image;base64,${profile}` : profile}></img>
+          </Link>
+          <h1>{user.NickName}</h1>
+          <div className={Styles.followerDiv}>
+            <span>{user.Follwings?.length}<br />팔로워</span>
+            <span>{user.Follwers?.length}<br />팔로잉</span>
+          </div>
+        </div>
+        <div className={Styles.boardDiv}>
+          {user.Boards?.map((board, idx) => {
+            //게시글 이미지 변환
+            const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
+            return (
+              <Link to={`/board/${board.BID}`} key={idx}>
+                <img src={`data:image;base64,${img}`}></img>
+              </Link>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className={Styles.container}>
       {users?.map((user, idx) => {
-
-        //프로필 이미지 변환
-        let profile = "./img/profile.png";
-        if (user.Profile) {
-          profile = Buffer.from(user.Profile).toString('base64');
-        }
-
-        const date = new Date(user.Boards[0]?.createdAt);
-        const newBoardDate = 
-          `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
-
         if (users.length !== 0 && users.length === idx + 1) {
           return (
-            <div className={Styles.userContainer} key={idx} ref={lastElementRef}>
-              <div className={Styles.userDiv}>
-                <Link to={`/user/${user.UID}`}>
-                  <img src={(user.Profile) ?
-                    `data:image;base64,${profile}` : profile}></img>
-                </Link>
-                <h1>{user.NickName}</h1>
-                <div className={Styles.followerDiv}>
-                  <span>{user.Follwings?.length}<br/>팔로워</span>
-                  <span>{user.Follwers?.length}<br/>팔로잉</span>
-                </div>
-                <p>게시글 수 : {user.Boards?.length}</p>
-                <p>최근 게시물 : {newBoardDate}</p>
-              </div>
-              <div className={Styles.boardDiv}>
-                {user.Boards?.map((board, idx) => {
-                  //게시글 이미지 변환
-                  const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
-                  return (
-                    <Link to={`/board/${board.BID}`} key={idx}>
-                      <img src={`data:image;base64,${img}`}></img>
-                    </Link>
-                  );
-
-                })}
-              </div>
+            <div className={Styles.userContainer} key = { idx } ref = { lastElementRef } >
+              {userComponet(user)}
             </div>
           );
         } else {
           return (
             <div className={Styles.userContainer} key={idx}>
-              <div className={Styles.userDiv}>
-                <Link to={`/user/${user.UID}`}>
-                  <img src={(user.Profile) ?
-                    `data:image;base64,${profile}` : profile}></img>
-                </Link>
-                <h1>{user.NickName}</h1>
-                <div className={Styles.followerDiv}>
-                  <span>{user.Follwings?.length}<br/>팔로워</span>
-                  <span>{user.Follwers?.length}<br/>팔로잉</span>
-                </div>
-                <p>게시글 수 : {user.Boards?.length}</p>
-                {(user.Boards.length !== 0) && <p>최근 게시물 : {newBoardDate}</p>}
-              </div>
-              <div className={Styles.boardDiv}>
-                {user.Boards?.map((board, idx) => {
-                  //게시글 이미지 변환
-                  const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
-                  return (
-                    <Link to={`/board/${board.BID}`} key={idx}>
-                      <img src={`data:image;base64,${img}`}></img>
-                    </Link>
-                  );
-
-                })}
-              </div>
+              {userComponet(user)}
             </div>
           );
         }
       })}
+      {loading && <div className={Styles.loader}></div>}
     </div>
   );
 }

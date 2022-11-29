@@ -164,61 +164,75 @@ const Join = (props) => {
         <div onClick={allClose}> {/* 외부영역 클릭 시 모달 닫음 */}
             <div  className={Styles.joinModal}>
                 <div className={Styles.joinModalContainer} onClick={(e) => e.stopPropagation()}> {/* 이벤트전파막음 */}
-                    <div className="joinModalHeader">
+                    <div className={Styles.logoDiv}>
+                        <p onClick={joinClose}>&larr;</p>
                         <h1>MyFF</h1>
-                        <h3>회원가입</h3>
                         <p onClick={allClose}>&times;</p>
                     </div>
+                    <div className={Styles.joinModalHeader}>
+                        <h3>회원가입</h3>
+                    </div>
                     <div className={Styles.joinFormWrapper}>
-                        <form className="joinForm" onSubmit={joinTest}>
-                            <input name="joinEmailName"
-                                placeholder="이메일"
-                                onChange={joinEmailCkFnc}/>
-                            <p>{emailMsg}</p>
-                            <input name="joinNickName" 
-                                placeholder="닉네임"
-                                onChange={joinNickCkFnc}/>
-                            <p>{nickMsg}</p>
-                            <input name="joinPwdName" 
-                                type="password"
-                                placeholder="비밀번호"
-                                onChange={joinPwdCkFnc}/>
-                            <p>{pwdMsg}</p>
-                            <input name="joinConfirmPwdName"
-                                type="password"
-                                placeholder="비밀번호 재입력"
-                                onChange={joinCkPwdCkFnc}/>
-                            <p>{ckPwdMsg}</p>
-                            <input name="joinNameName"
-                                placeholder="이름"
-                                onChange={joinUserNameCkFnc}/>
-                            <p>{userNameMsg}</p>
-                            <label for='year'>출생년도</label>
-                            <select id="year"
-                                name="joinYearName"
-                                value={birth.year}
-                                onChange={(e) => setBirth({ ...birth, year: e.target.value})}>
-                                    {years.map(item => (<option value={item} key={item}>{item}</option>))}
-                            </select>
-                            <label for='month'>월</label>
-                            <select id='month'
-                                name="joinMonthName" 
-                                value={birth.month}
-                                onChange={(e) => setBirth({ ...birth, month: e.target.value})}>
-                                    {month.map(item => (<option value={item} key={item}>{item}</option>))}
-                            </select>
-                            <label for='day'>일</label>
-                            <select id='day'
-                                name="joinDayName"
-                                value={birth.day}
-                                onChange={(e) => setBirth({ ...birth, day: e.target.value})}>
-                                    {days.map(item => (<option value={item} key={item}>{item}</option>))}
-                            </select>
-                            <input type="submit" value="회원가입"/>
+                        <form className={Styles.joinForm} onSubmit={joinTest}>
+                            <div className={Styles.inputDiv}>
+                                <input name="joinEmailName"
+                                    placeholder="이메일"
+                                    onChange={joinEmailCkFnc}/>
+                                <span>{emailMsg}</span>
+                                <input name="joinNickName" 
+                                    placeholder="닉네임"
+                                    onChange={joinNickCkFnc}/>
+                                <span>{nickMsg}</span>
+                                <input name="joinPwdName" 
+                                    type="password"
+                                    placeholder="비밀번호"
+                                    onChange={joinPwdCkFnc}/>
+                                <span>{pwdMsg}</span>
+                                <input name="joinConfirmPwdName"
+                                    type="password"
+                                    placeholder="비밀번호 재입력"
+                                    onChange={joinCkPwdCkFnc}/>
+                                <span>{ckPwdMsg}</span>
+                                <input name="joinNameName"
+                                    placeholder="이름"
+                                    onChange={joinUserNameCkFnc}/>
+                                    <span>{userNameMsg}</span>
+                            </div>
+                            <div className={Styles.selectDiv}>
+                                <div>
+                                    <label for='year'>출생년도</label>
+                                    <select id="year"
+                                        name="joinYearName"
+                                        value={birth.year}
+                                        onChange={(e) => setBirth({ ...birth, year: e.target.value})}>
+                                            {years.map(item => (<option value={item} key={item}>{item}</option>))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for='month'>월</label>
+                                    <select id='month'
+                                        name="joinMonthName" 
+                                        value={birth.month}
+                                        onChange={(e) => setBirth({ ...birth, month: e.target.value})}>
+                                            {month.map(item => (<option value={item} key={item}>{item}</option>))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for='day'>일</label>
+                                    <select id='day'
+                                        name="joinDayName"
+                                        value={birth.day}
+                                        onChange={(e) => setBirth({ ...birth, day: e.target.value})}>
+                                            {days.map(item => (<option value={item} key={item}>{item}</option>))}
+                                    </select>
+                                </div>
+                            </div>
+                            <input className={Styles.joinBtn} type="submit" value="회원가입"/>
                         </form>
                     </div>
-                    <hr/>
-                    <a onClick={joinClose}>이미 회원이라면 로그인</a>
+                    <div className={Styles.pDiv}>
+                        <p onClick={joinClose}>이미 회원이라면 로그인</p>
+                    </div>
                 </div>
             </div>    
         </div>

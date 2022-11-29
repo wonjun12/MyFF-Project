@@ -17,3 +17,27 @@ $bg: rgb(241, 241, 241);
   -ms-user-select:none;
   user-select:none;
 }
+
+%loader {
+  height: 100px;
+  width: 100px;
+  border: 6px solid white;
+
+  border: {
+      right-color: $myffColor;
+      top-color: $myffColor;
+      radius: 100%;
+  }
+
+  animation: spin 800ms infinite linear;
+}
+
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+
+  to {
+      transform: rotate(359deg);
+  }
+}

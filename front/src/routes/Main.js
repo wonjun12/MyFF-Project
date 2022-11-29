@@ -43,6 +43,40 @@ function Main() {
     [loading, hasMore]
   );
 
+  const boardComponet = (board, index) => {
+    //이미지 변환
+    let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
+    if (board.User.Profile) {
+      //console.log(board.User.Profile);
+      profile = Buffer.from(board.User.Profile).toString('base64');
+    }
+    const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
+    //지도 이미지 출력
+    page.path === 'main' && CreateMain(board, img, index, parseInt(sessionId));
+
+    return (
+      <>
+        <div className={Styles.userDiv}>
+          <img src={(board.User.Profile) ?
+            `data:image;base64,${profile}` : profile}></img>
+          <h1>{board.User.NickName}</h1>
+        </div>
+        <div className={Styles.boardimgDiv}>
+          <img className={Styles.boardImg} src={`data:image;base64,${img}`} />
+        </div>
+        <div className={Styles.contentsDiv}>
+          <h1>{board.PlaceName}</h1>
+          <h2>{board.Location}</h2>
+          <p>{board.Content}</p>
+          <p>#태그#태그#태그#태그</p>
+          <div className={Styles.starDiv}>
+            <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
+            <span className={Styles.star}>⭐{board.Star}</span>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   useEffect(() => {
     if (sessionId === null || sessionId === 'undefined' || sessionId === '') {
@@ -63,7 +97,7 @@ function Main() {
           {/* 팔로우유저, 지도 보여주는 영역 */}
           <div className={Styles.fwUserDiv}>
             {user?.map((fUser, index) => {
-              let profile = "./img/profile.png";
+              let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
               if (fUser.Profile) {
                 profile = Buffer.from(fUser.Profile).toString('base64');
               }
@@ -86,83 +120,28 @@ function Main() {
       <div className={Styles.boardContainer}>
 
         {boards?.map((board, index) => {
-
-          //이미지 변환
-          let profile = "./img/profile.png";
-          if (board.User.Profile) {
-            //console.log(board.User.Profile);
-            profile = Buffer.from(board.User.Profile).toString('base64');
-          }
           
-          const img = Buffer.from(board.Pictures[0].Photo.data).toString('base64');
-
-          //지도 이미지 출력
-          page.path === 'main' && CreateMain(board, img, index, parseInt(sessionId));
-
-
           //마지막 item에 ref
           if (board.length !== 0 && boards.length === index + 1) {
             return (
               <Link to={`/board/${board.BID}`} key={Math.random()}>
-
                 <div ref={lastElementRef} className={Styles.boardDiv}>
-                  <div className={Styles.userDiv}>
-
-                    <img src={(board.User.Profile) ?
-                      `data:image;base64,${profile}` : profile}></img>
-
-                    <h1>{board.User.NickName}</h1>
-                  </div>
-                  <div className={Styles.boardimgDiv}>
-                    <img className={Styles.boardImg} src={`data:image;base64,${img}`} />
-                  </div>
-                  <div className={Styles.contentsDiv}>
-                    <h1>{board.Location}</h1>
-                    <p>{board.Content}</p>
-                    <div className={Styles.starDiv}>
-                      <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
-                      <span className={Styles.star}>⭐{board.Star}</span>
-                    </div>
-                  </div>
+                  {boardComponet(board, index)}
                 </div>
-
               </Link>
             );
           } else {
             return (
               <Link to={`/board/${board.BID}`} key={Math.random()}>
-
                 <div key={Math.random()} className={Styles.boardDiv}>
-                  <div className={Styles.userDiv}>
-                    <img src={(board.User.Profile) ?
-                      `data:image;base64,${profile}` : profile}></img>
-
-                    <h1>{board.User.NickName}</h1>
-                  </div>
-                  <div className={Styles.boardimgDiv}>
-                    <img className={Styles.boardImg} src={`data:image;base64,${img}`} />
-                  </div>
-                  <div className={Styles.contentsDiv}>
-                    <h1>{board.Location}</h1>
-
-                    <p>{(board.Content.length > 35) ? board.Content.substr(0, 30) + '...' : board.Content}</p>
-                    <div className={Styles.starDiv}>
-                      {console.log(board)}
-                      <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
-                      <span className={Styles.star}>⭐{board.Star}</span>
-                      {/* <span className={Styles.tag}> #태그 #태그</span> */}
-                    </div>
-                  </div>
+                  {boardComponet(board, index)}
                 </div>
-
               </Link>
             );
           }
         })}
-        {loading && <div>loading...</div>}
-        {error && <div>error...</div>}
-
       </div>
+      {loading && <div className={Styles.loader}></div>}
     </div>
   );
 }

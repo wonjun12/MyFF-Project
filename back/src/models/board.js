@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
     Board.belongsTo(models.Users, {
       foreignKey: "UID"
     });
-    Board.belongsTo(models.Hashtag, {
+    Board.hasMany(models.Hashtag, {
       foreignKey: 'BID'
     });
   };

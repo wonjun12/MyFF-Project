@@ -4,13 +4,14 @@ import { Link, useParams } from "react-router-dom";
 import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
 import { SetMap } from "../kakao/kakaoAPI";
+import CreateMarker from '../kakao/kakaoCreateMarker';
 
 const SERVER_URL = '/api/board';
 
 const BoardDetail = () => {
   axios.defaults.withCredentials = true;
 
-  const userID = parseInt(sessionStorage.getItem("loginUID"));
+  const userID = sessionStorage.getItem("loginUID");
 
   const { id } = useParams();
   const [board, setBoard] = useState({});
@@ -33,7 +34,7 @@ const BoardDetail = () => {
   const getDate = (str) => {
     const date = new Date(str);
     const year = date.getFullYear();
-    const month = date.getMonth()+1;
+    const month = date.getMonth() + 1;
     const day = date.getDate();
     return `${year}-${month}-${day}`
   }
@@ -46,7 +47,7 @@ const BoardDetail = () => {
     setComments(res.data.Board.Comments);
 
     res.data.Board.BoardLikes.forEach(({ UID }) => {
-      if(UID === parseInt(sessionStorage.getItem('loginUID'))){
+      if (UID === parseInt(sessionStorage.getItem('loginUID'))) {
         like.isLike = true;
       }
       like.length++;
@@ -58,6 +59,7 @@ const BoardDetail = () => {
       create: getDate(res.data.Board.createdAt),
       update: getDate(res.data.Board.updatedAt),
     })
+
   }
 
   const prevClick = () => {
@@ -75,11 +77,11 @@ const BoardDetail = () => {
   const commentAdd = (e) => {
     e.preventDefault();
     const { userComment } = e.target;
-    console.log(userID);
+    //console.log(userID);
     // 댓글을 입력한 경우만 post 요청
-    if (userComment.value !== "" && userID) {
+    if (userComment.value !== "" && userID !== 'undefined') {
       axios.post(`${SERVER_URL}/${id}/commt`, {
-        userID,
+        userID: parseInt(userID),
         commtName: userComment.value
       }, { withCredentials: true }).then(res => {
         //console.log(res.data);
@@ -127,12 +129,12 @@ const BoardDetail = () => {
   const boardLikeFnc = async () => {
     await axios.post(`${SERVER_URL}/${id}/like`);
 
-      setLike((prev) => ({
-        length: prev.isLike ? prev.length - 1 : prev.length + 1,
-        isLike: (!prev.isLike)
-      }));
-    
-    }
+    setLike((prev) => ({
+      length: prev.isLike ? prev.length - 1 : prev.length + 1,
+      isLike: (!prev.isLike)
+    }));
+
+  }
 
   const boardStar = () => {
     let arr = [];
@@ -140,6 +142,11 @@ const BoardDetail = () => {
       arr.push(<div key={i}>★</div>);
     }
     return arr;
+  }
+
+  const todate = (dateStr) => {
+    const date = new Date(dateStr);
+    return (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
   }
 
   useEffect(() => {
@@ -155,7 +162,7 @@ const BoardDetail = () => {
           {(board.User?.Profile) ? (
             <img src={`data:image;base64,${Buffer.from(board.User.Profile).toString('base64')}`}></img>
           ) : (
-            <img src="../../img/profile.png" />
+            <img src={`${process.env.PUBLIC_URL}/img/profile.png`}/>
           )}
           <div className={Styles.userInfo}>
             <h1>{board.User?.NickName}</h1>
@@ -176,8 +183,13 @@ const BoardDetail = () => {
         <div className={Styles.mapDiv}>
           <div className={Styles.map}>
             <SetMap />
+            {CreateMarker(board.Location)}
+            <div className={Styles.locationDiv}>
+              {/* <p>{board.PlaceName}</p> */}
+              <p>{board.PlaceName}</p>
+              <p>{board.Location}</p>
+            </div>
           </div>
-          <p>{board.Location}</p>
         </div>
       </div>
 
@@ -207,14 +219,19 @@ const BoardDetail = () => {
             ❤
           </div>
           <div className={Styles.likeNumber}>{like.length}</div>
+          <div className={Styles.star}>
+            {boardStar()}
+          </div>
         </div>
-        <p>{board.Content}</p>
-        <div className={Styles.star}>
-          {boardStar()}
+        <div>
+          <p>{board.Content}</p>
+        </div>
+        <div>
+          <p>#태그#태그#태그#태그#태그#태그#태그#태그#태그</p>
         </div>
         <p>{boardDate.create}</p>
-        {board.User?.UID === userID && 
-          <Link to={`/board/${board.BID}/edit`}><input className={Styles.boardEditBtn} type="button" value="수정하기"/></Link>
+        {board.User?.UID === parseInt(userID) &&
+          <Link to={`/board/${board.BID}/edit`}><input className={Styles.boardEditBtn} type="button" value="수정하기" /></Link>
         }
       </div>
 
@@ -224,9 +241,19 @@ const BoardDetail = () => {
         {/* 댓글추가 */}
         <form onSubmit={commentAdd}>
           <div className={Styles.newCommDiv}>
-            <span>{userID}</span>
-            <input type="text" name="userComment"></input>
-            <input type="submit" value="추가"></input>
+            {(userID === 'undefined') ? (
+              <>
+                <span>MYFF</span>
+                <input type="text" placeholder="로그인 후 이용가능" readOnly></input>
+                <input type="submit" value="추가" disabled></input>
+              </>
+            ) : (
+              <>
+                <span>{sessionStorage.getItem('loginUserId')}</span>
+                <input type="text" name="userComment"></input>
+                <input type="submit" value="추가"></input>
+              </>
+            )}
           </div>
         </form>
 
@@ -250,9 +277,9 @@ const BoardDetail = () => {
                   <p>{comment.comm}</p>
                 )}
 
-                <p>{(comment.updatedAt === comment.createdAt) ? comment.createdAt : comment.updatedAt + "(수정됨)"}</p>
+                <p>{(comment.updatedAt === comment.createdAt) ? todate(comment.createdAt) : todate(comment.updatedAt) + "(수정됨)"}</p>
 
-                {comment.UID === userID &&
+                {comment.UID === parseInt(userID) &&
                   <div className={Styles.commtEditDiv}>
                     <input type="text" value={comment.CID} readOnly hidden></input>
                     {(commtEditID === comment.CID) ? (

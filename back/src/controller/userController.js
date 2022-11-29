@@ -2,7 +2,6 @@ import crypto from "crypto";
 import { Op } from "sequelize";
 import models from "../models";
 import jwt from "../jwt/jwt";
-import { rmSync } from "fs";
 
 //hash 단반향 변환 함수
 function addHash(pwd, salt){
@@ -23,10 +22,41 @@ export const userLoginCk = async (req, res) => {
     const Users = await models.Users.findOne({
             where: {
                 UID: user.UID
-            }
+            },
     });
 
     res.status(200).json({UID: Users.UID, NickName: Users.NickName}).end();
+};
+
+//이메일 중복확인
+export const userJoinEmailCk = async (req, res) => {
+    const {joinEmail} = req.body;
+    
+    const Users = await models.Users.findOne({
+        where: {Email: joinEmail}
+
+    });
+
+    if(Users){
+        res.status(201).json({result: 'no'}).end();    
+    }else{
+        res.status(201).json({result: 'yes'}).end();
+    }
+};
+
+//닉네임 중복확인
+export const userJoinNickCk = async (req, res) =>{
+    const {joinNick} = req.body;
+    const Users = await models.Users.findOne({
+        where: {NickName: joinNick}
+    });
+
+    if(Users){
+        res.status(201).json({result: 'no'}).end();
+    }else{
+        res.status(201).json({result: 'yes'}).end();
+    }
+
 };
 
 
@@ -108,7 +138,6 @@ export const userSee = async (req, res) => {
     const {MyAccess} = req.cookies;
     //토큰 유무 확인(자신인지 아닌지 판별 가능)
     
-
     const Users = await models.Users.findOne({
         where: {UID: id},
         include: [{
@@ -128,15 +157,17 @@ export const userSee = async (req, res) => {
         },
     ]
     });
-
+    //console.log(Users);
     let follwer = false;
 
     if(!!MyAccess){
         const user = await jwt.verify(MyAccess);
 
-        follwer = await models.Follwer.findOne({
-            where: {FUID: id, MyUID: user.UID}
-        });
+        if(!!user){
+            follwer = await models.Follwer.findOne({
+                where: {FUID: id, MyUID: user.UID}
+            });
+        }
     }
 
     return res.json({Users, isFollwer: !!follwer}).end();
@@ -153,25 +184,30 @@ export const userEditGet = async (req, res) => {
 };
 
 
+// 유저 비밀번호 확인
+export const userPwdCkPost = async (req, res) => {
+    const { editPCKName } = req.body;
+
+    const Users = await models.Users.findOne({
+        where: { UID: req.UID }
+    });
+
+    const { Salt, Pwd } = Users;
+    const hashPassword = addHash(editPCKName, Salt);
+
+    //변경시 비밀번호 확인
+    if (Pwd === hashPassword) {
+        return res.json({pwdCk: true}).end();
+    } else {
+        return res.json({pwdCk: false}).end();
+    }
+
+}
+
 //유저 정보 수정
 export const userEditPost = async (req, res) => {
-    const { editPCKName, editNickName, editPUPName, editYearName, editMonthName, editDayName } = req.body;
-
-    //비밀번호 확인
-    const pwdckFnc = async () => {
-        const Users = await models.Users.findOne({
-            where: { UID: req.UID }
-        });
-        const { Salt, Pwd } = Users;
-        const hashPassword = addHash(editPCKName, Salt);
-
-        //변경시 비밀번호 확인
-        if (Pwd === hashPassword) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    const { editNickName, editPUPName, editYearName, editMonthName, editDayName }
+     = JSON.parse(req.body.bodys);
 
     //비밀번호 변경
     const pwdEditFnc = async () => {
@@ -190,32 +226,27 @@ export const userEditPost = async (req, res) => {
         }
     }
     
-    const pwdck = pwdckFnc(); //비밀번호가 일치확인
-
-    if (pwdck) { //비밀번호가 일치하면 실행
-        const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
-        try {
-            const { file } = req.files; 
-            await models.Users.update({
-                NickName: editNickName,
-                BirthDay: birthDay,
-                Profile: file.data,
-            }, {
-                where: { UID: req.UID }
-            })
-            pwdEditFnc();
-        } catch (error) {
-            await models.Users.update({
-                NickName: editNickName,
-                BirthDay: birthDay,
-            }, {
-                where: { UID: req.UID }
-            })
-        }
-        return res.redirect("/");
-    }else {
-        res.json({ result: '비밀번호 틀림' }).end();
+    const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
+    try {
+        const { file } = req.files; 
+        await models.Users.update({
+            NickName: editNickName,
+            BirthDay: new Date(birthDay),
+            ProFile: file.data,
+        }, {
+            where: { UID: req.UID }
+        })
+        pwdEditFnc();
+    } catch (error) {
+        await models.Users.update({
+            NickName: editNickName,
+            BirthDay: new Date(birthDay),
+        }, {
+            where: { UID: req.UID }
+        })
+        pwdEditFnc();
     }
+    return res.json({result: true}).end();
 };
 
 //유저 삭제
@@ -223,39 +254,7 @@ export const userDelete = async (req, res) => {
     await models.Users.destroy({
         where: {UID: req.UID}
     })
-    res.clearCookie("MyAccess");
-    // return res.redirect("/");
-};
-
-//이메일 중복확인
-export const userJoinEmailCk = async (req, res) => {
-    const {joinEmail} = req.body;
-    //console.log('여기보세요' + joinEmail);
-    const Users = await models.Users.findOne({
-        where: {Email: joinEmail}
-
-    });
-
-    if(Users){
-        res.status(201).json({result: 'no'}).end();    
-    }else{
-        res.status(201).json({result: 'yes'}).end();
-    }
-};
-
-//닉네임 중복확인
-export const userJoinNickCk = async (req, res) =>{
-    const {joinNick} = req.body;
-    const Users = await models.Users.findOne({
-        where: {NickName: joinNick}
-    });
-
-    if(Users){
-        res.status(201).json({result: 'no'}).end();
-    }else{
-        res.status(201).json({result: 'yes'}).end();
-    }
-
+    res.clearCookie("MyAccess").end();
 };
 
 //팔로우, 언팔로우
@@ -291,9 +290,6 @@ export const userFollwer = async (req, res) => {
         }
  
     } catch (error) {
-       console.log(error);
-        
-        
+       console.log(error); 
     }
-    
 };

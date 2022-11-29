@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Styles from "./UserEdit.module.scss";
+import { Buffer } from "buffer";
 
 const SERVER_URL = "/api/user/"; 
 
@@ -12,7 +13,7 @@ const UserEdit = (props) => {
     
     const [editNick, setEditNick] = useState("");
     const [originPwd, setOrignPwd] = useState("");
-    const [editPwd, setEditPwd] = useState("");
+    const [editPwd, setEditPwd] = useState(""); 
     const [editConfirmPwd, setEditConfirmPwd] = useState("");
     const [birth, setBirth] = useState({
         year: 2022,
@@ -24,11 +25,19 @@ const UserEdit = (props) => {
     const [originPwdMsg, setOriginPwdMsg] = useState("");
     const [editPwdMsg, setEditPwdMsg] = useState("");
     const [editConfirmPwdMsg, setEditConfirmPwdMsg] = useState("");
+    const [proFile, setproFile] = useState();
 
     const [editNickConfirm, setEditNickConfirm] = useState(false);
     const [editOriginPwdConfirm, setEditOriginPwdConfirm] = useState(false);
     const [editPwdConfirm, setEditPwdConfirm] = useState(false);
     const [editCkPwdConfirm, setEditCkPwdConfirm] = useState(false);
+
+    const [prevCkPwd, setPrevCkPwd] = useState(false);
+    
+    //프로필사진저장
+    const inputRef = useRef(null);
+    const [imgFile, setImgFile] = useState();   //파일담는
+    const [img, setImg] = useState(""); //미리보기
 
     const editInfo = async () =>{
         const res = await axios.get(SERVER_URL+id+'/edit');
@@ -40,6 +49,15 @@ const UserEdit = (props) => {
         setBirth({year: words.getFullYear(),
                 month: words.getMonth() + 1,
                 day: words.getDate()});
+        
+        if(res.data.Users.ProFile !== null){ 
+            //console.log(res.data.Users.ProFile);
+            const buffer = Buffer.from(res.data.Users.ProFile).toString('base64');
+            
+            setImg(`data:image;base64,${buffer}`);
+        }else{
+            setImg(`${process.env.PUBLIC_URL}/img/profileEdit.png`);
+        }
         
     }
     
@@ -62,6 +80,17 @@ const UserEdit = (props) => {
     let date = new Date(birth.year, birth.month, 0).getDate();
     for(let d = 1; d <= date; d += 1){
         days.push(d);
+    }
+
+    function originPwdCk(e){    //들어가기전 비번체크
+        axios.post(SERVER_URL+id+'/pwdck', {
+            editPCKName: originPwd
+        }).then(res => {
+            const {pwdCk} = res.data;
+            //console.log(res.data);
+            setPrevCkPwd(pwdCk);
+            
+        })
     }
 
     function editNickCkFnc(e){
@@ -89,12 +118,7 @@ const UserEdit = (props) => {
 
     }
 
-    //프로필사진저장
-    const inputRef = useRef(null);
-    const [imgFile, setImgFile] = useState();   //파일담는
-    const [img, setImg] = useState("../img/profileEdit.png"); //미리보기
-
-    function saveImg(e){
+    function saveImg(e){    //프로필이미지저장
         e.preventDefault();
 
         const {files} = e.target;
@@ -105,15 +129,53 @@ const UserEdit = (props) => {
         }
     }
 
+    function userEditPost(e){   //저장이미지 포스트
+        e.preventDefault();
+        console.log(imgFile);
+        const config = {
+            Headers: {
+              "content-type": "multipart/form-data",
+            },
+          };
+
+        const formData = new FormData();
+
+        if(imgFile){
+            
+            formData.append("file", imgFile);    
+        }
+
+        //console.log(birth);
+        const data = {
+            editPCKName: originPwd,
+            editNickName: editNick,
+            editPUPName: editPwd, 
+            editYearName: birth.year, 
+            editMonthName: birth.month, 
+            editDayName: birth.day 
+        }
+        formData.append("bodys", JSON.stringify(data));
+            axios.post(SERVER_URL+id+'/edit', formData, config).then((res) => {
+                //console.log(res.data);
+                const { result } = res.data;
+                if(result){
+                    
+                    sessionStorage.setItem('loginUserId', editNick);
+
+                    window.location.href = `/user/${id}`;
+                }
+        })
+    }
+
     useEffect(()=>{
-        const fileReader = new FileReader();
+        const fileReader = new FileReader();    //프로필사진 미리보기
 
         if(imgFile){
             fileReader.readAsDataURL(imgFile);
             fileReader.onload = (e) =>{
                 
                 const { result } = e.target;
-                console.log(result);
+                //console.log(result);
                 if(result){
                     setImg(result);
                 }
@@ -126,7 +188,9 @@ const UserEdit = (props) => {
 
     //프로필 삭제, 프로필 formDate로 보내기, get 프로필 보여주기
     return(
+        
         <div onClick={close}>
+            {(prevCkPwd)?
             <div className={Styles.editModal}>
                 <div className={Styles.modalContainer} onClick={(e)=> e.stopPropagation()}>
                     <div className={Styles.editModalHeader}>
@@ -139,22 +203,20 @@ const UserEdit = (props) => {
                                 <input hidden='hidden' type='file' accept="image/*" onChange={saveImg}
                                     ref={inputRef}
                                     onClick={(e) => (e.target.value = null)}/>
-                                {/* <img  src="../img/profileEdit.png"></img> */}
                                 <img onClick={() => inputRef.current.click()} src={img}></img>
                                 
                             </div>
                             <div>
-                                <input name="editNickName" value={editNick}
-                                 onChange={editNickCkFnc}/>
+                                <input name="editNickName" value={editNick} onChange={editNickCkFnc}/>
                                 <p>{nickMsg}</p>
-                                <input name="orignPwdName" placeholder="현재비밀번호"/>
-                                <input name="editPwdName" placeholder="비밀번호"/>
+                                
+                                <input name="editPwdName" placeholder="비밀번호" value={editPwd} onChange={(e) => setEditPwd(e.target.value)}/>
                                 <input name="editConfirmPwdName" placeholder="비밀번호 재입력"/>
                             </div>
                             <div>
                             <label for='year'>출생년도</label>
                             <select id="year"
-                                name="joinYearName"
+                                name="joinYearName"editPwd
                                 value={birth.year}
                                 onChange={(e) => setBirth({ ...birth, year: e.target.value})}>
                                     {years.map(item => (<option value={item} key={item}>{item}</option>))}
@@ -174,12 +236,22 @@ const UserEdit = (props) => {
                                     {days.map(item => (<option value={item} key={item}>{item}</option>))}
                             </select>
                             </div>
-                            <input type="submit" value='수정완료'/>
+                            <input type="submit" value='수정완료' onClick={userEditPost}/>
                         </form>
                     </div>
                     <input value="탈퇴"></input>
                 </div>
+            
             </div>
+            : (<div className={Styles.editModal}>
+                    <div className={Styles.modalContainer} onClick={(e)=> e.stopPropagation()}>
+                        <h1>비밀번호</h1>
+                        <input name="orignPwdName" placeholder="현재비밀번호"
+                         value={originPwd} onChange={(e) => setOrignPwd(e.target.value)}/>
+                        <button onClick={originPwdCk}>확인</button>
+                    </div>
+                </div>)
+            }
         </div>
     );
 }

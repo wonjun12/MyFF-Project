@@ -57,6 +57,8 @@ function App() {
 
         {/* 유저 정보 */}
         <Route path="/user/:id" element={<UserDetail/>}></Route>
+
+        <Route path="/reset/password"></Route>
       </Routes>
       {(mapView)? <MapViewDetails mapView={setMapView} /> : null}
     </BrowserRouter>
