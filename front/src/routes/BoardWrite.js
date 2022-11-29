@@ -14,14 +14,6 @@ const colors = {
   grey: "#a9a9a9",
 };
 
-const starStyle = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "left",
-  },
-};
-
 const config = {
   Headers: {
     "content-type": "multipart/form-data",
@@ -41,9 +33,10 @@ const BoardWrite = () => {
 
     //imageFile 이 있는 경우만 게시물 작성 가능
     if (imageFiles) {
-      const { locationName, contentName } = e.target;
+      const { contentName } = e.target;
       const data = {
-        writeAddrName: locationName.value,
+        writeAddrName: location.addr,
+        writePlaceName: location.name,
         writeCommName: contentName.value,
         writeStarName: currentValue,
         writeHashtag: tagList,
@@ -59,11 +52,10 @@ const BoardWrite = () => {
       formData.append("bodys", JSON.stringify(data));
 
       axios.post(`${SERVER_URL}/write`, formData, config).then((res) => {
-        console.log(res.data);
         const { result } = res.data;
 
         if (result === "ok") {
-          socket.emit('boardCreate');
+          socket.emit("boardCreate");
           window.location.href = "/";
         } else if (result === "error") {
           alert("로그인 하고 하셈");
@@ -87,7 +79,6 @@ const BoardWrite = () => {
 
     setLocationValue(res.data);
   };
-
 
   // input 으로 파일을 선택하면 image State에 담는다
   const saveImage = (e) => {
@@ -191,49 +182,70 @@ const BoardWrite = () => {
     };
   }, [imageFiles]);
 
-
-  //주소 입력 
-  const [locationValue, setLocationValue] = useState('');
-  const [locationName, setLocationName] = useState('');
+  //주소 입력
+  const [locationValue, setLocationValue] = useState("");
+  const [location, setLocation] = useState({name:'', addr: ''});
 
   const locationSearch = (v) => {
-    const {value} = v.target;
+    const { value } = v.target;
     setLocationValue(value);
-    
-  }
+  };
 
   useEffect(() => {
     CreateMaker(locationValue);
-  }, [locationValue])
+  }, [locationValue]);
 
   return (
     <form onSubmit={boardSubmit}>
-      <div style={{ paddingTop: "130px" }}>
+      <div>
+        <input type="checkbox" id="writeMapId" />
         <label htmlFor="writeMapId"> 지도 </label>
-        <div>
+        <div className={Styles.mapContainer}>
           <input
             type="text"
-            id="boardLocationId"
             onChange={locationSearch}
             value={locationValue}
             placeholder="위치 검색"
-            name="locationName"
+            className={Styles.searchInput}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+              }
+            }}
           />
-          <input type="file" accept="image/*" onChange={imgLocation} />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={imgLocation}
+            className={Styles.imgInput}
+          />
+
           <div>
             <ul id="locationSearch" hidden></ul>
-            <button type="button">
-              {" "}
-              검색{" "}
-            </button>
+            {/* <button type="button"> 검색 </button> */}
             <div className={Styles.mapDiv}>
-                  <SearchBoard  addr={locationValue} setAddr={setLocationValue} setPlace={setLocationName}/>
-                  <SetMap/>
+              <SearchBoard
+                addr={locationValue}
+                setAddr={setLocationValue}
+                setName={setLocation}
+              />
+              <SetMap />
+            </div>
+            <div className={Styles.locationInfo}>
+              <div>
+                <p>이름:</p>
+                <p>주소:</p>
+              </div>
+              <div>
+                <p>{location.name}</p>
+                <p>{location.addr}</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/*====================Image View=======================*/}
+        <input type="checkbox" id="writeImgId" />
         <label htmlFor="writeImgId">사진</label>
         <div>
           {images.length > 0 ? (
@@ -248,7 +260,11 @@ const BoardWrite = () => {
                 );
               })}
             </div>
-          ) : null}
+          ) : (
+            <div className={Styles.noImg}>
+              <div>사진을 추가해 주세요</div>
+            </div>
+          )}
           <input
             type="file"
             accept="image/*"
@@ -258,23 +274,29 @@ const BoardWrite = () => {
             ref={inputRef}
             style={{ display: "none" }}
           />
-          <button type="button" onClick={() => inputRef.current.click()}>
-            Preview
-          </button>
-          <button type="button" onClick={deleteAll}>
-            Delete
-          </button>
+          <div className={Styles.pictureDiv}>
+            <button type="button" onClick={() => inputRef.current.click()}>
+              사진 추가
+            </button>
+            <button type="button" onClick={deleteAll}>
+              전체 삭제
+            </button>
+          </div>
         </div>
         {/*========================================================*/}
-
+        <input type="checkbox" id="writeCommId" />
         <label htmlFor="writeCommId">글쓰기</label>
-        <div>
-          <div>
-            <textarea name="contentName" placeholder="내용 입력"></textarea>
+        <div className={Styles.contentDiv}>
+          <div className={Styles.content}>
+            <textarea
+              name="contentName"
+              placeholder="내용 입력"
+              
+            ></textarea>
           </div>
 
-          <div style={starStyle.container}>
-            <span style={starStyle.stars}>
+          <div className={Styles.rate}>
+            <span className={Styles.star}>
               별점:
               {stars.map((_, index) => {
                 return (
@@ -299,11 +321,13 @@ const BoardWrite = () => {
               })}
             </span>
           </div>
-          <div>
+          <div className={Styles.tagMain}>
+          <div className={Styles.tagDiv}>
+            <div>
             {tagList.map((tagItem, idx) => {
               return (
-                <span key={idx}>
-                  <span>{tagItem}</span>
+                <span className={Styles.tagName} key={idx}>
+                  {tagItem}
                   <button
                     type="button"
                     onClick={() => deleteTagItem(idx, tagItem)}
@@ -314,6 +338,7 @@ const BoardWrite = () => {
                 </span>
               );
             })}
+            </div>
             <input
               type="text"
               placeholder="엔터 누르면 태그 추가"
@@ -323,9 +348,14 @@ const BoardWrite = () => {
               onKeyPress={onKeyPress}
             />
           </div>
-        </div>
-
-        <input type="submit" value="전송"></input>
+          <div className={Styles.buttons}>
+            <button type="button" > 뒤로 </button>
+            <button  type="submit">전송</button>
+          </div>
+          
+          </div>
+          
+        </div> 
       </div>
     </form>
   );

@@ -5,7 +5,7 @@ import styled from './boardList.module.scss';
 const {kakao} = window;
 
 
-const SearchBoard = ({addr, setAddr, setPlace}) => {
+const SearchBoard = ({addr, setAddr, setName}) => {
 
     const [boardList, setBoardList] = useState([]);
     const [location, setLocation] = useState(addr);
@@ -46,7 +46,7 @@ const SearchBoard = ({addr, setAddr, setPlace}) => {
         const locationName = innerText.substring(4, innerText.indexOf('주소: '));
         const locationValue = innerText.substring(innerText.indexOf('주소: ') + 4);
         
-        setPlace(locationName);
+        setName({name:locationName, addr:locationValue});
         setAddr(locationValue);
         setBoardList([]);
     };

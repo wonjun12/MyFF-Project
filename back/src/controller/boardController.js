@@ -32,8 +32,13 @@ async function deletePicture(PID) {
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
   // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
-  const { writeAddrName, writeCommName, writeStarName, writeHashtag } =
-    JSON.parse(req.body.bodys);
+  const {
+    writeAddrName,
+    writePlaceName,
+    writeCommName,
+    writeStarName,
+    writeHashtag,
+  } = JSON.parse(req.body.bodys);
   const { file } = req.files;
 
   try {
@@ -41,6 +46,7 @@ export const boardWritePost = async (req, res) => {
     const { BID } = await models.Board.create({
       UID: req.UID,
       Location: writeAddrName,
+      PlaceName: writePlaceName,
       Content: writeCommName,
       Star: parseInt(writeStarName),
     });
@@ -55,19 +61,16 @@ export const boardWritePost = async (req, res) => {
       createPicture(BID, file.data);
     }
 
-    const tagArrCheck = Array.isArray(writeHashtag);
-    if (tagArrCheck) {
-      for (let i in writeHashtag) {
-        await models.Hashtag.create(
-          {
-            title: writeHashtag[i],
-            BID: BID,
-          },
-          {
-            where: { BID: BID },
-          }
-        );
-      }
+    for (let i in writeHashtag) {
+      await models.Hashtag.create(
+        {
+          title: writeHashtag[i],
+          BID: BID,
+        },
+        {
+          where: { BID: BID },
+        }
+      );
     }
 
     //사진 넣기 함수 넣으면 됨
@@ -153,20 +156,26 @@ export const boardEditGet = async (req, res) => {
       },
     ],
   });
-  console.log(Board);
   return res.json({ Board, UID: req.UID }).end();
 };
 
 //게시글 수정하기
 export const boardEditPost = async (req, res) => {
   const { id } = req.params;
-  const { writeAddrName, writeCommName, writeStarName, writeHashtag } =
-    JSON.parse(req.body.bodys);
+  const {
+    writeAddrName,
+    writePlaceName,
+    writeCommName,
+    writeStarName,
+    writeHashtag,
+    hashtag,
+  } = JSON.parse(req.body.bodys);
 
   //게시글 수정
   await models.Board.update(
     {
       Location: writeAddrName,
+      PlaceName: writePlaceName,
       Content: writeCommName,
       Star: parseInt(writeStarName),
     },
@@ -174,6 +183,39 @@ export const boardEditPost = async (req, res) => {
       where: { BID: id },
     }
   );
+  //기존 태그데이터 수정
+  const prevHashtag = await models.Hashtag.findAll({
+    where: { BID: id },
+  });
+
+  if (prevHashtag.length !== hashtag.length) {
+    await models.Hashtag.destroy({
+      where: { BID: id },
+    });
+    for (let i in hashtag) {
+      await models.Hashtag.create(
+        {
+          title: hashtag[i].title,
+          BID: id,
+        },
+        {
+          where: { BID: id },
+        }
+      );
+    }
+  }
+  //태그 추가
+  for (let i in writeHashtag) {
+    await models.Hashtag.create(
+      {
+        title: writeHashtag[i],
+        BID: id,
+      },
+      {
+        where: { BID: id },
+      }
+    );
+  }
 
   try {
     const { file } = req.files;
@@ -187,11 +229,6 @@ export const boardEditPost = async (req, res) => {
     } else {
       createPicture(id, file.data);
     }
-
-    // const tagArrCheck =Array.isArray(writeHashtag);
-    // if(tagArrCheck){
-    //   for()
-    // }
   } catch {
     res.json({ result: "error" }).end();
   }
@@ -213,7 +250,11 @@ export const boardDelte = async (req, res) => {
     where: { BID: id },
   });
 
-  return res.redirect("/");
+  await models.Hashtag.destroy({
+    where: { BID: id },
+  });
+
+  return res.end();
 };
 
 //댓글 작성

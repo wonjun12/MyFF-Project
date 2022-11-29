@@ -10,6 +10,7 @@
     height: 65%;
     z-index: 4;
     overflow-y: auto;
+    overflow-x:hidden ;
     border-radius: 10px;
     margin-top: 5px;
     margin-left: 5px;
@@ -28,10 +29,14 @@
     li {
         border-radius: 15px;
         margin-top: 5px;
-        width: 100%;
-        background-color: rgba(140, 143, 143, 0.507);
+        width: 98%;
+        background-color: white;
+        box-shadow: 3px 3px 3px gray;
+        opacity: 0.9;
+        padding-left: 7px;
+        font-size: 20px;
         &:hover{
-            background-color: rgba(146, 189, 135, 0.274);
+            background-color: rgba(243, 161, 117, 0.829);
         }
     }
 }
