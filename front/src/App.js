@@ -4,6 +4,7 @@ import Main from './routes/Main';
 
 import Best from './routes/Best';
 import BestUser from './routes/BestUser';
+import Password from './routes/Password';
 
 import BoardWrite from "./routes/BoardWrite";
 import BoardEdit from "./routes/BoardEdit";
@@ -46,6 +47,8 @@ function App() {
         <Route path="/best" element={<Best />}></Route>
         <Route path="/bestuser" element={<BestUser />}></Route>
 
+        <Route path="/tag/:name" element={<Best isTag={true}/>}></Route>
+
         {/*글쓰기*/}
         <Route path="/board/write" element={<BoardWrite />}></Route>
         {/* 글 수정 */}
@@ -58,7 +61,7 @@ function App() {
         {/* 유저 정보 */}
         <Route path="/user/:id" element={<UserDetail/>}></Route>
 
-        <Route path="/reset/password"></Route>
+        <Route path="/reset/password" element={<Password/>}></Route>
       </Routes>
       {(mapView)? <MapViewDetails mapView={setMapView} /> : null}
     </BrowserRouter>

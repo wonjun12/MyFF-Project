@@ -9,10 +9,9 @@ async function createPicture(BID, Photo) {
   });
 }
 
-
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
-  // const {writeAddrName, writeCommName, writeTagName, writeStarName} = req.body;
+
   const {
     writeAddrName,
     writePlaceName,
@@ -20,6 +19,7 @@ export const boardWritePost = async (req, res) => {
     writeStarName,
     writeHashtag,
   } = JSON.parse(req.body.bodys);
+
   const { file } = req.files;
 
   try {
@@ -103,15 +103,9 @@ export const boardSee = async (req, res) => {
     ],
   });
 
-  //console.log(req.UID);
-  //게시글 유무 확인
-  if (Board != null) {
-    // 조회 결과 보내줌
-    res.json({ result: "ok", Board }).end();
 
-  } else {
-    return res.redirect("/");
-  }
+  res.json({ result: "ok", Board }).end();
+
 };
 
 
@@ -126,6 +120,9 @@ export const boardEditGet = async (req, res) => {
         model: models.Users,
         required: true,
         attributes: ["UID"],
+        where: {
+          UID : req.UID
+        }
       },
       {
         model: models.Picture,
@@ -137,7 +134,8 @@ export const boardEditGet = async (req, res) => {
       },
     ],
   });
-  return res.json({ Board, UID: req.UID }).end();
+
+  return res.json({ Board }).end();
 };
 
 //게시글 수정하기
@@ -153,88 +151,112 @@ export const boardEditPost = async (req, res) => {
     hashtags,
   } = JSON.parse(req.body.bodys);
 
-  //게시글 수정
-  await models.Board.update(
-    {
-      Location: writeAddrName,
-      PlaceName: writePlaceName,
-      Content: writeCommName,
-      Star: parseInt(writeStarName),
-    },
-    {
-      where: { BID: id },
-    }
-  );
 
-  await models.Picture.destroy({
-    where : {
-      BID : id,
-      PID : {
-        [Op.notIn] : photos
+  
+
+      //게시글 수정
+      const update = await models.Board.update(
+        {
+          Location: writeAddrName,
+          PlaceName: writePlaceName,
+          Content: writeCommName,
+          Star: parseInt(writeStarName),
+        },
+        {
+          where: { 
+            BID : id, 
+            UID : req.UID
+          },
+        }
+      );
+
+      if(!!update[0]){
+
+        await models.Picture.destroy({
+          where : {
+            BID : id,
+            PID : {
+              [Op.notIn] : photos
+            }
+          }
+        })
+  
+        await models.Hashtag.destroy({
+          where : {
+            BID: id,
+            id : {
+              [Op.notIn] : hashtags
+            }
+          }
+        })
+  
+        //태그 추가
+        for (let i in writeHashtag) {
+          await models.Hashtag.create(
+            {
+              title: writeHashtag[i],
+              BID: id,
+            },
+            {
+              where: { BID: id },
+            }
+          );
+        }
+  
+  
+        try {
+        const { file } = req.files;
+  
+        const arrayCheck = Array.isArray(file);
+  
+        if (arrayCheck) {
+          for (let i in file) {
+            createPicture(id, file[i].data);
+          }
+        } else {
+          createPicture(id, file.data);
+        }
+  
+        
+      
+        } catch {
+  
+        } 
+  
+        res.json({ result: "ok" }).end();
+
+      }else{
+        res.json({ result: "filed" }).end();
       }
-    }
-  })
+      
 
-  await models.Hashtag.destroy({
-    where : {
-      BID: id,
-      id : {
-        [Op.notIn] : hashtags
-      }
-    }
-  })
-
-  //태그 추가
-  for (let i in writeHashtag) {
-    await models.Hashtag.create(
-      {
-        title: writeHashtag[i],
-        BID: id,
-      },
-      {
-        where: { BID: id },
-      }
-    );
-  }
-
-  try {
-    const { file } = req.files;
-
-    const arrayCheck = Array.isArray(file);
-
-    if (arrayCheck) {
-      for (let i in file) {
-        createPicture(id, file[i].data);
-      }
-    } else {
-      createPicture(id, file.data);
-    }
-  } catch {
-    
-  }
-
-  res.json({ result: "ok" }).end();
-
-  //사진 배열 여부 확인 (2개 이상일 경우만 배열로 적용됨)
-  // const arrayCheck = Array.isArray(writeImgName);
 };
 
 //게시글 삭제
 export const boardDelte = async (req, res) => {
   const { id } = req.params;
 
-  //외래키 때문에 사진 먼저 삭제 해야함.
-  await models.Picture.destroy({
-    where: { BID: id },
-  });
+  const board = models.Board.findOne({
+    where : {
+      BID : id,
+      UID : req.UID
+    }
+  })
 
-  await models.Hashtag.destroy({
-    where: { BID: id },
-  });
-
-  await models.Board.destroy({
-    where: { BID: id },
-  });
+  if(!!board){
+    //외래키 때문에 사진 먼저 삭제 해야함.
+    await models.Picture.destroy({
+      where: { BID: id },
+    });
+  
+    await models.Hashtag.destroy({
+      where: { BID: id },
+    });
+  
+    await models.Board.destroy({
+      where: { BID: id },
+    });
+  }
 
   return res.end();
 };
@@ -262,11 +284,14 @@ export const boardCommt = async (req, res) => {
 //댓글 수정
 export const boardCommtEdit = async (req, res) => {
   const { commtID, action, commtEditText } = req.body;
-  console.log(req.body);
+
   if (action === "delete") {
     try {
       await models.Comment.destroy({
-        where: { CID: commtID },
+        where: { 
+          CID: commtID,
+          UID: req.UID
+        },
       });
       res.json({ result: "ok" }).end();
     } catch (error) {
@@ -280,7 +305,10 @@ export const boardCommtEdit = async (req, res) => {
           comm: commtEditText,
         },
         {
-          where: { CID: commtID },
+          where: { 
+            CID : commtID ,
+            UID : req.UID
+          },
         }
       );
       res.json({ result: "ok" }).end();

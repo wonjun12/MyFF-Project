@@ -30,10 +30,8 @@ function Main() {
             ...page,
             num: page.num + 1
           });
-        } else if (!hasMore) {
-          console.log("더 없음");
-        }
-
+        } 
+        
       }, { threshold: 1 });
 
       if (node) observer.observe(node);
@@ -68,7 +66,9 @@ function Main() {
           <h1>{board.PlaceName}</h1>
           <h2>{board.Location}</h2>
           <p>{board.Content}</p>
-          <p>#태그#태그#태그#태그</p>
+          <p>{board.Hashtags?.map(({title}) => {
+              return `#${title}`;
+            })}</p>
           <div className={Styles.starDiv}>
             <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
             <span className={Styles.star}>⭐{board.Star}</span>

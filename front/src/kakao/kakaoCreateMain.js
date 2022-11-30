@@ -74,7 +74,7 @@ const CreateMain = (boards, img, index, sessionUID) => {
     
         } else if (stat === kakao.maps.services.Status.ZERO_RESULT) {
         // 검색결과가 없는경우 해야할 처리가 있다면 이곳에 작성해 주세요
-        console.log("검색결과 없음");
+            // console.log("검색결과 없음");
 
         }
     });

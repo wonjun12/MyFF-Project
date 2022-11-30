@@ -1,25 +1,15 @@
 import models from "../models";
-import jwt from "../jwt/jwt";
 import tesseract from "node-tesseract-ocr";
 import { Op } from "sequelize";
+import SendMail from '../mailer/mailer';
 
+//메인 페이지
 export const mainPage = async (req, res) => {
-    const {MyAccess} = req.cookies;
-    
-    const page = parseInt(req.query.page);
 
-    if(MyAccess){
-        const user = await jwt.verify(MyAccess);
-        req.UID = user.UID;
-    }
-
-    if(req.UID == undefined || req.UID == null){
-        return res.json({result:"filed"}).end();
-    }
-
-    try {
-        models.Users.findOne({
-            where: {UID: req.UID},
+    const board = await models.Users.findOne({
+            where: {
+                UID: req.UID
+            },
             attributes: ['UID', 'Email', 'NickName'],
             include: [{
                 model:models.Users,
@@ -27,7 +17,6 @@ export const mainPage = async (req, res) => {
                 attributes: ['UID', 'Email', 'NickName', 'Profile'],
                 include: [{
                     model: models.Board,
-                    order: [['BID', 'DESC']],
                     include: [{
                         model: models.Users,
                         require: true,
@@ -35,13 +24,16 @@ export const mainPage = async (req, res) => {
                     },{
                         model: models.Picture,
                         required: true,
+                        limit: 1
                     },{
                         model: models.BoardLike,
+                    },{
+                        model: models.Hashtag,
+                        require: true
                     }]
                 }]
             }, {
                 model: models.Board,
-                order: [['BID', 'DESC']],
                 include: [{
                     model: models.Users,
                     require: true,
@@ -49,41 +41,37 @@ export const mainPage = async (req, res) => {
                 },{
                     model: models.Picture,
                     required: true,
+                    limit: 1
                 },{
                     model: models.BoardLike,
+                },{
+                    model: models.Hashtag,
+                    require: true
                 }]
             }]
-        }).then(board => {
-            // console.log(board);
-            let boardCount = [];
-        
-            boardCount = board.Boards;
-           
-            for(let i in board.Follwers){
-                for(let j in board.Follwers[i].Boards){
-                    boardCount.push(board.Follwers[i].Boards[j]);
-                }
-            }
-        
-            boardCount.sort((a, b) => {
-                if(a.BID < b.BID) return 1;
-                if(a.BID > b.BID) return -1;
-            });
-        
-            const minPage = page * 4, 
-                maxPage = (boardCount.length < (page + 1) * 4)? boardCount.length : (page + 1) * 4;
-            
-            const boardArray = boardCount.slice(minPage, maxPage);
-        
-            res.json({result:"ok", boardArray, follwers: board.Follwers}).end();
-
-        }).catch(err => {
-            console.log(err);
         });
+
+    const page = parseInt(req.query.page);
+
+    let boardCount = [];
         
-        } catch (error) {
-            // res.render("home.html", {UID: Users});
-        } 
+    boardCount = board.Boards;
+    
+    board.Follwers.forEach(({Boards}) => {
+            boardCount.push(Boards);
+    });
+    
+    boardCount.sort((a, b) => {
+        if(a.BID < b.BID) return 1;
+        if(a.BID > b.BID) return -1;
+    });
+    
+    const minPage = page * 4, 
+            maxPage = (boardCount.length < (page + 1) * 4)? boardCount.length : (page + 1) * 4;
+        
+    const boardArray = boardCount.slice(minPage, maxPage);
+    
+    res.json({result:"ok", boardArray, follwers: board.Follwers}).end();
 
 };
 
@@ -97,9 +85,13 @@ export const bestPage = async (req, res) => {
             attributes: ['UID', 'NickName', 'Profile']
         },{
             model: models.Picture,
-            require: true
+            require: true,
+            limit: 1
         },{
             model: models.BoardLike,
+            require: true
+        },{
+            model: models.Hashtag,
             require: true
         }]
     })
@@ -110,7 +102,6 @@ export const bestPage = async (req, res) => {
     });
 
     const boards = await board.filter((item) => {
-
         if(item.BoardLikes?.length !== 0){
             return item;
         }
@@ -129,7 +120,7 @@ export const bestPage = async (req, res) => {
 export const bestUserPage = async (req, res) => {
 
     const page = parseInt(req.query.page);
-    console.log(page)
+
     const user = await models.Users.findAll({
         attributes: ["UID", "NickName", "Profile", "createdAt"],
         include: [{
@@ -173,6 +164,73 @@ export const bestUserPage = async (req, res) => {
 
     
     res.json({result:"ok", userArray}).end();
+}
+
+//태그 검색 베스트 게시물
+export const tagPage = async (req, res) => {
+    const {page, tag} = req.query;
+
+    const tags = await models.Hashtag.findAll({
+        where : {
+            title : tag
+        },
+    });
+
+    if(!!tags){
+
+        let tagName = [];
+
+        tags.forEach(({BID}) => {
+            tagName.push(BID);
+        })
+
+        const board = await models.Board.findAll({
+            where : {
+                BID : {
+                    [Op.in] : tagName
+                }
+            },
+            include: [{
+                model: models.Users,
+                require: true,
+                attributes: ['UID', 'NickName', 'Profile']
+            },{
+                model: models.Picture,
+                require: true,
+                limit: 1
+            },{
+                model: models.BoardLike,
+                require: true
+            },{
+                model: models.Hashtag,
+                require: true
+            }]
+        })
+
+        await board.sort((a, b) => {
+            if(a.BoardLikes.length < b.BoardLikes.length) return 1;
+            if(a.BoardLikes.length > b.BoardLikes.length) return -1;
+        });
+    
+        const boards = await board.filter((item) => {
+            if(item.BoardLikes?.length !== 0){
+                return item;
+            }
+        });
+        
+        const minPage = page * 6, 
+            maxPage = (board.length < (page + 1) * 6)? board.length : (page + 1) * 6;
+    
+        const boardArray = boards.slice(minPage, maxPage);
+    
+        
+        res.json({result:"ok", boardArray}).end();
+
+    }else{
+
+        res.json({result:"filed"}).end();
+
+    }
 }
 
 //지도 상세보기
@@ -268,12 +326,12 @@ export const mainSearch = async (req, res) => {
                 [Op.or] : [
                     {
                         NickName : {
-                            [Op.like] : `%${value}%`
+                            [Op.substring] : value
                         }
                     },
                     {
                         Name : {
-                            [Op.like] : `%${value}%`
+                            [Op.substring] : value
                         }
                     }
                 ]
@@ -297,7 +355,7 @@ export const mainSearch = async (req, res) => {
       const board = await models.Board.findAll({
         where: {
           PlaceName : {
-            [Op.like] : `%${value}%`
+            [Op.substring] : value
           }
         },
         order: [['BID', 'DESC']],
@@ -317,14 +375,16 @@ export const mainSearch = async (req, res) => {
 
 //비밀번호 찾기 메일
 export const pwdMail = async (req, res) => {
-    const value = req.body;
+    const {email} = req.body;
 
-    const {Pwd} = await models.Users.findOne({
-        where: {Email : ''},
+    const user = await models.Users.findOne({
+        where: {Email : email},
         attributes: ['Pwd']
     });
 
-    SendMail(Pwd, '');
+    if(!!user){
+        SendMail(user.Pwd, email);
+    }
 
     res.end();
 }

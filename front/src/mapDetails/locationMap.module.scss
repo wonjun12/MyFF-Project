@@ -13,7 +13,7 @@
 @mixin imgSize {
     &:hover{
         transform: scale(1.15);
-        background-color: rgb(80, 236, 74);
+        background-color: rgba(245, 195, 88, 0.815);
     }
     img:nth-child(1){
         border-radius: 10px;
@@ -32,13 +32,13 @@
 }
 
 .mapImgDiv{
-    background-color: red;
+    background-color: rgba(250, 115, 115, 0.856);
     @extend %mainMap;
     @include imgSize();
 }
 
 .mapImgDivF{
-    background-color: blue;
+    background-color: rgba(87, 87, 250, 0.747);
     @extend %mainMap;
     @include imgSize();
 }

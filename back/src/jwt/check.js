@@ -7,7 +7,7 @@ const checkToken = async (req, res, next) => {
     
     if(!MyAccess){
         console.log("토큰 없음");
-        return res.status(201).json({result: "error"}).end();
+        return res.status(201).json({result: "filed"}).end();
     }
 
     //토큰 복호화
@@ -16,10 +16,10 @@ const checkToken = async (req, res, next) => {
     if(user === tokenExpiration){
         console.log("토큰 만료");
         res.clearCookie("MyAccess");
-        return res.status(201).json({result: "error"});
+        return res.status(201).json({result: "filed"}).end();
     }else if(user === tokenFaild){
         console.log("토큰 부적합");
-        return res.status(201).json({result: "error"});
+        return res.status(201).json({result: "filed"}).end();
     }
 
     //토큰 재설정

@@ -2,15 +2,18 @@ import React, { useEffect, useState, useCallback } from "react";
 import Styles from "./Main.module.scss";
 import useBoardData from "../hooks/useBoardData";
 import { Buffer } from "buffer";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-const Best = () => {
+const Best = ({ isTag }) => {
 
+  const tag = useParams('name');
   const [page, setPage] = useState({
+    tag: tag.name,
     path: 'best',
     num: 0,
   });
-  const [loading, error, boards, hasMore] = useBoardData(page);
+  const [loading, error, boards, hasMore] = useBoardData(page, !!isTag);
+
   const lastElementRef = useCallback(
     (node) => {
       if (loading) return;
@@ -57,7 +60,11 @@ const Best = () => {
           <h1>{board.PlaceName}</h1>
           <h2>{board.Location}</h2>
           <p>{board.Content}</p>
-          <p>#태그#태그#태그#태그</p>
+          <p>
+            {board.Hashtags?.map(({title}) => {
+              return `#${title}`;
+            })}
+          </p>
           <div className={Styles.starDiv}>
             <span className={Styles.like}><span>❤</span>{board.BoardLikes.length}</span>
             <span className={Styles.star}>⭐{board.Star}</span>

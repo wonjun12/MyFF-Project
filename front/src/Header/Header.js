@@ -11,16 +11,20 @@ const SERVER_URL = "/api/user";
 
 function Header({mapView}) {
 
-  const loginCk = () => {
-    axios.get(`/api/home/login`)
-      .then(res => {
-        sessionStorage.setItem('loginUserId', res.data.NickName);
-        sessionStorage.setItem('loginUID', res.data.UID);
-      })
-      .then(() => {
-        setSessionId(sessionStorage.getItem('loginUserId'));
-        setSessionUId(sessionStorage.getItem('loginUID'))
-      });
+  const loginCk = async () => {
+    const {data} = await axios.get(`/api/home/login`);
+
+
+    if(data.result === 'ok'){
+      sessionStorage.setItem('loginUserId', data.NickName);
+      sessionStorage.setItem('loginUID', data.UID);
+    }else{
+      sessionStorage.removeItem('loginUID');
+      sessionStorage.removeItem('loginUserId');
+    }
+      
+    setSessionId(sessionStorage.getItem('loginUserId'));
+    setSessionUId(sessionStorage.getItem('loginUID'))
   };
 
   
@@ -97,7 +101,7 @@ function Header({mapView}) {
       select : selectName.value
     }
 
-    if(body.value.length > 0){
+    if(body.value.length > 0 && body.select !== '2'){
       const res = await axios.post('/api/home/search', body);
 
       if(res.data.result === 'ok'){
@@ -108,6 +112,8 @@ function Header({mapView}) {
           setSearchValue(res.data.board);
         }
       }
+    }else{
+        window.location.href = `/tag/${body.value}`
     }
   }
 

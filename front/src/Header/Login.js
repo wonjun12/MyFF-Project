@@ -3,6 +3,7 @@ import { useState } from "react";
 import Styles from "./Login.module.scss";
 import Join from "./Join";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const SERVER_URL = "/api/home";
 
@@ -111,7 +112,7 @@ const Login = (props) => {
                     </div>
                     <div className={Styles.pDivWrapper}>
                         <div className={Styles.pDiv}>
-                            <p>비밀번호 찾기</p>
+                            <Link to='/reset/password'onClick={close}><p>비밀번호 찾기</p></Link>
                             <p className={Styles.criteria}>/</p>
                             <p onClick={openJoinModal}>회원가입</p>
                         </div>

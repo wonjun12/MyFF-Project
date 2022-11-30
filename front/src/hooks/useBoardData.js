@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
-const useBoardData = (page) => {
+const useBoardData = (page, isTag) => {
     axios.defaults.withCredentials = true;
     let SERVER_URL = "/api/home/";
-
     const source = axios.CancelToken.source();
 
     const [loading, setLoading] = useState(true);
@@ -14,14 +13,14 @@ const useBoardData = (page) => {
     const [hasMore, setHasMore] = useState(false);
     const [user, setUser] = useState([]);
     
-    const tryUseEffect = () => {
-        
+    const tryUseEffect = (params) => {
+
         try {
             setLoading(true);
             setError(false);
 
             axios.get(SERVER_URL,{
-                params: { page: page.num },
+                params,
                 cancelToken: source.token,
             }).then(res => {
                 const {result} = res.data;
@@ -52,15 +51,23 @@ const useBoardData = (page) => {
     
     useEffect(() => {
 
-        if(page.path === 'best'){
-            SERVER_URL = "/api/home/best";
+        let params = {
+            page: page.num,
         }
 
+        if(page.path === 'best'){
+            if(isTag){
+                SERVER_URL = "/api/home/tag";
+                params.tag = page.tag;
+            }else{
+                SERVER_URL = "/api/home/best";
+            }
+        }
         // useEffect안에async는 반환하는 값의 형태가 다르므로 쓸 수 없음
         // 그래서 새로운 함수를 만들어서 호출하는 방식으로 사용
         // axios의 cancel-token을 사용하여 반복적으로 cancel하고 
         // 마지막 onChange 에만 axios를 작동하게 한다
-        tryUseEffect();
+        tryUseEffect(params);
 
     }, [page.num ,page.path]);
 

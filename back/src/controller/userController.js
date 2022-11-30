@@ -17,7 +17,6 @@ export const userLoginCk = async (req, res) => {
     const {MyAccess} = req.cookies;
 
     const user = await jwt.verify(MyAccess);
-    
 
     const Users = await models.Users.findOne({
             where: {
@@ -25,7 +24,7 @@ export const userLoginCk = async (req, res) => {
             },
     });
 
-    res.status(200).json({UID: Users.UID, NickName: Users.NickName}).end();
+    res.status(200).json({result: 'ok', UID: Users.UID, NickName: Users.NickName}).end();
 };
 
 //이메일 중복확인
@@ -63,7 +62,6 @@ export const userJoinNickCk = async (req, res) =>{
 //로그인
 export const userLogin  = async (req, res) => {
     const {loginENName, loginPwdName} = req.body;
-    console.log(req.body);
 
     try {
         const Users = await models.Users.findOne({
@@ -84,7 +82,6 @@ export const userLogin  = async (req, res) => {
             res.cookie("MyAccess", token, {httpOnly:true});
             res.status(201).json({result: 'ok', UID: Users.UID, NickName}).end();
 
-            // return res.redirect("/");
         }else{
             return res.json({result:"error", reason:"뭔가 틀림1"}).end();
         }
@@ -99,7 +96,6 @@ export const userJoin = async (req, res) => {
 
     const {joinPwdName, joinEmailName, joinNameName, joinNickName, joinYearName, joinMonthName, joinDayName} 
             = req.body;
-    console.log(req.body);
 
     //현재 날짜에 의거하여 랜덤 부여
     const salt = addSalt();
@@ -157,7 +153,6 @@ export const userSee = async (req, res) => {
         },
     ]
     });
-    //console.log(Users);
     let follwer = false;
 
     if(!!MyAccess){
@@ -175,9 +170,10 @@ export const userSee = async (req, res) => {
 
 //유저 수정 정보 가져오기
 export const userEditGet = async (req, res) => {
-
     const Users = await models.Users.findOne({
-        where: {UID: req.UID}
+        where: {
+            UID: req.UID
+        }
     }); 
 
     return res.json({Users});
@@ -188,11 +184,10 @@ export const userEditGet = async (req, res) => {
 export const userPwdCkPost = async (req, res) => {
     const { editPCKName } = req.body;
 
-    const Users = await models.Users.findOne({
+    const { Salt, Pwd } = await models.Users.findOne({
         where: { UID: req.UID }
     });
 
-    const { Salt, Pwd } = Users;
     const hashPassword = addHash(editPCKName, Salt);
 
     //변경시 비밀번호 확인
@@ -227,25 +222,26 @@ export const userEditPost = async (req, res) => {
     }
     
     const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
-    try {
-        const { file } = req.files; 
+    
+    
+    if(!!req.files){
         await models.Users.update({
             NickName: editNickName,
             BirthDay: new Date(birthDay),
-            ProFile: file.data,
+            ProFile:  req.files.file.data
         }, {
             where: { UID: req.UID }
         })
-        pwdEditFnc();
-    } catch (error) {
+    }else{
         await models.Users.update({
             NickName: editNickName,
             BirthDay: new Date(birthDay),
         }, {
             where: { UID: req.UID }
         })
-        pwdEditFnc();
     }
+    pwdEditFnc();
+
     return res.json({result: true}).end();
 };
 
@@ -297,26 +293,28 @@ export const userFollwer = async (req, res) => {
 
 //비밀번호 찾아서 변경
 export const pwdChange = async (req, res) => {
-    const value = req.body;
+    const { email, originPwd, newPwd } = req.body;
 
     const user = await models.Users.findOne({
-        where: {Email:'', Pwd: ''}
+        where: {
+            Email:email, 
+            Pwd: originPwd
+        }
     });
 
     if(!!user){
         const Salt = addSalt();
-        const Pwd = addHash('', Salt);
+        const Pwd = addHash(newPwd, Salt);
 
         await models.Users.update({
             Salt,
             Pwd
         },{
-            where: {Email: ''}
+            where: {Email: email}
         })
 
-        res.json({result:'ok'}).end();
+        return res.json({result: true}).end();
     }else{
-        res.json({result:'err'}).end();
+        return res.json({result: false}).end();
     }
-    
 }
