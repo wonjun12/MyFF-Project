@@ -55,22 +55,26 @@ const BoardEdit = () => {
   };
   const boardEditSubmit = (e) => {
     e.preventDefault();
-    
-    //imageFile 이 있는 경우만 게시물 작성 가능
-    if (imageFiles) {
 
+    //imageFile 이 있는 경우만 게시물 작성 가능
+    if (
+      (!!imageFiles.length || !!pictures.length) &&
+      !!location.name &&
+      !!location.addr &&
+      !!currentValue
+    ) {
       let photos = [];
-      if(!!pictures){
-        pictures.forEach(({PID}) => {
+      if (!!pictures) {
+        pictures.forEach(({ PID }) => {
           photos.push(PID);
-        })
+        });
       }
 
       let hashtags = [];
-      if(!!hashtag){
-        hashtag.forEach(({id}) => {
+      if (!!hashtag) {
+        hashtag.forEach(({ id }) => {
           hashtags.push(id);
-        })
+        });
       }
       const { contentName } = e.target;
       const data = {
@@ -100,10 +104,14 @@ const BoardEdit = () => {
           window.location.href = "/";
         }
       });
+    } else if (!location.name) {
+      alert("주소를 선택해주세요");
+    } else if (!currentValue) {
+      alert("별점을 추가해주세요");
     } else {
       alert("이미지를 업로드 해주세요");
     }
-  };
+  }
 
   //img 주소 추출
   const imgLocation = async (e) => {
@@ -156,7 +164,7 @@ const BoardEdit = () => {
 
   useEffect(() => {
     dataFetch();
-  }, [])
+  }, []);
 
   // 이미지 state 초기화 및 파일 추가 시 실행
   useEffect(() => {
@@ -220,12 +228,17 @@ const BoardEdit = () => {
   const [tagItem, setTagItem] = useState("");
   const [tagList, setTagList] = useState([]);
 
+
   const onKeyPress = (e) => {
     if (e.target.value.length !== 0 && e.key === "Enter") {
       submitTagItem();
       e.preventDefault();
+    } else if (e.target.value.length === 0 && e.key === "Enter") {
+      e.preventDefault();
     }
   };
+
+  
   const submitTagItem = () => {
     tagList.push(tagItem);
     setTagList([...tagList]);
@@ -257,7 +270,7 @@ const BoardEdit = () => {
   return (
     <form onSubmit={boardEditSubmit}>
       <div>
-        <input type="checkbox" id="writeMapId" />
+        <input type="radio" name="accordion" defaultChecked id="writeMapId" />
         <label htmlFor="writeMapId"> 지도 </label>
         <div className={Styles.mapContainer}>
           <input
@@ -306,36 +319,44 @@ const BoardEdit = () => {
         </div>
 
         {/*====================Image View=======================*/}
-        <input type="checkbox" id="writeImgId" />
+        <input type="radio" name="accordion" id="writeImgId" />
         <label htmlFor="writeImgId">사진</label>
         <div>
-          <div className={Styles.imgDiv}>
-              {pictures.map((image, idx) => {
-                const img = Buffer.from(image.Photo.data).toString("base64");
-                return (
-                  <span key={idx} className={Styles.imgSpan}>
-                    <p onClick={() => prevImgDelete(idx, image)}>X</p>
-                    <img
-                      className={Styles.imgView}
-                      src={`data:image;base64,${img}`}
-                      alt=""
-                    />
-                  </span>
-                );
-              })}
-          {images.length > 0 ? (
-            <div className={Styles.imgDiv}>
-              {images.map((image, idx) => {
-                //console.log(image);
-                return (
-                  <span key={idx} className={Styles.imgSpan}>
-                    <p onClick={() => imgDelete(idx, image)}>X</p>
-                    <img className={Styles.imgView} src={image} alt="" />
-                  </span>
-                );
-              })}
+          {/* 사진 없을 때 사진 추가 안내 화면 */}
+          {pictures.length === 0 && images.length === 0 ? (
+            <div className={Styles.noImg}>
+              <div>사진을 추가해 주세요</div>
             </div>
           ) : null}
+          {/* 저장된 사진 */}
+          <div className={Styles.imgDiv}>
+            {pictures.map((image, idx) => {
+              const img = Buffer.from(image.Photo.data).toString("base64");
+              return (
+                <span key={idx} className={Styles.imgSpan}>
+                  <p onClick={() => prevImgDelete(idx, image)}>X</p>
+                  <img
+                    className={Styles.imgView}
+                    src={`data:image;base64,${img}`}
+                    alt=""
+                  />
+                </span>
+              );
+            })}
+            {/* 새로 추가한 사진 */}
+            {images.length > 0 ? (
+              <div className={Styles.imgDiv}>
+                {images.map((image, idx) => {
+                  //console.log(image);
+                  return (
+                    <span key={idx} className={Styles.imgSpan}>
+                      <p onClick={() => imgDelete(idx, image)}>X</p>
+                      <img className={Styles.imgView} src={image} alt="" />
+                    </span>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
           <input
             type="file"
@@ -357,7 +378,7 @@ const BoardEdit = () => {
         </div>
 
         {/*========================================================*/}
-        <input type="checkbox" id="writeCommId" />
+        <input type="radio" name="accordion" id="writeCommId" />
         <label htmlFor="writeCommId">글쓰기</label>
         <div className={Styles.contentDiv}>
           <div className={Styles.content}>
@@ -431,17 +452,29 @@ const BoardEdit = () => {
                   );
                 })}
               </div>
-              <input
-                type="text"
-                placeholder="엔터 누르면 태그 추가"
-                tabIndex={2}
-                value={tagItem}
-                onChange={(e) => setTagItem(e.target.value)}
-                onKeyPress={onKeyPress}
-              />
+              {tagList.length + hashtag.length < 10 ? (
+                <input
+                  type="text"
+                  placeholder="엔터 누르면 태그 추가"
+                  tabIndex={2}
+                  value={tagItem}
+                  onChange={(e) => setTagItem(e.target.value)}
+                  onKeyPress={onKeyPress}
+                />
+              ) : (
+                <div className={Styles.banInput}>
+                  <img
+                    alt=""
+                    src="/img/error.png"
+                  />
+                  <p>더 이상 태그를 추가할 수 없습니다!!</p>
+                </div>
+              )}
             </div>
             <div className={Styles.buttons}>
-              <Link to={`/board/${id}`}><button type="button"> 취소 </button></Link>
+              <Link to={`/board/${id}`}>
+                <button type="button"> 취소 </button>
+              </Link>
               <button type="submit">전송</button>
             </div>
           </div>

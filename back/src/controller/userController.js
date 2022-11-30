@@ -201,9 +201,9 @@ export const userPwdCkPost = async (req, res) => {
 
 //유저 정보 수정
 export const userEditPost = async (req, res) => {
-    const { editNickName, editPUPName, editYearName, editMonthName, editDayName }
-     = JSON.parse(req.body.bodys);
-
+    const { editNickName, editPUPName, editYearName, editMonthName, editDayName, profileDelete }
+        = JSON.parse(req.body.bodys);
+    console.log(profileDelete);
     //비밀번호 변경
     const pwdEditFnc = async () => {
         //비밀번호 변경 입력 여부 확인
@@ -220,29 +220,39 @@ export const userEditPost = async (req, res) => {
             })
         }
     }
-    
-    const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
-    
-    
-    if(!!req.files){
-        await models.Users.update({
-            NickName: editNickName,
-            BirthDay: new Date(birthDay),
-            ProFile:  req.files.file.data
-        }, {
-            where: { UID: req.UID }
-        })
-    }else{
-        await models.Users.update({
-            NickName: editNickName,
-            BirthDay: new Date(birthDay),
-        }, {
-            where: { UID: req.UID }
-        })
-    }
-    pwdEditFnc();
 
-    return res.json({result: true}).end();
+    const birthDay = editYearName + "-" + editMonthName + "-" + editDayName;
+    try {
+        const { file } = req.files;
+        await models.Users.update({
+            NickName: editNickName,
+            BirthDay: new Date(birthDay),
+            ProFile: file.data,
+        }, {
+            where: { UID: req.UID }
+        })
+        pwdEditFnc();
+    } catch (error) {
+        if (profileDelete) {    //기본이미지로 변경
+            await models.Users.update({
+                NickName: editNickName,
+                BirthDay: new Date(birthDay),
+                ProFile: null
+            }, {
+                where: { UID: req.UID }
+            })
+        } else {
+            await models.Users.update({
+                NickName: editNickName,
+                BirthDay: new Date(birthDay),
+            }, {
+                where: { UID: req.UID }
+            })
+        }
+
+        pwdEditFnc();
+    }
+    return res.json({ result: true }).end();
 };
 
 //유저 삭제

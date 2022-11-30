@@ -33,7 +33,12 @@ const BoardWrite = () => {
     e.preventDefault();
 
     //imageFile 이 있는 경우만 게시물 작성 가능
-    if (imageFiles) {
+    if (
+      !!imageFiles.length &&
+      !!location.name &&
+      !!location.addr &&
+      !!currentValue
+    ) {
       const { contentName } = e.target;
       const data = {
         writeAddrName: location.addr,
@@ -63,8 +68,12 @@ const BoardWrite = () => {
           window.location.href = "/";
         }
       });
-    } else {
+    } else if (!location.name) {
+      alert("주소를 선택해주세요");
+    } else if (!imageFiles.length) {
       alert("이미지를 업로드 해주세요");
+    } else if (!currentValue) {
+      alert("별점을 추가해주세요");
     }
   };
 
@@ -127,13 +136,14 @@ const BoardWrite = () => {
   };
 
   //태그
-  const tegDiv = useRef();
   const [tagItem, setTagItem] = useState("");
   const [tagList, setTagList] = useState([]);
 
   const onKeyPress = (e) => {
     if (e.target.value.length !== 0 && e.key === "Enter") {
       submitTagItem();
+      e.preventDefault();
+    } else if (e.target.value.length === 0 && e.key === "Enter") {
       e.preventDefault();
     }
   };
@@ -142,7 +152,6 @@ const BoardWrite = () => {
     tagList.push(tagItem);
     setTagList([...tagList]);
     setTagItem("");
-    // tegDiv.current.scrollTop(this.width());
   };
 
   const deleteTagItem = (idx) => {
@@ -201,8 +210,8 @@ const BoardWrite = () => {
   return (
     <form onSubmit={boardSubmit}>
       <div>
-        <input type="checkbox" id="writeMapId" />
-        <label htmlFor="writeMapId"> 지도 </label>
+        <input type="radio" name="accordion" defaultChecked id="writeMapId" />
+        <label htmlFor="writeMapId">지도</label>
         <div className={Styles.mapContainer}>
           <input
             type="text"
@@ -235,25 +244,25 @@ const BoardWrite = () => {
                 setAddr={setLocationValue}
                 setName={setLocation}
               />
-              <SetMap Draggable={true}/>
+              <SetMap Draggable={true} />
             </div>
-            {(location.name)? 
-            <div className={Styles.locationInfo}>
-              <div>
-                <p>이름:</p>
-                <p>주소:</p>
+            {location.name ? (
+              <div className={Styles.locationInfo}>
+                <div>
+                  <p>이름:</p>
+                  <p>주소:</p>
+                </div>
+                <div>
+                  <p>{location.name}</p>
+                  <p>{location.addr}</p>
+                </div>
               </div>
-              <div>
-                <p>{location.name}</p>
-                <p>{location.addr}</p>
-              </div>
-            </div> : 
-            null }
+            ) : null}
           </div>
         </div>
 
         {/*====================Image View=======================*/}
-        <input type="checkbox" id="writeImgId" />
+        <input type="radio" name="accordion" id="writeImgId" />
         <label htmlFor="writeImgId">사진</label>
         <div>
           {images.length > 0 ? (
@@ -292,7 +301,7 @@ const BoardWrite = () => {
           </div>
         </div>
         {/*========================================================*/}
-        <input type="checkbox" id="writeCommId" />
+        <input type="radio" name="accordion" id="writeCommId" />
         <label htmlFor="writeCommId">글쓰기</label>
         <div className={Styles.contentDiv}>
           <div className={Styles.content}>
@@ -327,7 +336,7 @@ const BoardWrite = () => {
           </div>
           <div className={Styles.tagMain}>
             <div className={Styles.tagDiv}>
-              <div ref={tegDiv}>
+              <div>
                 {tagList.map((tagItem, idx) => {
                   return (
                     <span className={Styles.tagName} key={idx}>
@@ -343,17 +352,29 @@ const BoardWrite = () => {
                   );
                 })}
               </div>
-              <input
-                type="text"
-                placeholder="엔터 누르면 태그 추가"
-                tabIndex={2}
-                value={tagItem}
-                onChange={(e) => setTagItem(e.target.value)}
-                onKeyPress={onKeyPress}
-              />
+              {tagList.length < 10 ? (
+                <input
+                  type="text"
+                  placeholder="엔터 누르면 태그 추가"
+                  tabIndex={2}
+                  value={tagItem}
+                  onChange={(e) => setTagItem(e.target.value)}
+                  onKeyPress={onKeyPress}
+                />
+              ) : (
+                <div className={Styles.banInput}>
+                  <img
+                    alt=""
+                    src="/img/error.png"
+                  />
+                  <p>더 이상 태그를 추가할 수 없습니다!!</p>
+                </div>
+              )}
             </div>
             <div className={Styles.buttons}>
-              <Link to='/'><button type="button"> 취소 </button> </Link>
+              <Link to="/">
+                <button type="button"> 취소 </button>{" "}
+              </Link>
               <button type="submit">전송</button>
             </div>
           </div>

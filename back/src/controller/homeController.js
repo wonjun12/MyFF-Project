@@ -364,7 +364,8 @@ export const mainSearch = async (req, res) => {
           require: true,
           limit: 1
         },{
-          model: models.BoardLike
+          model: models.BoardLike,
+          require: true
         }]
       })
   

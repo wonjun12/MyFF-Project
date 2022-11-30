@@ -38,6 +38,14 @@ const Best = ({ isTag }) => {
     [loading, hasMore]
   );
 
+  const boardStar = (star) => {
+    let arr = [];
+    for (let i = 0; i < parseInt(star); i++) {
+      arr.push(<div key={i}>★</div>);
+    }
+    return arr;
+  }
+
   const boardComponet = (board) => {
     //이미지 변환
     let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
@@ -60,14 +68,18 @@ const Best = ({ isTag }) => {
           <h1>{board.PlaceName}</h1>
           <h2>{board.Location}</h2>
           <p>{board.Content}</p>
-          <p>
-            {board.Hashtags?.map(({title}) => {
-              return `#${title}`;
+          <p className={Styles.tag}>
+            {board.Hashtags?.map(({ title }) => {
+              return (
+                <span>{`#${title}`}</span>
+              );
             })}
           </p>
           <div className={Styles.starDiv}>
             <span className={Styles.like}><span>❤</span>{board.BoardLikes.length}</span>
-            <span className={Styles.star}>⭐{board.Star}</span>
+            <span className={Styles.star}>
+              {boardStar(board.Star)}
+            </span>
           </div>
         </div>
       </>
@@ -91,7 +103,7 @@ const Best = ({ isTag }) => {
           } else {
             return (
               <Link to={`/board/${board.BID}`} key={Math.random()}>
-                <div key={Math.random()} className={Styles.boardDiv}>
+                <div className={Styles.boardDiv}>
                   {boardComponet(board, index)}
                 </div>
               </Link>

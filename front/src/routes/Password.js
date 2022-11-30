@@ -71,7 +71,7 @@ const Password = () => {
 
   return (
     <>
-      <div className={Styles.back}></div>
+      <div className={Styles.back} onClick={() => {window.location.href = '/'}}></div>
       <div className={Styles.container}>
         {urlCk ? (
           <div className={Styles.formDiv}>

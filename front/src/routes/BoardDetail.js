@@ -162,7 +162,7 @@ const BoardDetail = () => {
           {(board.User?.Profile) ? (
             <img src={`data:image;base64,${Buffer.from(board.User.Profile).toString('base64')}`}></img>
           ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/profile.png`}/>
+            <img src={`${process.env.PUBLIC_URL}/img/profile.png`} />
           )}
           <div className={Styles.userInfo}>
             <h1>{board.User?.NickName}</h1>
@@ -227,7 +227,13 @@ const BoardDetail = () => {
           <p>{board.Content}</p>
         </div>
         <div>
-          <p>#태그#태그#태그#태그#태그#태그#태그#태그#태그</p>
+          <p className={Styles.tag}>
+            {board.Hashtags?.map(({ title }) => {
+              return (
+                <Link to={`/tag/${title}`}><span>{`#${title}`}</span></Link>
+              );
+            })}
+          </p>
         </div>
         <p>{boardDate.create}</p>
         {board.User?.UID === parseInt(userID) &&

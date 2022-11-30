@@ -1,15 +1,17 @@
 import socketIO from "socket.io";
 import models from "../models";
 
+const options = {
+    path: '/socket.io', 
+    cors: {
+        origin : "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+}
 
 module.exports = (server) => {
-    const io = socketIO(server, {path: '/socket.io', 
-        cors: {
-            origin : "http://localhost:3000",
-            methods: ["GET", "POST"],
-            credentials: true
-        }
-    });
+    const io = socketIO(server, options);
     
 
         io.use((socket, next) => {

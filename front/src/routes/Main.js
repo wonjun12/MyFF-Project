@@ -41,6 +41,14 @@ function Main() {
     [loading, hasMore]
   );
 
+  const boardStar = (star) => {
+    let arr = [];
+    for (let i = 0; i < parseInt(star); i++) {
+      arr.push(<div key={i}>★</div>);
+    }
+    return arr;
+  }
+
   const boardComponet = (board, index) => {
     //이미지 변환
     let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
@@ -66,12 +74,16 @@ function Main() {
           <h1>{board.PlaceName}</h1>
           <h2>{board.Location}</h2>
           <p>{board.Content}</p>
-          <p>{board.Hashtags?.map(({title}) => {
-              return `#${title}`;
-            })}</p>
+          <p className={Styles.tag}>
+            {board.Hashtags?.map(({title}) => {
+              return <span>{`#${title}`}</span>;
+            })}
+          </p>
           <div className={Styles.starDiv}>
             <span className={Styles.like}><span>❤</span>{board.BoardLikes?.length}</span>
-            <span className={Styles.star}>⭐{board.Star}</span>
+            <span className={Styles.star}>
+              {boardStar(board.Star)}
+            </span>
           </div>
         </div>
       </>

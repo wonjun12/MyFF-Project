@@ -15,6 +15,7 @@ import boardRouter from "./router/boardRouter";
 //소켓 통신
 import socketIO from "./socket/socket";
 
+import path from 'path';
 
 
 
@@ -22,20 +23,20 @@ import socketIO from "./socket/socket";
 const app = express();
 const PORT = 4000;
 
-// models.sequelize.sync().then(() => {
-//     console.log("DB 연결");
-// }).catch(err => {
-//     console.log(err);
-// });
+models.sequelize.sync().then(() => {
+    console.log("DB 연결");
+}).catch(err => {
+    console.log(err);
+});
 
 
 //정책 설정
-const corsOptions = { 
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
-    credentials : true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = { 
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET", "POST"],
+//     credentials : true,
+// };
+// app.use(cors(corsOptions));
 
 // app.use(express.static(path.join(__dirname, "../../front/build")));
 

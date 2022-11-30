@@ -76,15 +76,17 @@ function Header({mapView}) {
 
   const openLoginModal = () => {
     setLoginModalOpen(true);
+    document.body.style.overflow = "hidden";
   }
   const closeLoginModal = () => {
     setLoginModalOpen(false);
+    document.body.style.overflow = "unset";
   }
   
   const userCkFnc = (e) => {
     const userID = sessionStorage.getItem("loginUID");
     if(userID === null || userID === 'undefined' || userID === ""){
-      alert('로그인 후 이용해주세요');
+      setLoginModalOpen(true);
       e.preventDefault();
     }
   }

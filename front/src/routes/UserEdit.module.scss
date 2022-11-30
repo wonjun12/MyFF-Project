@@ -1,26 +1,190 @@
-.editModal{
+@import '../routes/button';
+
+.editModal {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.6); 
+    background: rgba(0, 0, 0, 0.6);
     z-index: 11;
 }
 
-.modalContainer{
-    width: 480px;
-    height: 600px;
+.modalContainer {
+    box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, .3);
+    border-radius: 10px;
+    width: 500px;
+    height: 700px;
     background-color: white;
     position: relative;
     box-sizing: border-box;
-    margin: 180px auto;
+    margin: 100px auto;
     padding: 20px;
-    background: #fff; 
+    background: #fff;
+
+    .editModalHeader {
+        display: flex;
+        justify-content: right;
+        font-size: 30px;
+        font-family: "NanumExtra";
+        font-weight: bold;
+
+        p {
+            margin-right: 140px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        span {
+            cursor: pointer;
+        }
+    }
+
+    .editFormWrapper {
+        display: flex;
+        justify-content: center;
+
+        .editForm {
+            width: 400px;
+
+            .profileEditImg {
+                margin-bottom: 30px;
+
+                img {
+                    width: 210px;
+                    height: 210px;
+                    border-radius: 105px;
+                    //margin-left: 90px;
+                }
+
+                p {
+                    font-size: 13px;
+                    margin-top: 2px;
+                    margin-left: 290px;
+                    color: #696969;
+                    cursor: pointer;
+                }
+            }
+
+            .editInput {
+
+                margin-top: 10px;
+
+                input {
+                    width: 394px;
+                    margin-top: 10px;
+                    font-size: 15px;
+                    padding: 3px;
+                }
+
+                span {
+                    color: red;
+                    font-size: 12px;
+
+                }
+            }
+
+            .selectDiv {
+                display: flex;
+                justify-content: flex-start;
+                margin-top: 15px;
+
+                label {
+                    margin-right: 5px;
+                }
+
+                select {
+                    margin-right: 10px;
+                }
+            }
+
+            .editBtn {
+                margin-top: 10px;
+                input {
+                    @extend %button;
+                    border: none;
+                }
+            }
+
+        }
+    }
+    .userDeleteBtn{
+        
+        cursor: pointer;
+        margin-top: 5px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #696969;
+    }
 }
-.profileEditImg{
-    img{
-    width: 200px;
-    height: 200px;
+
+.prevModal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 11;
+
+    .prevModalContainer {
+        box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, .3);
+        border-radius: 10px;
+        width: 500px;
+        height: 250px;
+        background-color: white;
+        position: relative;
+        box-sizing: border-box;
+        margin: 180px auto;
+        padding: 20px;
+        background: #fff;
+
+        .prevHeader {
+            display: flex;
+            justify-content: right;
+            font-size: 30px;
+            font-family: "NanumExtra";
+            font-weight: bold;
+
+            p {
+                margin-right: 120px;
+                margin-top: 10px;
+                margin-bottom: 30px;
+            }
+
+            span {
+                cursor: pointer;
+            }
+        }
+
+        .prevText {
+            margin-bottom: 20px;
+
+            p {
+                font-size: 17px;
+                font-family: "Nanum";
+                font-weight: bold;
+            }
+        }
+
+        .prevInput {
+            margin-bottom: 20px;
+
+            input {
+                width: 400px;
+                font-size: 20px;
+            }
+        }
+
+        .prevBtn {
+
+            button {
+                @extend %button;
+
+                border: none;
+                width: 400px;
+
+            }
+        }
     }
 }

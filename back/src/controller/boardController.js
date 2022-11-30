@@ -99,6 +99,9 @@ export const boardSee = async (req, res) => {
       {
         model: models.BoardLike,
         attributes: ['UID']
+      },{
+        model: models.Hashtag,
+        require: true
       }
     ],
   });
