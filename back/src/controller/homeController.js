@@ -1,6 +1,7 @@
 import models from "../models";
 import jwt from "../jwt/jwt";
 import tesseract from "node-tesseract-ocr";
+import { Op } from "sequelize";
 
 export const mainPage = async (req, res) => {
     const {MyAccess} = req.cookies;
@@ -255,4 +256,75 @@ export const getLetter = async (req, res) => {
         return res.json("오류").end();
     }
     
+}
+
+//메인페이지 검색 기능
+export const mainSearch = async (req, res) => {
+    const {value, select}  = req.body;
+    
+    if(select === '0'){
+        const user = await models.Users.findAll({
+            where : {
+                [Op.or] : [
+                    {
+                        NickName : {
+                            [Op.like] : `%${value}%`
+                        }
+                    },
+                    {
+                        Name : {
+                            [Op.like] : `%${value}%`
+                        }
+                    }
+                ]
+            },
+            attributes : ['UID', 'NickName', 'Name', 'ProFile'],
+            include : [{
+                model: models.Users,
+                as: 'Follwings',
+                attributes: ['UID']
+            },{
+                model: models.Board,
+                attributes: ['BID', 'createdAt'],
+                order: [['BID', 'DESC']],
+                limit: 1
+            }]
+        });
+  
+        res.json({result: 'ok', user}).end();
+    }else if(select === '1'){
+  
+      const board = await models.Board.findAll({
+        where: {
+          PlaceName : {
+            [Op.like] : `%${value}%`
+          }
+        },
+        order: [['BID', 'DESC']],
+        include: [{
+          model: models.Picture,
+          require: true,
+          limit: 1
+        },{
+          model: models.BoardLike
+        }]
+      })
+  
+      res.json({result: 'ok', board}).end();
+    }
+}
+
+
+//비밀번호 찾기 메일
+export const pwdMail = async (req, res) => {
+    const value = req.body;
+
+    const {Pwd} = await models.Users.findOne({
+        where: {Email : ''},
+        attributes: ['Pwd']
+    });
+
+    SendMail(Pwd, '');
+
+    res.end();
 }

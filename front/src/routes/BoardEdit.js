@@ -55,9 +55,23 @@ const BoardEdit = () => {
   };
   const boardEditSubmit = (e) => {
     e.preventDefault();
-
+    
     //imageFile 이 있는 경우만 게시물 작성 가능
     if (imageFiles) {
+
+      let photos = [];
+      if(!!pictures){
+        pictures.forEach(({PID}) => {
+          photos.push(PID);
+        })
+      }
+
+      let hashtags = [];
+      if(!!hashtag){
+        hashtag.forEach(({id}) => {
+          hashtags.push(id);
+        })
+      }
       const { contentName } = e.target;
       const data = {
         writeAddrName: location.addr,
@@ -65,7 +79,8 @@ const BoardEdit = () => {
         writeCommName: contentName.value,
         writeStarName: currentValue,
         writeHashtag: tagList,
-        hashtag,
+        photos,
+        hashtags,
       };
 
       const formData = new FormData();
@@ -82,7 +97,6 @@ const BoardEdit = () => {
         if (result === "ok") {
           window.location.href = "/";
         } else if (result === "error") {
-          alert("로그인 하고 하셈");
           window.location.href = "/";
         }
       });
@@ -123,21 +137,29 @@ const BoardEdit = () => {
       setImageFiles((prev) => [...prev, ...[files[0]]]);
     }
   };
+
+  // 이미지 개별 삭제
+  const prevImgDelete = (idx) => {
+    setPictures(pictures.filter((_, fileIdx) => fileIdx !== idx));
+  };
+
   // 이미지 개별 삭제
   const imgDelete = (idx) => {
-    console.log(idx);
     setImageFiles(imageFiles.filter((_, fileIdx) => fileIdx !== idx));
   };
 
   // 이미지 전체 삭제
   const deleteAll = () => {
-    console.log("dsdd");
     setImageFiles([]);
+    setPictures([]);
   };
+
+  useEffect(() => {
+    dataFetch();
+  }, [])
 
   // 이미지 state 초기화 및 파일 추가 시 실행
   useEffect(() => {
-    dataFetch();
     const images = [],
       fileReaders = [];
 
@@ -156,7 +178,6 @@ const BoardEdit = () => {
             setImages(images);
           }
         };
-        //console.log(file);
         fileReader.readAsDataURL(file);
         // fileReader.readAsArrayBuffer(blobImg);
       });
@@ -293,7 +314,7 @@ const BoardEdit = () => {
                 const img = Buffer.from(image.Photo.data).toString("base64");
                 return (
                   <span key={idx} className={Styles.imgSpan}>
-                    {/* <p onClick={() => prevImgDelete(idx, image)}>X</p> */}
+                    <p onClick={() => prevImgDelete(idx, image)}>X</p>
                     <img
                       className={Styles.imgView}
                       src={`data:image;base64,${img}`}

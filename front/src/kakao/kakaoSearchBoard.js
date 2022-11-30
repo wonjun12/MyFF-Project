@@ -5,7 +5,11 @@ import styled from './boardList.module.scss';
 const {kakao} = window;
 
 
+
+
 const SearchBoard = ({addr, setAddr, setName}) => {
+
+    
 
     const [boardList, setBoardList] = useState([]);
     const [location, setLocation] = useState(addr);

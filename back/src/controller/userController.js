@@ -293,3 +293,30 @@ export const userFollwer = async (req, res) => {
        console.log(error); 
     }
 };
+
+
+//비밀번호 찾아서 변경
+export const pwdChange = async (req, res) => {
+    const value = req.body;
+
+    const user = await models.Users.findOne({
+        where: {Email:'', Pwd: ''}
+    });
+
+    if(!!user){
+        const Salt = addSalt();
+        const Pwd = addHash('', Salt);
+
+        await models.Users.update({
+            Salt,
+            Pwd
+        },{
+            where: {Email: ''}
+        })
+
+        res.json({result:'ok'}).end();
+    }else{
+        res.json({result:'err'}).end();
+    }
+    
+}

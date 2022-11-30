@@ -87,15 +87,26 @@ function Header({mapView}) {
 
   //메인 화면 검색 기능 스위치
   const [searchValue, setSearchValue] = useState(null);
+  const [searchSelect, setSearchSelect] = useState('');
 
   const search = async (e) => {
     e.preventDefault();
-    const {value} = e.target.search;
-    if(value.length > 0){
-      const res = await axios.post('/api/home/search', {value});
+    const {selectName, search} = e.target;
+    const body = {
+      value : search.value,
+      select : selectName.value
+    }
+
+    if(body.value.length > 0){
+      const res = await axios.post('/api/home/search', body);
 
       if(res.data.result === 'ok'){
-        setSearchValue(res.data.user);
+        setSearchSelect(body.select);
+        if(body.select === '0'){
+          setSearchValue(res.data.user);
+        }else if(body.select === '1'){
+          setSearchValue(res.data.board);
+        }
       }
     }
   }
@@ -110,10 +121,10 @@ function Header({mapView}) {
         <div className={Styles.mainNav}>
           <div className={Styles.searchDiv}>
             <form onSubmit={search} className={Styles.searchForm}>
-              <select>
-                <option>이름</option>
-                <option>장소</option>
-                <option>태그</option>
+            <select name='selectName'>
+                <option value='0'>이름</option>
+                <option value='1'>장소</option>
+                <option value='2'>태그</option>
               </select>
               <input name="search" type="text"></input>
               <input className={Styles.searchBtn} type="submit" value="검색"></input>
@@ -148,7 +159,7 @@ function Header({mapView}) {
         </div>
       </div>
       {/* 검색 기능 */}
-      {(!!searchValue)? <HeaderSearch searchValue={searchValue} setSearchValue={setSearchValue} /> : null }
+      {(!!searchValue)? <HeaderSearch select={searchSelect} searchValue={searchValue} setSearchValue={setSearchValue} /> : null }
     </div>
   );
 }

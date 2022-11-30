@@ -235,7 +235,7 @@ const BoardWrite = () => {
                 setAddr={setLocationValue}
                 setName={setLocation}
               />
-              <SetMap />
+              <SetMap Draggable={true}/>
             </div>
             {(location.name)? 
             <div className={Styles.locationInfo}>

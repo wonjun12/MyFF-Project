@@ -25,7 +25,7 @@
         width: 100px;
         height: 30px;
         border-radius: 10px;
-        border: 1px solid black;
+        border: none;
         font-size: 15px;
         @extend %button;
         transition: transform 0.45s;
@@ -37,8 +37,8 @@
     .selectDiv{
         position: absolute;
         display: flex;
-        width: 200px;
-        height: 22px;
+        width: 250px;
+        height: 75px;
         top: 20%;
         right: 15%;
         z-index: 12;
@@ -47,38 +47,46 @@
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            background-color: rgba(152, 152, 187, 0.788);
+            background-color: rgba(245, 222, 179, 0.781);
             width: 100%;
             height: 100%;
             
             button{
                 position: absolute;
                 top: 0%;
-                right: 0%;
-                width: 100%;
-                border-radius: 10px;
-                border: 1px solid black;
-                background-color: rgba(166, 193, 233, 0.555);
+                left: 0%;
+                height: 100%;
+                z-index: 10;
+                @extend %button;
+                border: none;
+
+                transition: transform 0.5s;
                 &:hover{
-                    background-color: rgba(184, 197, 187, 0.596);
+                   transform: scale(1.1);
                 }
             }
             ul{
                 position: absolute;
-                margin-top: 27px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: end;
+                right: 0;
                 width: 200px;
                 
                 li{
                     margin-top: 10px;
-                    border-radius: 5px;
                     font-size: 20px;
-                    background-color: rgba(168, 164, 170, 0.678);
                     div{
                         display: flex;
                         justify-content: space-between;
-                        input{
+                        transition: transform 0.3s;
+                        input{ 
                             width: 20px;
+                            margin-left: 13px;
                             margin-right: 10px;
+                        }
+                        &:hover{
+                            transform: scale(1.05);
                         }
                     }
                 }

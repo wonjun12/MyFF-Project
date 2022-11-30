@@ -9,25 +9,6 @@ async function createPicture(BID, Photo) {
   });
 }
 
-//사진 업데이트 함수
-async function updatePicture(PID, Poto) {
-  await models.Picture.update(
-    {
-      Poto: Poto,
-    },
-    {
-      where: { PID: PID },
-    }
-  );
-}
-
-//사진 삭제 함수
-async function deletePicture(PID) {
-  await models.Picture.destroy({
-    where: { PID: PID },
-  });
-}
-
 
 //게시판 만들기
 export const boardWritePost = async (req, res) => {
@@ -168,7 +149,8 @@ export const boardEditPost = async (req, res) => {
     writeCommName,
     writeStarName,
     writeHashtag,
-    hashtag,
+    photos,
+    hashtags,
   } = JSON.parse(req.body.bodys);
 
   //게시글 수정
@@ -183,27 +165,25 @@ export const boardEditPost = async (req, res) => {
       where: { BID: id },
     }
   );
-  //기존 태그데이터 수정
-  const prevHashtag = await models.Hashtag.findAll({
-    where: { BID: id },
-  });
 
-  if (prevHashtag.length !== hashtag.length) {
-    await models.Hashtag.destroy({
-      where: { BID: id },
-    });
-    for (let i in hashtag) {
-      await models.Hashtag.create(
-        {
-          title: hashtag[i].title,
-          BID: id,
-        },
-        {
-          where: { BID: id },
-        }
-      );
+  await models.Picture.destroy({
+    where : {
+      BID : id,
+      PID : {
+        [Op.notIn] : photos
+      }
     }
-  }
+  })
+
+  await models.Hashtag.destroy({
+    where : {
+      BID: id,
+      id : {
+        [Op.notIn] : hashtags
+      }
+    }
+  })
+
   //태그 추가
   for (let i in writeHashtag) {
     await models.Hashtag.create(
@@ -230,8 +210,10 @@ export const boardEditPost = async (req, res) => {
       createPicture(id, file.data);
     }
   } catch {
-    res.json({ result: "error" }).end();
+    
   }
+
+  res.json({ result: "ok" }).end();
 
   //사진 배열 여부 확인 (2개 이상일 경우만 배열로 적용됨)
   // const arrayCheck = Array.isArray(writeImgName);

@@ -1,18 +1,19 @@
 import {renderToString} from 'react-dom/server';
 import styled from './MainImg.module.scss';
 import {map} from './kakaoAPI';
+import {Buffer} from 'buffer'
 
 const {kakao} = window;
 let mainImg = [];
 
-const CreateImg = ({img, bool}) => {
-
+const CreateImg = ({img, bool, profile}) => {
     const setImg = `data:image;base64,${img}`;
+    const setPro = (!!profile)? `data:image;base64,${Buffer.from(profile.data).toString('base64')}` : '/img/profile.png';
 
     return (
         <div className={(bool)? styled.mapImgDiv : styled.mapImgDivF} >
             <img src={setImg}/>
-            <img src='/img/profile.png' style={{}} />
+            {(profile === undefined)? null : <img src={setPro}/>}
         </div>
     );
 }
@@ -26,7 +27,7 @@ const CreateMain = (boards, img, index, sessionUID) => {
         }
     }
 
-    const {UID, Location, BID} = boards;
+    const {UID, Location, BID, User} = boards;
 
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -34,7 +35,7 @@ const CreateMain = (boards, img, index, sessionUID) => {
         if(stat === kakao.maps.services.Status.OK){
             const position = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-            const getImg = renderToString(<CreateImg img={img} bool={UID === sessionUID} BID={BID} />);
+            const getImg = renderToString(<CreateImg img={img} bool={UID === sessionUID} BID={BID} profile={User?.Profile}/>);
     
             const content = document.createElement('div');
             

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 export let map;
 
-export const  SetMap = ({zoom}) => {
+export const  SetMap = ({zoom, Draggable}) => {
     const mapElement =  useRef(null);
     const {kakao} = window;
     
@@ -19,9 +19,11 @@ export const  SetMap = ({zoom}) => {
             const options = {
                 center : new kakao.maps.LatLng(37.5424593, 126.6838205),
                 level: zoom,
+                draggable: !Draggable
             };
     
             map = new kakao.maps.Map(mapElement.current, options);
+
             
         }
     };

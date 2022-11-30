@@ -112,7 +112,7 @@ function Main() {
               );
             })}
           </div>
-          <SetMap />
+          <SetMap zoom={8} />
         </div>
       }
 

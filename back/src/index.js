@@ -15,6 +15,8 @@ import boardRouter from "./router/boardRouter";
 //소켓 통신
 import socketIO from "./socket/socket";
 
+import 'dotenv/config';
+
 
 
 const app = express();

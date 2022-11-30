@@ -37,12 +37,12 @@ const MapViewDetails = ({mapView}) => {
     const viewAnimation = (bool) => {
         selectDiv.current.animate([
             {
-                height: '22px'
+                width: '49px'
             },{
-                height: '120px'
+                width: '250px'
             }
         ], {
-            duration: 2000,
+            duration: 1500,
             direction: (bool)? 'normal' : 'reverse',
             easing: 'ease-in-out',
             fill: 'forwards'
@@ -111,7 +111,7 @@ const MapViewDetails = ({mapView}) => {
             <button onClick={closeMap}> 지도 닫기 </button>
             <div ref={selectDiv} className={styled.selectDiv} >
                 <div className={styled.selectView}>
-                    <button onClick={setView} disabled={disables}> 보기 설정 </button>
+                    <button onClick={setView} disabled={disables}> 설정 </button>
                     <ul>
                         {selectList.map((list, index) => {
                             return (

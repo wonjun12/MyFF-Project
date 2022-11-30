@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
+import { Buffer } from "buffer";
 import styled from "./HeaderSearch.module.scss";
 
 
-const HeaderSearch = ({searchValue, setSearchValue}) => {
+const HeaderSearch = ({searchValue, setSearchValue, select}) => {
 
     const [bool, setBool] = useState();
     const searchDiv = useRef();
@@ -50,7 +51,9 @@ const HeaderSearch = ({searchValue, setSearchValue}) => {
             {
                 (bool)? 
                 <ul>
-                    {searchValue.map(({Name, NickName, ProFile, UID, Follwings, Boards}, index) => {
+                    {
+                    (select === '0')?
+                    searchValue.map(({Name, NickName, ProFile, UID, Follwings, Boards}, index) => {
 
                         let photo;
                         if(!!ProFile){
@@ -89,7 +92,41 @@ const HeaderSearch = ({searchValue, setSearchValue}) => {
                             </li>
                             
                         );
-                    })}
+                    }) : 
+                    searchValue.map(({BID, Location, Pictures, PlaceName, Star, BoardLikes}, index) => {
+
+                        const photo = `data:image;base64,${Buffer.from(Pictures[0].Photo.data).toString('base64')}`;
+
+                        const stars = (Star) => {
+                            let con = ''
+                            for(let i = 0; i < parseInt(Star); i++){
+                                con += '★';
+                            }
+                            return con;
+                        }
+
+                        return (
+                            <li key={index} onClick={() => setSearchValue(null)}>
+                                <Link to={`/board/${BID}`}>
+                                    <div className={styled.searchListBoard}>
+                                        <img src={photo} />
+                                        <div>
+                                            <div>❤ 
+                                                <div>
+                                                    {BoardLikes.length}
+                                                    </div>
+                                                </div>
+                                            
+                                            <p>{stars(Star)}</p>
+                                            <p>{PlaceName}</p>
+                                            <p>{Location}</p>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </li>
+                        );
+                    })
+                }
                 </ul>
                 :
                 <div className={styled.searchFiled}>

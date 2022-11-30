@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {renderToString} from 'react-dom/server';
 import styled from './locationMap.module.scss';
+import {Buffer} from 'buffer';
 
 const {kakao} = window;
 let detailsMap;
@@ -37,8 +38,7 @@ export const  SetMap = () => {
 
 export const CreateLocation = (boards, img, sessionUID) => {
 
-    const {UID, Location, BID} = boards;
-
+    const {UID, Location, BID, User} = boards;
     const geocoder = new kakao.maps.services.Geocoder();
 
     geocoder.addressSearch(Location, (result, stat) => {
@@ -47,7 +47,7 @@ export const CreateLocation = (boards, img, sessionUID) => {
 
             const bool = (UID === sessionUID);
 
-            const getImg = renderToString(<CreateImg img={img} bool={bool} BID={BID} />);
+            const getImg = renderToString(<CreateImg img={img} bool={bool} BID={BID} profile={User.ProFile}/>);
     
             const content = document.createElement('div');
             
@@ -88,14 +88,15 @@ export const CreateLocation = (boards, img, sessionUID) => {
     });
 }
 
-const CreateImg = ({img, bool }) => {
+const CreateImg = ({img, bool, profile }) => {
 
     const setImg = `data:image;base64,${img}`;
+    const setPro = (!!profile)? `data:image;base64,${Buffer.from(profile.data).toString('base64')}` : '/img/profile.png';
 
     return (
         <div className={(bool)? styled.mapImgDiv : styled.mapImgDivF}>
             <img src={setImg}/>
-            <img src='/img/profile.png' style={{}} />
+            <img src={setPro}/>
         </div>
     );
 }
