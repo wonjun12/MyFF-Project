@@ -1,0 +1,44 @@
+%mainMap{
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    z-index: 1;
+
+    transition: background-color 1s, transform 1s;
+}
+@mixin imgSize {
+    &:hover{
+        transform: scale(1.15);
+        background-color: rgba(245, 195, 88, 0.815);
+    }
+    img:nth-child(1){
+        border-radius: 10px;
+        width: 70px; 
+        height: 70px;
+        z-index: 2;
+    }
+    img:nth-child(2){
+        position: absolute;
+        border-radius: 50%;
+        margin-bottom: 100px;
+        width: 50px;
+        height: 50px;
+        z-index: 2;
+    }
+}
+
+.mapImgDiv{
+    background-color: rgba(250, 115, 115, 0.856);
+    @extend %mainMap;
+    @include imgSize();
+}
+
+.mapImgDivF{
+    background-color: rgba(87, 87, 250, 0.747);
+    @extend %mainMap;
+    @include imgSize();
+}

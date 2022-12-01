@@ -1,0 +1,160 @@
+@import '../routes/button';
+.searchDiv{
+    width: 430px;
+    height: 350px;
+    position: absolute;
+    z-index: 4;
+    position: fixed;
+    
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 15px;
+
+
+    ul{
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar{
+            width: 10px;
+        }
+        &::-webkit-scrollbar-thumb{
+            border-radius: 13px;
+            background-color: rgba(243, 167, 69, 0.836);
+        }
+        &::-webkit-scrollbar-track{
+            border-radius: 13px;
+            background-color: rgba(143, 142, 142, 0.87);
+        }
+
+        .searchList{
+            width: 97%;
+            display: flex;
+            margin-top: 5px;
+            margin-left: 5px;
+            padding-bottom: 5px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 3px 3px 3px gray;
+            opacity: 1;
+
+            &:hover{
+                div:nth-child(3){
+                    color:rgb(249, 87, 0);
+                    font-size: 18px;
+                }   
+            }
+            
+
+            img{
+                margin-top: 5px;
+                margin-left: 5px;
+                margin-bottom: 5px;
+                width: 95px;
+                height: 95px;
+                border-radius: 50px;
+            }
+            div:nth-child(2){
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: end;
+                width: 25%;
+                color: rgba(39, 39, 38, 0.911);
+            }
+            div:nth-child(3){
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin-left: 5px;
+                width: 50%;
+                white-space: nowrap;
+
+                transition: all 0.4s;
+            }
+            
+        }
+
+        .searchListBoard{
+            width: 97%;
+            display: flex;
+            margin-top: 5px;
+            margin-left: 5px;
+            padding-bottom: 5px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 3px 3px 3px gray;
+            opacity: 1;
+
+            &:hover{
+                div:nth-child(2){
+                    color:rgb(249, 87, 0);
+                    transform: scale(1.03);
+                }   
+            }
+
+            img{
+                margin-top: 5px;
+                margin-left: 5px;
+                margin-bottom: 5px;
+                width: 95px;
+                height: 95px;
+                border-radius: 10px;
+            }
+            div:nth-child(2){
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin-left: 5px;
+                margin-top: 5px;
+                margin-bottom: 5px;
+                white-space: nowrap;
+
+                transition: all 0.4s;
+                div:nth-child(1){
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 15%;
+                    color: red;
+                    font-size: 17px;
+                    div{
+                        color: black;
+                    }
+                }
+                
+                p:nth-child(2){
+                    color: rgb(235, 215, 39);
+                }
+            }
+        }
+    }
+    
+
+    button{
+        position: absolute;
+        top: 2%;
+        right: 2.5%; 
+        border: none;
+        @extend %button;
+        transition: transform 0.45s;
+        &:hover{
+            transform: scale(1.15);
+        }
+    }
+
+}
+
+.searchFiled{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(236, 191, 133, 0.404);
+    font-size: 17px;
+    width: 100%;
+    height: 100%;
+}

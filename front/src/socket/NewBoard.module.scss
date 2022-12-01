@@ -1,0 +1,20 @@
+.newBoard{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+
+    display: flex;
+    position: absolute;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    top: 0%;
+    z-index: 30;
+    width: 400px;
+    height: 25px;
+    background-color: rgb(71, 166, 255);
+    border-radius: 20px;
+    color: rgb(255, 255, 255);
+    transform: translateY(-30px);
+}

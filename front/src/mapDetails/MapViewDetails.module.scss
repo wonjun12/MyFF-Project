@@ -1,0 +1,97 @@
+@import '../routes/button';
+.mapDetails{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    position:fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(65, 62, 62, 0.486);
+    z-index: 10;
+
+    .settingMap{
+        z-index: 11;
+        width: 70%;
+        height: 70%;
+    }
+    button:nth-child(2){
+        position: absolute;
+        z-index: 12;
+        top: 15.3%;
+        right: 15.3%;
+        width: 100px;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+        font-size: 15px;
+        @extend %button;
+        transition: transform 0.45s;
+        &:hover {
+            transform: scale(1.11);
+        }
+
+    }
+    .selectDiv{
+        position: absolute;
+        display: flex;
+        width: 250px;
+        height: 75px;
+        top: 20%;
+        right: 15%;
+        z-index: 12;
+
+        .selectView{
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: rgba(245, 222, 179, 0.781);
+            width: 100%;
+            height: 100%;
+            
+            button{
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                height: 100%;
+                z-index: 10;
+                @extend %button;
+                border: none;
+
+                transition: transform 0.5s;
+                &:hover{
+                   transform: scale(1.1);
+                }
+            }
+            ul{
+                position: absolute;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: end;
+                right: 0;
+                width: 200px;
+                
+                li{
+                    margin-top: 10px;
+                    font-size: 20px;
+                    div{
+                        display: flex;
+                        justify-content: space-between;
+                        transition: transform 0.3s;
+                        input{ 
+                            width: 20px;
+                            margin-left: 13px;
+                            margin-right: 10px;
+                        }
+                        &:hover{
+                            transform: scale(1.05);
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}
