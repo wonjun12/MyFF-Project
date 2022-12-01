@@ -25,7 +25,7 @@ const UserDetail = () => {
   const [birth, setBirth] = useState({
     year: 2022,
     month: 1,
-    day: 1,
+    day: 1
   });
 
 
