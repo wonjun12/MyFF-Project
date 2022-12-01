@@ -300,12 +300,18 @@ const UserEdit = (props) => {
         
     }
 
+    const resetSelect = () => {
+        setShowDay(false);
+        setShowMonth(false);
+        setShowYear(false);
+    }
+
     return (
 
         <div>
             {(prevCkPwd) ?
-                <div className={Styles.editModal}>
-                    <div className={Styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+                <div className={Styles.editModal} onClick={resetSelect}>
+                    <div className={Styles.modalContainer} onClick={(e) => {e.stopPropagation()}}>
                         <div className={Styles.editModalHeader}>
                             <p>프로필편집</p>
                             <span onClick={close}>&times;</span>
