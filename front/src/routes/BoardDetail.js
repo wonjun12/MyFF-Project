@@ -389,7 +389,11 @@ const BoardDetail = () => {
 
             return (
               <div className={Styles.commDiv} key={idx}>
-                <Link to={`/user/${comment.User.UID}`}><p>{comment.User.NickName}</p></Link>
+                <p>
+                  <Link to={`/user/${comment.User.UID}`}>
+                    {comment.User.NickName}
+                  </Link>
+                </p>
                 {(commtEditID === comment.CID) ? (
                   <input type="text"
                     className={Styles.editCommInput}

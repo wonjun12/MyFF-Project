@@ -266,9 +266,11 @@
         p:nth-child(1) {
           font-size: 20px;
           font-weight: bold;
-          transition: font-size 0.3s;
-          &:hover{
-            font-size: 23px;
+          a{
+            transition: font-size 0.3s;
+            &:hover{
+              font-size: 23px;
+            }
           }
         }
         p:nth-child(2) {
