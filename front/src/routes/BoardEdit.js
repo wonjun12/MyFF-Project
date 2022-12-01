@@ -118,7 +118,11 @@ const BoardEdit = () => {
           })
           navigate('/')
         } else if (result === "error") {
-
+          Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: '너무 많은 글을 작성하셧습니다',
+          })
           navigate('/')
         }
       });
