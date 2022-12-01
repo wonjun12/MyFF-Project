@@ -33,6 +33,10 @@ export const mainPage = async (req, res) => {
                         model: models.BoardLike,
                     },{
                         model: models.Hashtag,
+                    },{
+                        model: models.Comment,
+                        attributes: ['CID']
+                        // attributes: ['CID', [models.sequelize.fn('COUNT', models.sequelize.col('Boards.comments.CID')), 'counts']]
                     }]
                 }]
             }, {
@@ -50,6 +54,10 @@ export const mainPage = async (req, res) => {
                     model: models.BoardLike,
                 },{
                     model: models.Hashtag,
+                },{
+                    model: models.Comment,
+                    attributes: ['CID']
+                    // attributes: ['CID', [models.sequelize.fn('COUNT', models.sequelize.col('Boards.comments.CID')), 'counts']]
                 }]
             }]
         });
@@ -68,8 +76,7 @@ export const mainPage = async (req, res) => {
         if(!!Boards.length){
             for(let i in Boards){
                 boardCount.push(Boards[i]);
-            }
-            
+            } 
         }
     });
     
@@ -108,6 +115,10 @@ export const bestPage = async (req, res) => {
         },{
             model: models.Hashtag,
             require: true
+        },{
+            model: models.Comment,
+            attributes: ['CID']
+            // attributes: ['CID', [models.sequelize.fn('COUNT', models.sequelize.col('Boards.comments.CID')), 'counts']]
         }]
     })
     
@@ -228,6 +239,10 @@ export const tagPage = async (req, res) => {
             },{
                 model: models.Hashtag,
                 require: true
+            },{
+                model: models.Comment,
+                attributes: ['CID']
+                // attributes: ['CID', [models.sequelize.fn('COUNT', models.sequelize.col('Boards.comments.CID')), 'counts']]
             }]
         })
 

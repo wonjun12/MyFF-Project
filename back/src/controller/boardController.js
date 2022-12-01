@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import models from "../models";
+import jwt from '../jwt/jwt';
 
 //사진 넣기 함수
 async function createPicture(BID, Photo) {
@@ -69,6 +70,7 @@ export const boardWritePost = async (req, res) => {
 //게시글 보기
 export const boardSee = async (req, res) => {
   const { id } = req.params;
+  const {MyAccess} = req.cookies;
   
   //업데이트해줌
   // 특정 값을 일정한 값으로 증가시키고 싶을때
@@ -105,6 +107,7 @@ export const boardSee = async (req, res) => {
           {
             model: models.Users,
             require: true,
+            attributes: ["UID", "NickName"],
           },
         ],
       },
@@ -116,11 +119,25 @@ export const boardSee = async (req, res) => {
         require: true
       }
     ],
+    order: [
+      [models.Comment, 'CID', 'ASC']
+    ],
   });
 
+  let follwer = false;
 
-  res.json({ result: "ok", Board }).end();
+    //접속 유무에 따라 팔로우 확인
+  if(!!MyAccess){
+        const user = await jwt.verify(MyAccess);
 
+        if(!!user){
+            follwer = await models.Follwer.findOne({
+                where: {FUID: Board.UID, MyUID: user.UID}
+            });
+        }
+    }
+
+  res.json({result: "ok", Board, isFollwer: !!follwer}).end();
 };
 
 
@@ -251,6 +268,7 @@ export const boardEditPost = async (req, res) => {
 
 };
 
+
 //게시글 삭제
 export const boardDelte = async (req, res) => {
   const { id } = req.params;
@@ -294,6 +312,28 @@ export const boardDelte = async (req, res) => {
     return res.json({ result: "err" }).end();
   }
 };
+
+
+//댓글 불러오기
+export const boardCommtSee = async (req, res) => {
+  const {id} =  req.params;
+  
+
+  const commt = await models.Comment.findAll({
+      where : { 
+        BID: id
+      },
+      order: [['CID', 'ASC']],
+      include : [{
+            model: models.Users,
+            require: true,
+            attributes: ["UID", "NickName"],
+      }]      
+  })
+
+  res.json({result: true, commt}).end();
+
+}
 
 //댓글 작성
 export const boardCommt = async (req, res) => {

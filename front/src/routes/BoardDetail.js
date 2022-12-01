@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
@@ -15,6 +15,8 @@ const BoardDetail = () => {
   const userID = sessionStorage.getItem("loginUID");
   const navigate = useNavigate();
 
+  //댓글 더보기
+  const [commMore, setCommMore] = useState(0);
 
   //게시물 초기 정보
   const { id } = useParams();
@@ -46,17 +48,14 @@ const BoardDetail = () => {
   }
 
   const [isFollwing, setIsFollwing] = useState(false);    //팔로우여부
-  const [countFollwer, setCountFollwer] = useState(0);   //팔로워
-
 
   //게시물 정보 가져오기
   const dataFetch = async () => {
     const res = await axios.get(`${SERVER_URL}/${id}`);
-    //console.log(res.data.Board);
+
     setBoard(res.data.Board);
     setPictures(res.data.Board.Pictures);
     setComments(res.data.Board.Comments);
-    setCountFollwer(res.data.Board.User.Follwings.length);
 
     res.data.Board.BoardLikes.forEach(({ UID }) => {
       if (UID === parseInt(sessionStorage.getItem('loginUID'))) {
@@ -66,6 +65,7 @@ const BoardDetail = () => {
     });
 
     setLike(like);
+    setIsFollwing(res.data.isFollwer);
 
     setBoardDate({
       create: getDate(res.data.Board.createdAt),
@@ -74,6 +74,13 @@ const BoardDetail = () => {
 
   }
 
+  const commentDataFetch = async () => {
+    const res = await axios.get(`${SERVER_URL}/${id}/commt`);
+
+    if(res.data.result){
+      setComments(res.data.commt);
+    }
+  }
   //이미지 이전 버튼
   const prevClick = () => {
     if (imgPage > 1) {
@@ -102,7 +109,10 @@ const BoardDetail = () => {
       }, { withCredentials: true }).then(res => {
         //console.log(res.data);
         if (res.data.result === "ok") {
-          dataFetch();
+          commentDataFetch();
+          setCommMore(Math.ceil(comments.length / 10))
+          scrollEnd();
+          setCommView(true);
           userComment.value = "";
         }
       });
@@ -118,7 +128,7 @@ const BoardDetail = () => {
     }, { withCredentials: true }).then(res => {
       //console.log(res.data);
       if (res.data.result === "ok") {
-        dataFetch();
+        commentDataFetch();
         //console.log("OK");
       }
     });
@@ -138,11 +148,12 @@ const BoardDetail = () => {
         if (res.data.result === "ok") {
           setCommtEditID(0);
           setCommtEditText("");
-          dataFetch();
+          commentDataFetch();
         }
       });
     }
   }
+
 
   //게시물 좋아요
   const boardLikeFnc = async () => {
@@ -213,21 +224,34 @@ const BoardDetail = () => {
   const followFnc = async (FUID) => {
     const {data} = await axios.post('/api/user/' + FUID + '/follwer');
     const { result } = data;
-      console.log(result);
+  
       if (result === 'follow') {
         setIsFollwing(!isFollwing); //팔로우>언팔 / 언팔>팔로우
-        setCountFollwer(countFollwer + 1);
       } else if (result === 'unfollow') {
         setIsFollwing(!isFollwing);
-        setCountFollwer(countFollwer - 1);
-
       }
+      dataFetch();
   }
 
 
   useEffect(() => {
     dataFetch();
   }, []);
+
+
+  //0.4초후 맨아래로 스크롤 내림
+  const scrollEnd = () => {
+    setTimeout(() => {
+      document.body.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    }, 400);
+  }
+
+  //댓글을 열경우 실행
+  useEffect(() => {
+    if(commView){
+      scrollEnd();
+    }
+  }, [commView])
 
 
   return (
@@ -361,7 +385,8 @@ const BoardDetail = () => {
         </div>
 
         {(comments.length > 0 && commView) ? (
-          comments.map((comment, idx) => {
+          comments.slice(0, (commMore * 10 + 10)).map((comment, idx) => {
+
             return (
               <div className={Styles.commDiv} key={idx}>
                 <Link to={`/user/${comment.User.UID}`}><p>{comment.User.NickName}</p></Link>
@@ -398,10 +423,21 @@ const BoardDetail = () => {
             );
           })
         ) : null}
-
+        <div className={Styles.commtMore}>
+        {((comments.length > commMore * 10 + 10) && commView)? 
+            <button type="button" onClick={() => {
+              setCommMore(commMore+1);
+              scrollEnd();
+            }}> 댓글 더 보기 </button> : null}
+        </div>
       </div>
     </div>
   );
+}
+
+
+const createCommt = (comments, commView) => {
+
 }
 
 export default BoardDetail;

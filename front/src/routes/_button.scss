@@ -41,3 +41,10 @@ $bg: rgb(241, 241, 241);
       transform: rotate(359deg);
   }
 }
+
+@mixin hoverPoint($size) {
+    transition: transform 0.4s;
+    &:hover{
+      transform: scale($size);
+    }
+}

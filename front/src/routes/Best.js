@@ -92,6 +92,9 @@ const Best = ({ isTag }) => {
             <span>
               👁 {board.Views}
             </span>
+            <span className={Styles.commts}>
+              {board.Comments.length} 💬
+            </span>
           </div>
         </div>
       </>

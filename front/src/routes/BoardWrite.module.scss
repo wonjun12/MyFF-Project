@@ -135,6 +135,7 @@ input[id*="write"]:checked + label + div {
     width: 25%;
     margin-top: 5px;
     margin-left: 10px;
+    @include hoverPoint(1.04);
   }
   .imgInput {
     width: 0%;

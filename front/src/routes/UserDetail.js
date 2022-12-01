@@ -32,7 +32,7 @@ const UserDetail = () => {
   //유저 정보 가져오기
   const userInfo = async () => {
     const res = await axios.get(SERVER_URL + id);
-  
+    
     setUser(res.data.Users);
     setIsFollwing(res.data.isFollwer);
     setCountFollwing(res.data.Users.Follwers.length);

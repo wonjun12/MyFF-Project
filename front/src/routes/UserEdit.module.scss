@@ -54,6 +54,7 @@
                     width: 210px;
                     height: 210px;
                     border-radius: 105px;
+                    @include hoverPoint(1.08);
                     //margin-left: 90px;
                 }
 
@@ -63,6 +64,7 @@
                     margin-left: 292px;
                     color: #696969;
                     cursor: pointer;
+                    @include hoverPoint(1.1);
                 }
             }
 
@@ -115,9 +117,12 @@
 
             .editBtn {
                 margin-top: 10px;
+                
                 input {
                     @extend %button;
                     border: none;
+                    @include hoverPoint(1.08);
+                    
                 }
             }
 
@@ -130,6 +135,7 @@
         font-size: 15px;
         font-weight: bold;
         color: #696969;
+        @include hoverPoint(1.1);
     }
 }
 
@@ -206,6 +212,7 @@
 
                 border: none;
                 width: 400px;
+                @include hoverPoint(1.05);
 
             }
         }

@@ -51,6 +51,7 @@
             margin-top: 15px;
             width: 150px;
             @extend %button;
+            @include hoverPoint(1.04);
             &:nth-child(1){margin-right: 15px;}
           }
         }
@@ -99,11 +100,13 @@
       .prev {
         color: black;
         font-size: 100px;
+        @include hoverPoint(1.15);
       }
   
       .next {
         color: black;
         font-size: 100px;
+        @include hoverPoint(1.15);
       }
   
       .pictureSpan {
@@ -139,9 +142,11 @@
           font-size: 50px;
           margin-top: -10px;
           color: red;
+          @include hoverPoint(1.15);
         }
         .unlike {
           @extend %drag;
+          @include hoverPoint(1.15);
           font-size: 50px;
           margin-top: -10px;
           color: rgba($color: #000000, $alpha: 0.3);
@@ -157,6 +162,11 @@
         .sape{
           color: rgba(97, 132, 248, 0.815);
           margin-right: 10px;
+          border-radius: 10px;
+          transition: background-color 0.3s;
+          &:hover{
+            background-color: rgba(212, 212, 212, 0.534)
+          }
           span:nth-child(1){
               font-style: oblique;
               margin-right: 2px;
@@ -188,6 +198,7 @@
         right: 160px;
         width: 120px;
         @extend %button;
+        @include hoverPoint(1.06);
       }
       .boardDeleteBtn{
         position: absolute;
@@ -195,12 +206,14 @@
         right: 20px;
         width: 120px;
         @extend %button;
+        @include hoverPoint(1.06);
       }
     }
   
     //content
   
     .commentDiv {
+
       height: 100%;
       width: 100%;
       margin-top: 20px;
@@ -226,7 +239,9 @@
   
         input[type=submit] {
           width: 100px;
+          border: none;
           @extend %button;
+          @include hoverPoint(1.1);
         }
       }
   
@@ -236,6 +251,7 @@
         justify-content: center;
         cursor: pointer;
         margin-bottom: 20px;
+        @include hoverPoint(1.04);
       }
   
       //전체 댓글
@@ -250,6 +266,10 @@
         p:nth-child(1) {
           font-size: 20px;
           font-weight: bold;
+          transition: font-size 0.3s;
+          &:hover{
+            font-size: 23px;
+          }
         }
         p:nth-child(2) {
           margin-top: 5px;
@@ -273,7 +293,18 @@
           input {
             width: 70px;
             @extend %button;
+            @include hoverPoint(1.1);
           }
+        }
+      }
+      .commtMore{
+        display: flex;
+        justify-content: center;
+        padding-bottom: 15px;
+        button{
+          border: none;
+          @extend %button;
+          @include hoverPoint(1.1);
         }
       }
   
