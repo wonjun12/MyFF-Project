@@ -44,7 +44,9 @@ const BoardDetail = () => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${year}-${month}-${day}`
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${year}-${month}-${day} ${hour}:${minute}`
   }
 
   const [isFollwing, setIsFollwing] = useState(false);    //팔로우여부
@@ -176,12 +178,6 @@ const BoardDetail = () => {
     return arr;
   }
 
-  //날짜 변환
-  const todate = (dateStr) => {
-    const date = new Date(dateStr);
-    return (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
-  }
-
 
   //게시물 삭제
   const boardDeleteFnc = async (BID) => {
@@ -253,14 +249,16 @@ const BoardDetail = () => {
     }
   }, [commView])
 
-   //시간 계산
-   const setTimeer = (createdAt) => {
+
+    
+    //시간 계산
+    const setTimeer = (createdAt) => {
     //게시물 작성날짜 시간 가져오기
     const create = new Date(createdAt);
     //현재 시각 가져옴
     const date = new Date();
+
     //년수 출력
-    
     let times = Math.ceil((date.getTime() - create.getTime()) / 1000);
 
     if(times < 60){
@@ -442,7 +440,7 @@ const BoardDetail = () => {
                   <p>{comment.comm}</p>
                 )}
 
-                <p>{(comment.updatedAt === comment.createdAt) ? todate(comment.createdAt) : todate(comment.updatedAt) + "(수정됨)"}</p>
+                <p style={{color:'gray', paddingTop:'10px'}}>{((comment.updatedAt === comment.createdAt) ? getDate(comment.createdAt) : getDate(comment.updatedAt) + " (수정됨)")} ({setTimeer(comment.createdAt)})</p>
 
                 {comment.UID === parseInt(userID) &&
                   <div className={Styles.commtEditDiv}>

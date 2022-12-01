@@ -65,12 +65,10 @@ const Login = (props) => {
                 loginENName: inputLoginNickNEmail.value,
                 loginPwdName: inputLoginPwd.value,
             }, {withCredentials: true}).then(res => {
-                console.log(res.data);
                 const {result} = res.data;
                 
                 if(result === "ok"){
                     //setMsg("");
-                    console.log(res.data);
                     //세션저장소에 로그인한 이메일 혹은 닉네임 저장함.
                     sessionStorage.setItem('loginUserId', res.data.NickName);
                     sessionStorage.setItem('loginUID', res.data.UID);

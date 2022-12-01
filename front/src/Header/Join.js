@@ -19,6 +19,18 @@ const Join = (props) => {
         month: 1,
         day: 1,
     });
+
+    //생일 선택 유무
+    const [isBirth, setIsBirth] = useState({
+        year:false,
+        month: false,
+        day: false
+    })
+
+    //select list 출력
+    const [showYear, setShowYear] = useState(false)
+    const [showMonth, setShowMonth] = useState(false)
+    const [showDay, setShowDay] = useState(false)
     
     //입력 상태에 따라 오류메세지
     const [emailMsg, setEmailMsg] = useState('');
@@ -63,7 +75,7 @@ const Join = (props) => {
             axios.post(`${SERVER_URL}/emailCk`,{     
                 joinEmail: e.currentTarget.value,
             }).then(res => {
-                console.log(res.data);
+                
                 const {result} = res.data;
 
                 if(result === 'no'){
@@ -144,17 +156,16 @@ const Join = (props) => {
         if(emailConfirm === true && nickConfirm === true && 
             pwdConfirm === true && ckPwdConfirm === true && userNameConfirm === true){
         //if(유효성 검사 불린값 === 모두 true 일때 서브밋된다)
-        const {joinEmailName, joinNickName, joinPwdName, joinNameName
-            , joinYearName, joinMonthName,joinDayName} = e.target;
+        const {joinEmailName, joinNickName, joinPwdName, joinNameName} = e.target;
 
         axios.post(`${SERVER_URL}/join`,{
             joinEmailName: joinEmailName.value,
             joinNickName: joinNickName.value,
             joinPwdName: joinPwdName.value,
             joinNameName: joinNameName.value,
-            joinYearName: joinYearName.value,
-            joinMonthName: joinMonthName.value,
-            joinDayName: joinDayName.value,
+            joinYearName: birth.year,
+            joinMonthName: birth.month,
+            joinDayName: birth.day,
 
         }, {withCredentials: true}).then(res => {
             const {result} = res.data;
@@ -224,30 +235,95 @@ const Join = (props) => {
                             <div className={Styles.selectDiv}>
                                 <div>
                                     <label for='year'>출생년도</label>
-                                    <select id="year"
+                                    <div className={Styles.brithDiv}>
+                                            <button type="button" onClick={() => {
+                                                setShowMonth(false)
+                                                setShowDay(false)
+                                                setShowYear(!showYear);
+                                            }}> {(isBirth.year)? birth.year : '선택' }</button>
+                                            {
+                                                (showYear)? 
+                                                <ul className={Styles.yearUl}>
+                                                {
+                                                    years.map((item) => {
+                                                        return (<li value={item} key={item} onClick={(e) => {
+                                                            setShowYear(!showYear);
+                                                            setIsBirth({...isBirth, year: true});
+                                                            setBirth({ ...birth, year: e.target.value })
+                                                        }}>{item}</li>)
+                                                    })}
+                                                </ul>
+                                                : null
+                                            }
+                                            
+                                        </div>
+                                    {/* <select id="year"
                                         name="joinYearName"
                                         value={birth.year}
                                         onChange={(e) => setBirth({ ...birth, year: e.target.value})}>
                                             {years.map(item => (<option value={item} key={item}>{item}</option>))}
-                                    </select>
+                                    </select> */}
                                 </div>
                                 <div>
                                     <label for='month'>월</label>
-                                    <select id='month'
+                                    <div className={Styles.brithDiv}>
+                                            <button type="button" onClick={() => {
+                                                setShowYear(false)
+                                                setShowDay(false)
+                                                setShowMonth(!showMonth);
+                                            }}> {(isBirth.month)? birth.month : '선택' }</button>
+                                            {
+                                                (showMonth)? 
+                                                <ul className={Styles.monthUl}>
+                                                {
+                                                month.map((item) => {
+                                                    return (<li value={item} key={item} onClick={(e) => {
+                                                        setShowMonth(!showMonth);
+                                                        setIsBirth({...isBirth, month: true});
+                                                        setBirth({ ...birth, month: e.target.value })
+                                                    }}>{item}</li>)
+                                                })}
+                                                </ul>
+                                                : null
+                                            }
+                                            
+                                        </div>
+                                    {/* <select id='month'
                                         name="joinMonthName" 
                                         value={birth.month}
                                         onChange={(e) => setBirth({ ...birth, month: e.target.value})}>
                                             {month.map(item => (<option value={item} key={item}>{item}</option>))}
-                                    </select>
+                                    </select> */}
                                 </div>
                                 <div>
                                     <label for='day'>일</label>
-                                    <select id='day'
+                                    <div className={Styles.brithDiv}>
+                                            <button type="button" onClick={() => {
+                                                setShowMonth(false)
+                                                setShowYear(false)
+                                                setShowDay(!showDay);
+                                            }}> {(isBirth.day)? birth.day : '선택' }</button>
+                                            {
+                                                (showDay)?
+                                                <ul className={Styles.dayhUl}>
+                                                    {
+                                                    days.map((item) => {
+                                                        return (<li value={item} key={item} onClick={(e) => {
+                                                            setShowDay(!showDay);
+                                                            setIsBirth({...isBirth, day: true});
+                                                            setBirth({ ...birth, day: e.target.value })
+                                                        }}>{item}</li>)
+                                                    })}
+                                                </ul>
+                                                : null
+                                            }
+                                        </div>
+                                    {/* <select id='day'
                                         name="joinDayName"
                                         value={birth.day}
                                         onChange={(e) => setBirth({ ...birth, day: e.target.value})}>
                                             {days.map(item => (<option value={item} key={item}>{item}</option>))}
-                                    </select>
+                                    </select> */}
                                 </div>
                             </div>
                             <input className={Styles.joinBtn} type="submit" value="회원가입"/>

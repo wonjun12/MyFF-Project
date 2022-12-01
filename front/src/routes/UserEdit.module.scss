@@ -100,9 +100,9 @@
 
             .selectDiv {
                 display: flex;
-                justify-content: flex-start;
-                margin-top: 15px;
-                margin-bottom: 17px;
+                justify-content: space-around;
+                margin-top: 10px;
+                margin-bottom: 50px;
 
                 label {
                     margin-right: 5px;
@@ -110,8 +110,63 @@
                     font-weight: bold;
                 }
 
-                select {
-                    margin-right: 10px;
+                .brithDiv{
+                    position: relative;
+                    margin-top: 7px;
+                    button{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 90px;
+                        border-radius: 10px;
+                        border: none;
+                        background-color: rgba(245, 222, 179, 0.808);
+                        font-size: 17px;
+                        font-weight: bold;
+                        padding-top: 3px;
+                        padding-bottom: 3px;
+                        @include hoverPoint(1.1);
+                    }
+                    ul{
+                        position: absolute;
+                        overflow-y: auto;
+                        margin-top: 8px;
+                        height: 125px;
+                        background-color: rgb(252, 246, 223);
+                        border-radius: 10px;
+                        overflow-x: hidden;
+                        li{
+                            padding-top: 5px;
+                            padding-bottom: 5px;
+                            font-size: 17px;
+                            @include hoverPoint(1.15);
+                            &:hover{
+                                background-color: rgba(255, 166, 0, 0.692);
+                            }
+                        }
+                        &::-webkit-scrollbar{
+                            width: 8px;
+                        }
+                        &::-webkit-scrollbar-thumb{
+                            border-radius: 13px;
+                            background-color: rgb(253, 174, 83);
+                        }
+                        &::-webkit-scrollbar-track{
+                            border-radius: 13px;
+                            background-color: rgba(128, 128, 128, 0.767);
+                        }
+                    }
+                    .yearUl{
+                        width: 90px;
+                    }
+                    .monthUl{
+                        width: 70px;
+                        margin-left: 13px;
+                    }
+                    .dayhUl{
+                        width: 70px;
+                        margin-left: 12px;
+                    }
                 }
             }
 
@@ -131,11 +186,10 @@
     .userDeleteBtn{
         
         cursor: pointer;
-        margin-top: 5px;
+        margin-top: 10px;
         font-size: 15px;
         font-weight: bold;
         color: #696969;
-        @include hoverPoint(1.1);
     }
 }
 

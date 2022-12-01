@@ -116,6 +116,7 @@ const Password = () => {
           </div>
         ) : (
           <div className={Styles.formDiv}>
+            <span onClick={() => navigate('/')} >✖</span>
             <form onSubmit={emailPostFnc}>
               <h1>MYFF</h1>
               <h2>비밀번호 찾기</h2>

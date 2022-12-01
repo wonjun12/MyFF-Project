@@ -1,4 +1,4 @@
-
+@import '../routes/button';
 .joinModal{
     
     position: fixed;
@@ -80,6 +80,7 @@
             //border-radius: 0px;
             border: none;
             color: white;
+            @include hoverPoint(1.07);
             
         }
     }
@@ -93,14 +94,75 @@
 
 .selectDiv{
     display: flex;
-    justify-content: flex-start;
-    margin-top: 15px;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 25px;
+
     label{
-        margin-right: 5px;
+        display: flex;
+        width: 100%;
+        justify-content: center;
     }
-    select{
-        margin-right: 10px;
-        
+
+
+    .brithDiv{
+        position: relative;
+        margin-top: 12px;
+        button{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            border-radius: 10px;
+            border: none;
+            background-color: rgba(245, 222, 179, 0.808);
+            font-size: 17px;
+            font-weight: bold;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            @include hoverPoint(1.1);
+        }
+        ul{
+            position: absolute;
+            overflow-y: auto;
+            margin-top: 8px;
+            height: 150px;
+            background-color: rgb(252, 246, 223);
+            border-radius: 10px;
+            overflow-x: hidden;
+            li{
+                text-align: center;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 17px;
+                @include hoverPoint(1.15);
+                &:hover{
+                    background-color: rgba(255, 166, 0, 0.692);
+                }
+            }
+            &::-webkit-scrollbar{
+                width: 8px;
+            }
+            &::-webkit-scrollbar-thumb{
+                border-radius: 13px;
+                background-color: rgb(253, 174, 83);
+            }
+            &::-webkit-scrollbar-track{
+                border-radius: 13px;
+                background-color: rgba(128, 128, 128, 0.767);
+            }
+        }
+        .yearUl{
+            width: 90px;
+        }
+        .monthUl{
+            width: 70px;
+            margin-left: 13px;
+        }
+        .dayhUl{
+            width: 70px;
+            margin-left: 12px;
+        }
     }
 }
 
