@@ -257,10 +257,54 @@ export const userEditPost = async (req, res) => {
 
 //유저 삭제
 export const userDelete = async (req, res) => {
+
+    const board = await models.Board.findAll({
+        where : { UID : req.UID}
+    })
+
+    if(!!board[0]){
+        await board.forEach(async ({BID}) => {
+            models.BoardLike.destroy({
+                where: { BID },
+            });
+
+            models.Comment.destroy({
+                where: { BID },
+              });
+          
+            models.Picture.destroy({
+                where: { BID },
+              });
+
+            models.Hashtag.destroy({
+                where: { BID },
+            });
+        })
+    }
+
+    models.BoardLike.destroy({
+        where: { UID: req.UID },
+    });
+
+    models.Follwer.destroy({
+        where : {
+            [Op.or] : [{
+                MyUID : req.UID
+            },{
+                FUID : req.UID
+            }]
+        }
+    })
+    
+    await models.Board.destroy({
+        where : {UID: req.UID}
+    })
+    
     await models.Users.destroy({
         where: {UID: req.UID}
     })
-    res.clearCookie("MyAccess").end();
+  
+    res.clearCookie("MyAccess").json({result:true}).end();
 };
 
 //팔로우, 언팔로우

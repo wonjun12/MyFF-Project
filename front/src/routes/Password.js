@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import Styles from './Password.module.scss'
 
 const SERVER_URL = "/api/home/";
 
 const Password = () => {
 
+  const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const point = {
     warPoint: params.get('warPoint'),
@@ -33,10 +35,21 @@ const Password = () => {
       });
       const { result } = res.data;
       if (result) {
-        window.location.href = '/';
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: '비밀번호 변경 완료!',
+          showConfirmButton: false,
+          timer: 1200
+        })
       } else {
-        alert("아이디 혹은 비밀번호가 올바르지 않습니다.\n다시 접속 해주세요.");
+        Swal.fire({
+          icon: 'error',
+          title: '잘못된 접근',
+          text: '잘못된 접근입니다!!',
+        })
       }
+      navigate('/');
     }
   }
 
@@ -58,7 +71,13 @@ const Password = () => {
     await axios.post(SERVER_URL+"pwdMail", {
       email: email.value,
     });
-    setEmailPost("이메일을 성공적으로 보냈습니다.")
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: '이메일을 성공적으로 보냈습니다.',
+      showConfirmButton: false,
+      timer: 1500
+    })
   }
 
   useEffect(() => {
@@ -91,7 +110,6 @@ const Password = () => {
               <h1>MYFF</h1>
               <h2>비밀번호 찾기</h2>
               <input type="text" name="email" placeholder="이메일을 입력해주세요"/>
-              <p>{emailPost}</p>
               <button type="submit">전송</button>
             </form>
           </div>

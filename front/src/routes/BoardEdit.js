@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Styles from "./BoardWrite.module.scss";
 import { FaStar } from "react-icons/fa";
 import { Buffer } from "buffer";
 import { SetMap } from "../kakao/kakaoAPI";
 import SearchBoard from "../kakao/kakaoSearchBoard";
 import CreateMaker from "../kakao/kakaoCreateMarker";
+import Swal from "sweetalert2";
 
 const SERVER_URL = "/api/board/";
 
@@ -24,6 +25,8 @@ const config = {
 
 const BoardEdit = () => {
   axios.defaults.withCredentials = true;
+
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const [content, setContent] = useState("");
@@ -96,20 +99,39 @@ const BoardEdit = () => {
       formData.append("bodys", JSON.stringify(data));
 
       axios.post(SERVER_URL + id + "/edit", formData, config).then((res) => {
-        // console.log(res.data);
         const { result } = res.data;
         if (result === "ok") {
-          window.location.href = "/";
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: '게시물 작성 완료',
+            showConfirmButton: false,
+            timer: 1200
+          })
+          navigate('/')
         } else if (result === "error") {
-          window.location.href = "/";
+
+          navigate('/')
         }
       });
     } else if (!location.name) {
-      alert("주소를 선택해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '주소 오류',
+        text: '주소를 선택해 주세요.',
+      })
     } else if (!currentValue) {
-      alert("별점을 추가해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '별점 오류',
+        text: '별점을 넣어주세요',
+      })
     } else {
-      alert("이미지를 업로드 해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '이미지 오류',
+        text: '이미지는 1개이상 넣어주세요.',
+      })
     }
   }
 

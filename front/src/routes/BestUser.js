@@ -18,7 +18,6 @@ const BestUser = () => {
         if (entries[0].isIntersecting && hasMore) {
           setPage(page.num + 1);
         } else if (!hasMore) {
-          console.log("더 없음");
         }
 
       }, { threshold: 1 });

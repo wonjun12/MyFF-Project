@@ -1,13 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Styles from "./UserEdit.module.scss";
 import { Buffer } from "buffer";
+import Swal from "sweetalert2";
 
 const SERVER_URL = "/api/user/";
 
 const UserEdit = (props) => {
 
+    const navigate = useNavigate();
     const { close } = props;
     const { id } = useParams();
 
@@ -24,7 +26,7 @@ const UserEdit = (props) => {
     });
 
     const [nickMsg, setNickMsg] = useState("");
-    //const [originPwdMsg, setOriginPwdMsg] = useState("");
+    const [originPwdMsg, setOriginPwdMsg] = useState("");
     const [editPwdMsg, setEditPwdMsg] = useState("");
     const [editConfirmPwdMsg, setEditConfirmPwdMsg] = useState("");
     //const [proFile, setproFile] = useState();
@@ -91,8 +93,12 @@ const UserEdit = (props) => {
             editPCKName: originPwd
         }).then(res => {
             const { pwdCk } = res.data;
-            //console.log(res.data);
-            setPrevCkPwd(pwdCk);
+            
+            if(pwdCk){
+                setPrevCkPwd(pwdCk);
+            }else{
+                setOriginPwdMsg('입력정보를 확인하세요');
+            }
 
         })
     }
@@ -100,6 +106,7 @@ const UserEdit = (props) => {
     function editNickCkFnc(e) {
         setEditNickConfirm(false);
         setEditNick(e.currentTarget.value);
+        let nick = e.currentTarget.value;
         const nickRegEx = /^[A-Za-z0-9가-힣]{2,8}$/;
 
         if (!nickRegEx.test(e.currentTarget.value)) {
@@ -112,9 +119,10 @@ const UserEdit = (props) => {
 
                 if (result === 'no') {
 
-                    if (sessionStorage.getItem('loginUserId') === editNick) {
+                    if (sessionStorage.getItem('loginUserId') === nick) {
                         setNickMsg('');
                         setEditNickConfirm(true);
+                        console.log(nick);
                     } else {
                         setNickMsg('이미 사용중인 닉네임입니다.');
                     }
@@ -208,6 +216,12 @@ const UserEdit = (props) => {
         setProfileDelete(true);
     }
 
+    function enterCk(e){    //비밀번호 확인 엔터키입력
+        if(e.keyCode === 13){
+            originPwdCk();
+        }
+    }
+
     useEffect(() => {
         const fileReader = new FileReader();    //프로필사진 미리보기
 
@@ -227,6 +241,42 @@ const UserEdit = (props) => {
             fileReader.abort();
         }
     }, [imgFile]);
+
+    const deleteUser = async () => {
+
+        Swal.fire({
+            title: '정말로 탈퇴 하시겠습니까?',
+            text: "탈퇴 후 취소할수 없습니다.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '탈퇴하기',
+            cancelButtonText:'취소'
+          }).then(async (result) => {
+            if(result.isConfirmed){
+                const res = await axios.post('/api/user/delete');
+                const { result } = res.data;
+
+                if(result){
+                    Swal.fire(
+                      '탈퇴 완료!',
+                      '정상적으로 탈퇴되었습니다.',
+                      'success',
+                    )
+                    sessionStorage.removeItem('loginUserId');
+                    sessionStorage.removeItem('loginUID');
+                    window.location.href = '/';
+                }
+            }
+                
+
+
+          })
+          return;
+        
+        
+    }
 
     //프로필 삭제, 프로필 formDate로 보내기, get 프로필 보여주기
     return (
@@ -250,17 +300,17 @@ const UserEdit = (props) => {
                                 </div>
                                 <div className={Styles.editInput}>
                                     <input name="editNickName" value={editNick} onChange={editNickCkFnc} />
-                                    <span>{nickMsg}</span>
+                                    <span className={Styles.nickSpan}>{nickMsg}</span>
                                     <input name="editPwdName" placeholder="비밀번호"
                                         value={editPwd}
                                         onChange={editPwdCkFnc}
                                         type="password" />
-                                    <span>{editPwdMsg}</span>
+                                    <span className={Styles.pwdSpan}>{editPwdMsg}</span>
                                     <input name="editConfirmPwdName"
                                         placeholder="비밀번호 재입력"
                                         onChange={editCkPwdCkFnc}
                                         type="password" />
-                                    <span>{editConfirmPwdMsg}</span>
+                                    <span className={Styles.pwdCkSpan}>{editConfirmPwdMsg}</span>
                                 </div>
                                 <div className={Styles.selectDiv}>
                                     <div>
@@ -296,7 +346,7 @@ const UserEdit = (props) => {
                                 </div>
                             </form>
                         </div>
-                        <p className={Styles.userDeleteBtn}>회원탈퇴</p>
+                        <p className={Styles.userDeleteBtn} onClick={deleteUser}>회원탈퇴</p>
                     </div>
 
                 </div>
@@ -311,7 +361,9 @@ const UserEdit = (props) => {
                         </div>
                         <div className={Styles.prevInput}>
                             <input type="password" placeholder="현재비밀번호"
-                                value={originPwd} onChange={(e) => setOrignPwd(e.target.value)} />
+                                value={originPwd} onChange={(e) => setOrignPwd(e.target.value)}
+                                onKeyUp={enterCk} />
+                            <p>{originPwdMsg}</p>
                         </div>
                         <div className={Styles.prevBtn}>
                             <button onClick={originPwdCk}>확인</button>

@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Styles from "./BoardDetail.module.scss";
 import { Buffer } from "buffer";
 import { SetMap } from "../kakao/kakaoAPI";
 import CreateMarker from '../kakao/kakaoCreateMarker';
+import Swal from 'sweetalert2'
 
 const SERVER_URL = '/api/board';
 
@@ -12,6 +13,7 @@ const BoardDetail = () => {
   axios.defaults.withCredentials = true;
 
   const userID = sessionStorage.getItem("loginUID");
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const [board, setBoard] = useState({});
@@ -149,13 +151,47 @@ const BoardDetail = () => {
     return (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
   }
 
+  const boardDeleteFnc = async (BID) => {
+
+
+    Swal.fire({
+      title: '정말로 삭제 하시겠습니까?',
+      text: "삭제 후 취소할수 없습니다.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '삭제하기',
+      cancelButtonText:'취소'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await axios.post(`${SERVER_URL}/${BID}/delete`);
+        const { result } = res.data;
+
+        if(result){
+          Swal.fire(
+            '삭제 완료!',
+            '정상적으로 삭제되었습니다.',
+            'success',
+          )
+          navigate(`/`);
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: '에러',
+            text: '예상치 못한 오류가 났습니다.',
+          })
+        }
+        
+      }
+    })
+  }
   useEffect(() => {
     dataFetch();
   }, []);
 
   return (
     <div className={Styles.container}>
-
       <div className={Styles.userMap}>
         {/*==== User ====*/}
         <div className={Styles.userDiv}>
@@ -222,6 +258,9 @@ const BoardDetail = () => {
           <div className={Styles.star}>
             {boardStar()}
           </div>
+          <div className={Styles.view}>
+            👁 {board.Views}
+          </div>
         </div>
         <div>
           <p>{board.Content}</p>
@@ -230,14 +269,19 @@ const BoardDetail = () => {
           <p className={Styles.tag}>
             {board.Hashtags?.map(({ title }) => {
               return (
-                <Link to={`/tag/${title}`}><span>{`#${title}`}</span></Link>
+                <Link to={`/tag/${title}`} key={Math.random()}><span>{`#${title}`}</span></Link>
               );
             })}
           </p>
         </div>
         <p>{boardDate.create}</p>
         {board.User?.UID === parseInt(userID) &&
-          <Link to={`/board/${board.BID}/edit`}><input className={Styles.boardEditBtn} type="button" value="수정하기" /></Link>
+          <div>
+            <Link to={`/board/${board.BID}/edit`}>
+              <input className={Styles.boardEditBtn} type="button" value="수정하기" />
+            </Link>
+            <input className={Styles.boardDeleteBtn} type="button" value="삭제하기" onClick={() => boardDeleteFnc(board.BID)}/>
+          </div>
         }
       </div>
 

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import Styles from "./Header.module.scss";
 import Login from "./Login";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import HeaderSearch from "./HeaderSearch";
@@ -10,6 +10,8 @@ import HeaderSearch from "./HeaderSearch";
 const SERVER_URL = "/api/user";
 
 function Header({mapView}) {
+
+  const navigate = useNavigate();
 
   const loginCk = async () => {
     const {data} = await axios.get(`/api/home/login`);
@@ -115,7 +117,7 @@ function Header({mapView}) {
         }
       }
     }else{
-        window.location.href = `/tag/${body.value}`
+      navigate(`/tag/${body.value}`);
     }
   }
 

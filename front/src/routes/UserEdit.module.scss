@@ -14,7 +14,7 @@
     box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, .3);
     border-radius: 10px;
     width: 500px;
-    height: 700px;
+    height: 650px;
     background-color: white;
     position: relative;
     box-sizing: border-box;
@@ -60,7 +60,7 @@
                 p {
                     font-size: 13px;
                     margin-top: 2px;
-                    margin-left: 290px;
+                    margin-left: 292px;
                     color: #696969;
                     cursor: pointer;
                 }
@@ -80,17 +80,32 @@
                 span {
                     color: red;
                     font-size: 12px;
+                    font-weight: bold;
 
                 }
+                // .nickSpan{
+                //     margin-right: 170px;
+                // }
+                // .pwdSpan{
+                //     margin-right: 122px;
+                // }
+                // .pwdCkSpan{
+                //     margin-right: 242px;
+                // }
+
+                
             }
 
             .selectDiv {
                 display: flex;
                 justify-content: flex-start;
                 margin-top: 15px;
+                margin-bottom: 17px;
 
                 label {
                     margin-right: 5px;
+                    //font-size: 20px;
+                    font-weight: bold;
                 }
 
                 select {
@@ -168,11 +183,19 @@
         }
 
         .prevInput {
-            margin-bottom: 20px;
+            margin-bottom: 13px;
 
             input {
                 width: 400px;
-                font-size: 20px;
+                padding: 3px;
+                font-size: 15px;
+            }
+            p{
+                margin-top: 5px;
+                margin-right: 280px;
+                font-size: 12px;
+                font-weight: bold;
+                color: red;
             }
         }
 
@@ -187,4 +210,5 @@
             }
         }
     }
+    
 }

@@ -84,6 +84,9 @@ function Main() {
             <span className={Styles.star}>
               {boardStar(board.Star)}
             </span>
+            <span>
+              👁 {board.Views}
+            </span>
           </div>
         </div>
       </>

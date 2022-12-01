@@ -6,7 +6,8 @@ import { SetMap } from "../kakao/kakaoAPI";
 import SearchBoard from "../kakao/kakaoSearchBoard";
 import CreateMaker from "../kakao/kakaoCreateMarker";
 import { socket } from "../socket/socket";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 const SERVER_URL = "/api/board";
 //별점 스타일
@@ -23,6 +24,8 @@ const config = {
 
 const BoardWrite = () => {
   axios.defaults.withCredentials = true;
+
+  const navigate = useNavigate();
 
   //이미지 뷰 ref, state
   const inputRef = useRef(null); //input file
@@ -62,18 +65,37 @@ const BoardWrite = () => {
 
         if (result === "ok") {
           socket.emit("boardCreate");
-          window.location.href = "/";
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: '게시물 작성 완료',
+            showConfirmButton: false,
+            timer: 1200
+          })
+          navigate('/')
         } else if (result === "error") {
-          alert("로그인 하고 하셈");
-          window.location.href = "/";
+
+          navigate('/')
         }
       });
     } else if (!location.name) {
-      alert("주소를 선택해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '주소 오류',
+        text: '주소를 선택해 주세요.',
+      })
     } else if (!imageFiles.length) {
-      alert("이미지를 업로드 해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '이미지 오류',
+        text: '이미지는 1개이상 넣어주세요.',
+      })
     } else if (!currentValue) {
-      alert("별점을 추가해주세요");
+      Swal.fire({
+        icon: 'error',
+        title: '별점 오류',
+        text: '별점을 넣어주세요',
+      })
     }
   };
 

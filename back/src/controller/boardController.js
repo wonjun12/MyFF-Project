@@ -65,6 +65,12 @@ export const boardWritePost = async (req, res) => {
 //게시글 보기
 export const boardSee = async (req, res) => {
   const { id } = req.params;
+  
+  await models.Board.increment({
+    Views: 1
+  },{
+    where: {BID: id}
+  })
 
   const Board = await models.Board.findOne({
     where: { BID: id },
@@ -239,7 +245,7 @@ export const boardEditPost = async (req, res) => {
 export const boardDelte = async (req, res) => {
   const { id } = req.params;
 
-  const board = models.Board.findOne({
+  const board = await models.Board.findOne({
     where : {
       BID : id,
       UID : req.UID
@@ -248,20 +254,35 @@ export const boardDelte = async (req, res) => {
 
   if(!!board){
     //외래키 때문에 사진 먼저 삭제 해야함.
-    await models.Picture.destroy({
-      where: { BID: id },
-    });
+    try {
+      await models.BoardLike.destroy({
+        where: { BID: id },
+      });
   
-    await models.Hashtag.destroy({
-      where: { BID: id },
-    });
+      await models.Comment.destroy({
+        where: { BID: id },
+      });
   
-    await models.Board.destroy({
-      where: { BID: id },
-    });
-  }
+      await models.Picture.destroy({
+        where: { BID: id },
+      });
+    
+      await models.Hashtag.destroy({
+        where: { BID: id },
+      });
+    
+      await models.Board.destroy({
+        where: { BID: id },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    
 
-  return res.end();
+    return res.json({ result: "ok" }).end();
+  } else {
+    return res.json({ result: "err" }).end();
+  }
 };
 
 //댓글 작성

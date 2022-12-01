@@ -2,6 +2,7 @@ import React from "react";
 import Styles from "./Join.module.scss";
 import { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const SERVER_URL = "/api/home";
 
@@ -151,8 +152,21 @@ const Join = (props) => {
             
             if(result === "ok"){
                 joinClose();
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '회원가입 완료!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
             }
-        }).catch((error)=>console.log("회원가입실패"));
+        }).catch((error)=>{
+            Swal.fire({
+                icon: 'error',
+                title: '에러',
+                text: '예상치 못한 오류가 났습니다.',
+              })
+        });
        
     }
 }
