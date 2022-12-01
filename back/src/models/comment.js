@@ -32,12 +32,12 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: sequelize.fn('NOW')
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: sequelize.fn('NOW')
     }
   }, {
     charset: 'utf8',

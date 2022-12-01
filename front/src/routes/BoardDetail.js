@@ -253,6 +253,44 @@ const BoardDetail = () => {
     }
   }, [commView])
 
+   //시간 계산
+   const setTimeer = (createdAt) => {
+    //게시물 작성날짜 시간 가져오기
+    const create = new Date(createdAt);
+    //현재 시각 가져옴
+    const date = new Date();
+    //년수 출력
+    
+    let times = Math.ceil((date.getTime() - create.getTime()) / 1000);
+
+    if(times < 60){
+      return `${times}초 전`
+    }else{
+      times = Math.floor(times / 60);
+      if(times < 60){
+        return `${times}분 전`
+      } else{
+        times =  Math.floor(times / 60);
+        if(times < 24){
+          return `${times}시간 전`
+        }else{
+          times =  Math.floor(times / 24);
+          if(times < 30){
+            return `${times}일 전`
+          }else{
+            times =  Math.floor(times / 30);
+            if(times < 12){
+              return `${times}달 전`
+            }else {
+              times =  Math.floor(times / 12);
+              return `${times}년 전`
+            }
+          }
+        }
+      }
+    }
+  }
+
 
   return (
     <div className={Styles.container}>
@@ -290,8 +328,7 @@ const BoardDetail = () => {
             <SetMap />
             {CreateMarker(board.Location)}
             <div className={Styles.locationDiv}>
-              {/* <p>{board.PlaceName}</p> */}
-              <p>{board.PlaceName}</p>
+              <h1>{board.PlaceName}</h1>
               <p>{board.Location}</p>
             </div>
           </div>
@@ -347,7 +384,7 @@ const BoardDetail = () => {
             })}
           </p>
         </div>
-        <p>{boardDate.create}</p>
+        <p className={Styles.createDate}>{boardDate.create} ({setTimeer(board.createdAt)})</p>
         {board.User?.UID === parseInt(userID) &&
           <div>
             <Link to={`/board/${board.BID}/edit`}>
@@ -439,9 +476,5 @@ const BoardDetail = () => {
   );
 }
 
-
-const createCommt = (comments, commView) => {
-
-}
 
 export default BoardDetail;

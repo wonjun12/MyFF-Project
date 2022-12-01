@@ -27,21 +27,12 @@ module.exports = (sequelize, DataTypes) => {
     Photo: {
       allowNull: false,
       type: DataTypes.BLOB("long")
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     charset: 'utf8',
     collate: 'utf8_general_ci',
     sequelize,
+    timestamps: false,
     modelName: 'Picture',
   });
 

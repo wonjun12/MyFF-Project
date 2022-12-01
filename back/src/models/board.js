@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     PlaceName : DataTypes.STRING,
-    Content: DataTypes.STRING(65535),
+    Content: DataTypes.STRING(10000),
     Star: DataTypes.INTEGER,
     Views: {
       type: DataTypes.INTEGER,
@@ -38,12 +38,12 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: sequelize.fn('NOW')
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: sequelize.fn('NOW')
     }
   }, {
     charset: 'utf8',

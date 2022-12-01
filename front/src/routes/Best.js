@@ -47,6 +47,44 @@ const Best = ({ isTag }) => {
     return arr;
   }
 
+  //시간 계산
+  const setTimeer = (createdAt) => {
+    //게시물 작성날짜 시간 가져오기
+    const create = new Date(createdAt);
+    //현재 시각 가져옴
+    const date = new Date();
+    //년수 출력
+    
+    let times = Math.ceil((date.getTime() - create.getTime()) / 1000);
+
+    if(times < 60){
+      return `${times}초 전`
+    }else{
+      times = Math.floor(times / 60);
+      if(times < 60){
+        return `${times}분 전`
+      } else{
+        times =  Math.floor(times / 60);
+        if(times < 24){
+          return `${times}시간 전`
+        }else{
+          times =  Math.floor(times / 24);
+          if(times < 30){
+            return `${times}일 전`
+          }else{
+            times =  Math.floor(times / 30);
+            if(times < 12){
+              return `${times}달 전`
+            }else {
+              times =  Math.floor(times / 12);
+              return `${times}년 전`
+            }
+          }
+        }
+      }
+    }
+  }
+
   const boardComponet = (board) => {
     //이미지 변환
     let profile = `${process.env.PUBLIC_URL}/img/profile.png`;
@@ -74,7 +112,10 @@ const Best = ({ isTag }) => {
           <img className={Styles.boardImg} src={`data:image;base64,${img}`} />
         </div>
         <div className={Styles.contentsDiv}>
-          <h1>{board.PlaceName}</h1>
+          <span className={Styles.titleName}>
+            <h1>{board.PlaceName}</h1>
+            <p>{setTimeer(board.createdAt)}</p>
+          </span>
           <h2>{board.Location}</h2>
           <p>{coneShort(board.Content)}</p>
           <p className={Styles.tag}>

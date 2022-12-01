@@ -208,6 +208,11 @@
         @extend %button;
         @include hoverPoint(1.06);
       }
+      .createDate{
+        margin-top: 5px;
+        font-size: 17px;
+        color: gray;
+      }
     }
   
     //content
