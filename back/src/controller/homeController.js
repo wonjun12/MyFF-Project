@@ -280,7 +280,7 @@ export const locationPage = async (req, res) => {
             include: [{
                 model: models.Users,
                 require: true,
-                attributes: ['NickName']
+                attributes: ['NickName', 'UID', 'ProFile']
             },{
                 model: models.Picture,
                 require: true,
@@ -305,7 +305,7 @@ export const locationPage = async (req, res) => {
                     include: [{
                         model: models.Users,
                         require: true,
-                        attributes: ['UID', 'NickName']
+                        attributes: ['UID', 'NickName', 'ProFile']
                     },{
                         model: models.Picture,
                         required: true,

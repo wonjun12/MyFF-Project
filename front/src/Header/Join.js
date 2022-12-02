@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Styles from "./Join.module.scss";
 import { useState } from "react";
 import axios from "axios";
@@ -118,8 +118,10 @@ const Join = (props) => {
 
         if(!pwdRegEx.test(e.currentTarget.value)){
             setPwdMsg('8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.');
-        }else{
+        }else if(e.currentTarget.value !== ckPwd){
+            setCkPwdMsg('비밀번호가 일치하지 않습니다.');
             setPwdMsg('');
+        }else{
             setPwdConfirm(true);
         }
     }

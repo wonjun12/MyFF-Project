@@ -27,6 +27,10 @@ const HeaderSearch = ({searchValue, setSearchValue, select}) => {
         
     }
 
+    const nameSearchFnc = (UID) => {
+        window.location.href = `/user/${UID}`;
+    }
+
     
     useEffect(() => {
         autoLeft();
@@ -79,8 +83,8 @@ const HeaderSearch = ({searchValue, setSearchValue, select}) => {
 
                         return (
                             <li key={index} onClick={() => setSearchValue(null)}>
-                                <Link to={`/user/${UID}`}>
-                                    <div className={styled.searchList}>
+                                {/* <Link to={`/user/${UID}`}> */}
+                                    <div className={styled.searchList} onClick={() => nameSearchFnc(UID)}>
                                         <img src={photo} />
                                         <div>
                                             <p>이름 :</p>
@@ -95,7 +99,7 @@ const HeaderSearch = ({searchValue, setSearchValue, select}) => {
                                             <p>{create}</p>   
                                         </div>
                                     </div>
-                                </Link>
+                                {/* </Link> */}
                             </li>
                             
                         );

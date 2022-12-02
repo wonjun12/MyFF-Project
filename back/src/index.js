@@ -32,16 +32,16 @@ models.sequelize.sync().then(() => {
 
 
 //정책 설정
-import cors from 'cors';
-const corsOptions = { 
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
-    credentials : true,
-};
-app.use(cors(corsOptions));
+// import cors from 'cors';
+// const corsOptions = { 
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET", "POST"],
+//     credentials : true,
+// };
+// app.use(cors(corsOptions));
 
 //기본 경로 설정
-// app.use(express.static(path.join(__dirname, "../../front/build")));
+app.use(express.static(path.join(__dirname, "../../front/build")));
 
 //html body 해석
 app.use(express.json());
@@ -58,9 +58,9 @@ app.use("/api/user", userRouter);
 app.use("/api/board", boardRouter);
 
 //front로 보여줄 경로에 index경로 설정
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "../../front/build", "index.html"));
-// });
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../front/build", "index.html"));
+});
 
 //오픈한 서버 정보 받기
 const server =  app.listen(PORT, () => {
