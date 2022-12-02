@@ -20,6 +20,10 @@
     font-family: 'NamumLight';
     src: url('./font/NanumGothicLight.woff') format('woff');
 }
+@font-face {
+    font-family: 'hanna';
+    src: url('./font/HANNA.woff') format('woff');
+}
 
 /* 화면 비율 */
 #root{

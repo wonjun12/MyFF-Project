@@ -42,11 +42,15 @@ const BoardDetail = () => {
   const getDate = (str) => {
     const date = new Date(str);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
+    const month = dateAddZero(date.getMonth() + 1);
+    const day = dateAddZero(date.getDate());
+    const hour = dateAddZero(date.getHours());
+    const minute = dateAddZero(date.getMinutes());
     return `${year}-${month}-${day} ${hour}:${minute}`
+  }
+
+  const dateAddZero = (date) => {
+    return ((date < 10)? '0' : '') + date;
   }
 
   const [isFollwing, setIsFollwing] = useState(false);    //팔로우여부

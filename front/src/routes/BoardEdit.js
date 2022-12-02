@@ -318,6 +318,7 @@ const BoardEdit = () => {
     setContent(e.target.value);
   };
   return (
+    <div className={Styles.container}>
     <form onSubmit={boardEditSubmit}>
       <div>
         <input type="radio" name="accordion" defaultChecked id="writeMapId" />
@@ -531,6 +532,7 @@ const BoardEdit = () => {
         </div>
       </div>
     </form>
+    </div>
   );
 };
 export default BoardEdit;

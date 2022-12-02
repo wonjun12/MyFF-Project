@@ -112,6 +112,7 @@
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: 187px;
         gap: 3px;
+        grid-auto-rows: 187px;
         background-color: white;
 
         .imgDiv{

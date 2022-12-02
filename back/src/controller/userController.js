@@ -148,7 +148,7 @@ export const userSee = async (req, res) => {
             as: 'Follwers',
             attributes: ["UID"],
         },
-    ]
+    ],order: [[models.Board, 'BID', 'DESC']]
     });
     let follwer = false;
 

@@ -1,4 +1,8 @@
 @import "./button";
+.container{
+  background-color: #f1f1f1;
+  padding: 20px;
+}
 .imgDiv {
   display: flex;
   overflow-x: auto;
@@ -69,7 +73,12 @@ input[id*="write"] {
   display: none;
 }
 input[id*="write"] + label {
-  border: 1px solid black;
+  // border: 1px solid black;
+  font-weight: bold;
+  font-size: 20px;
+  background-color: white;
+  margin-bottom: 10px;
+
   padding: 20px;
   cursor: pointer;
   display: block;

@@ -272,6 +272,7 @@ const BoardWrite = () => {
   }, [locationValue]);
 
   return (
+    <div className={Styles.container}>
     <form onSubmit={boardSubmit}>
       <div>
         <input type="radio" name="accordion" defaultChecked id="writeMapId" />
@@ -445,6 +446,7 @@ const BoardWrite = () => {
         </div>
       </div>
     </form>
+    </div>
   );
 };
 
