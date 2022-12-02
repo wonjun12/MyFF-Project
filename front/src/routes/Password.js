@@ -23,6 +23,7 @@ const Password = () => {
   const [urlCk, setUrlCk] = useState(false);
   //유효성 검사
   const pwdRef = useRef();
+  const pwdCkRef = useRef();
   
 
 
@@ -60,14 +61,18 @@ const Password = () => {
   }
 
 //비번유효성
-  const pwdCkFnc = (e) => {    
+  const pwdCkFnc = () => {    
     const pwdRegEx = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
+
     if (!pwdRegEx.test(pwdRef.current.value)) {
       setpwdMsg('8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.');
-    } else if (pwdRef.current.value !== e.target.value) {
-      setPwdCk("비밀번호가 일치하지않습니다.");
     } else {
       setpwdMsg("");
+    }
+    
+    if (pwdRef.current.value !== pwdCkRef.current.value && !!pwdCkRef.current.value) {
+      setPwdCk("비밀번호가 일치하지않습니다.");
+    } else {
       setPwdCk("");
     }
   }
@@ -109,7 +114,7 @@ const Password = () => {
               <h2>비밀번호 변경</h2>
               <input type="password" name="newPassword" placeholder="새로운 비밀번호" ref={pwdRef} onChange={pwdCkFnc} />
               <p>{pwdMsg}</p>
-              <input type="password" name="newPasswordCk" placeholder="새로운 비밀번호 확인" onChange={(e) => pwdCkFnc(e)} />
+              <input type="password" name="newPasswordCk" placeholder="새로운 비밀번호 확인" ref={pwdCkRef} onChange={pwdCkFnc} />
               <p>{pwdCk}</p>
               <button type="submit">변경</button>
             </form>

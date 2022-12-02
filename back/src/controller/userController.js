@@ -4,7 +4,7 @@ import models from "../models";
 import jwt from "../jwt/jwt";
 
 //hash 단반향 변환 함수
-function addHash(pwd, salt){
+function addHash(pwd, salt) {
     return crypto.createHash("sha512").update(pwd + salt).digest("hex");
 }
 
@@ -16,84 +16,84 @@ function addSalt() {
 //로그인 체크
 export const userLoginCk = async (req, res) => {
     const Users = await models.Users.findOne({
-            where: {
-                UID: req.UID
-            },
+        where: {
+            UID: req.UID
+        },
     });
 
-    res.status(200).json({result: 'ok', UID: Users.UID, NickName: Users.NickName}).end();
+    res.status(200).json({ result: 'ok', UID: Users.UID, NickName: Users.NickName }).end();
 };
 
 //이메일 중복확인
 export const userJoinEmailCk = async (req, res) => {
-    const {joinEmail} = req.body;
-    
+    const { joinEmail } = req.body;
+
     const Users = await models.Users.findOne({
-        where: {Email: joinEmail}
+        where: { Email: joinEmail }
 
     });
 
-    if(Users){
-        res.status(201).json({result: 'no'}).end();    
-    }else{
-        res.status(201).json({result: 'yes'}).end();
+    if (Users) {
+        res.status(201).json({ result: 'no' }).end();
+    } else {
+        res.status(201).json({ result: 'yes' }).end();
     }
 };
 
 //닉네임 중복확인
-export const userJoinNickCk = async (req, res) =>{
-    const {joinNick} = req.body;
+export const userJoinNickCk = async (req, res) => {
+    const { joinNick } = req.body;
     const Users = await models.Users.findOne({
-        where: {NickName: joinNick}
+        where: { NickName: joinNick }
     });
 
-    if(Users){
-        res.status(201).json({result: 'no'}).end();
-    }else{
-        res.status(201).json({result: 'yes'}).end();
+    if (Users) {
+        res.status(201).json({ result: 'no' }).end();
+    } else {
+        res.status(201).json({ result: 'yes' }).end();
     }
 
 };
 
 
 //로그인
-export const userLogin  = async (req, res) => {
-    const {loginENName, loginPwdName} = req.body;
+export const userLogin = async (req, res) => {
+    const { loginENName, loginPwdName } = req.body;
 
     try {
         const Users = await models.Users.findOne({
             where: {
                 //or 연산자 사용
-                [Op.or]: [{Email: loginENName}, {NickName: loginENName}]
+                [Op.or]: [{ Email: loginENName }, { NickName: loginENName }]
             }
         });
-        
-        const {Salt, Pwd, NickName} = Users;
+
+        const { Salt, Pwd, NickName } = Users;
         //hash 단방향 변환
         const hashPassword = addHash(loginPwdName, Salt);
 
-        if(hashPassword === Pwd){
-            console.log("로그인 성공");
+        if (hashPassword === Pwd) {
+            //console.log("로그인 성공");
             //jwt 생성
-            const {token} = await jwt.sign(Users);
-            
-            res.cookie("MyAccess", token, {httpOnly:true});
-            res.status(201).json({result: 'ok', UID: Users.UID, NickName}).end();
+            const { token } = await jwt.sign(Users);
 
-        }else{
-            return res.json({result:"error", reason:"뭔가 틀림1"}).end();
+            res.cookie("MyAccess", token, { httpOnly: true });
+            res.status(201).json({ result: 'ok', UID: Users.UID, NickName }).end();
+
+        } else {
+            return res.json({ result: "error", reason: "뭔가 틀림1" }).end();
         }
 
     } catch (error) {
-        return res.json({result:"error", reason:"뭔가 틀림2"}).end();
+        return res.json({ result: "error", reason: "뭔가 틀림2" }).end();
     }
 };
 
 //회원 가입
 export const userJoin = async (req, res) => {
 
-    const {joinPwdName, joinEmailName, joinNameName, joinNickName, joinYearName, joinMonthName, joinDayName} 
-            = req.body;
+    const { joinPwdName, joinEmailName, joinNameName, joinNickName, joinYearName, joinMonthName, joinDayName }
+        = req.body;
 
     //현재 날짜에 의거하여 랜덤 부여
     const salt = addSalt();
@@ -112,58 +112,58 @@ export const userJoin = async (req, res) => {
             BirthDay: birthDay
         })
 
-        return res.json({result:"ok"}).end();
+        return res.json({ result: "ok" }).end();
     } catch (error) {
-        return res.json({result:"error"}).end();
+        return res.json({ result: "error" }).end();
     }
 };
 
 //로그 아웃
 export const userLogout = (req, res) => {
     res.clearCookie("MyAccess");
-    res.json({result: 'ok'}).end();
+    res.json({ result: 'ok' }).end();
 };
 
 
 //유저 정보 보기
 export const userSee = async (req, res) => {
-    const {id} = req.params;
-    const {MyAccess} = req.cookies;
+    const { id } = req.params;
+    const { MyAccess } = req.cookies;
     //토큰 유무 확인(자신인지 아닌지 판별 가능)
-    
+
     const Users = await models.Users.findOne({
-        where: {UID: id},
+        where: { UID: id },
         include: [{
             model: models.Board,
             include: [{
                 model: models.Picture,
                 require: true
             }]
-        },{
-            model: models.Users, 
+        }, {
+            model: models.Users,
             as: 'Follwings',
             attributes: ["UID"],
-        },{
-            model: models.Users, 
+        }, {
+            model: models.Users,
             as: 'Follwers',
             attributes: ["UID"],
         },
-    ],order: [[models.Board, 'BID', 'DESC']]
+        ], order: [[models.Board, 'BID', 'DESC']]
     });
     let follwer = false;
 
     //접속 유무에 따라 팔로우 확인
-    if(!!MyAccess){
+    if (!!MyAccess) {
         const user = await jwt.verify(MyAccess);
 
-        if(!!user){
+        if (!!user) {
             follwer = await models.Follwer.findOne({
-                where: {FUID: id, MyUID: user.UID}
+                where: { FUID: id, MyUID: user.UID }
             });
         }
     }
 
-    return res.json({Users, isFollwer: !!follwer}).end();
+    return res.json({ Users, isFollwer: !!follwer }).end();
 };
 
 //유저 수정 정보 가져오기
@@ -172,9 +172,9 @@ export const userEditGet = async (req, res) => {
         where: {
             UID: req.UID
         }
-    }); 
+    });
 
-    return res.json({Users});
+    return res.json({ Users });
 };
 
 
@@ -190,9 +190,9 @@ export const userPwdCkPost = async (req, res) => {
 
     //변경시 비밀번호 확인
     if (Pwd === hashPassword) {
-        return res.json({pwdCk: true}).end();
+        return res.json({ pwdCk: true }).end();
     } else {
-        return res.json({pwdCk: false}).end();
+        return res.json({ pwdCk: false }).end();
     }
 
 }
@@ -261,23 +261,23 @@ export const userDelete = async (req, res) => {
 
     //해당 유저의 게시물이 잇는지 판별
     const board = await models.Board.findAll({
-        where : { UID : req.UID}
+        where: { UID: req.UID }
     })
 
     //게시물 잇을시
-    if(!!board[0]){
-        await board.forEach(async ({BID}) => {
+    if (!!board[0]) {
+        await board.forEach(async ({ BID }) => {
             models.BoardLike.destroy({
                 where: { BID },
             });
 
             models.Comment.destroy({
                 where: { BID },
-              });
-          
+            });
+
             models.Picture.destroy({
                 where: { BID },
-              });
+            });
 
             models.Hashtag.destroy({
                 where: { BID },
@@ -285,7 +285,7 @@ export const userDelete = async (req, res) => {
         })
     }
 
-    
+
     await models.Comment.destroy({
         where: { UID: req.UID },
     });
@@ -295,40 +295,40 @@ export const userDelete = async (req, res) => {
     });
 
     await models.Follwer.destroy({
-        where : {
-            [Op.or] : [{
-                MyUID : req.UID
-            },{
-                FUID : req.UID
+        where: {
+            [Op.or]: [{
+                MyUID: req.UID
+            }, {
+                FUID: req.UID
             }]
         }
     })
-    
+
     await models.Board.destroy({
-        where : {UID: req.UID}
+        where: { UID: req.UID }
     })
-    
+
     await models.Users.destroy({
-        where: {UID: req.UID}
+        where: { UID: req.UID }
     })
-  
-    res.clearCookie("MyAccess").json({result:true}).end();
+
+    res.clearCookie("MyAccess").json({ result: true }).end();
 };
 
 //팔로우, 언팔로우
 export const userFollwer = async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
-   
+
     try {
         const follwer = await models.Follwer.findOne({
-            where:{
+            where: {
                 MyUID: req.UID,
                 FUID: parseInt(id)
             }
         });
 
-        if(!!follwer){
+        if (!!follwer) {
             await models.Follwer.destroy({
                 where: {
                     MyUID: req.UID,
@@ -336,19 +336,19 @@ export const userFollwer = async (req, res) => {
                 }
             });
 
-            res.json({result: 'unfollow'}).end();
+            res.json({ result: 'unfollow' }).end();
 
-        }else{
+        } else {
             await models.Follwer.create({
                 MyUID: req.UID,
                 FUID: parseInt(id)
             });
 
-            res.json({result: 'follow'}).end();
+            res.json({ result: 'follow' }).end();
         }
- 
+
     } catch (error) {
-       console.log(error); 
+        //console.log(error);
     }
 };
 
@@ -359,24 +359,24 @@ export const pwdChange = async (req, res) => {
 
     const user = await models.Users.findOne({
         where: {
-            Email:email, 
+            Email: email,
             Pwd: originPwd
         }
     });
 
-    if(!!user){
+    if (!!user) {
         const Salt = addSalt();
         const Pwd = addHash(newPwd, Salt);
 
         await models.Users.update({
             Salt,
             Pwd
-        },{
-            where: {Email: email}
+        }, {
+            where: { Email: email }
         })
 
-        return res.json({result: true}).end();
-    }else{
-        return res.json({result: false}).end();
+        return res.json({ result: true }).end();
+    } else {
+        return res.json({ result: false }).end();
     }
 }

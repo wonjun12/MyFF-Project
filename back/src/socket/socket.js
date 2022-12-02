@@ -35,7 +35,7 @@ module.exports = (server) => {
             const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 
             //연결 된 후 출력
-            console.log('new connection', ip, socket.id);
+            //console.log('new connection', ip, socket.id);
             
             socket.on("login", (data)=>{
             
@@ -61,7 +61,7 @@ module.exports = (server) => {
             
             //소켓 해제시 발생 이벤트
             socket.on('disconnect', () => {
-                console.log("disconnect", ip, socket.id);
+                //console.log("disconnect", ip, socket.id);
                 clearInterval(socket.interval);
             });
         });  

@@ -27,10 +27,10 @@ module.exports = {
             decoded = jwt.verify(token, secretKey);    
         } catch (error) {
             if(error.message === "jwt expired"){
-                console.log("토큰 만료");
+                //console.log("토큰 만료");
                 return tokenExpiration;
             }else{
-                console.log("토큰 부적합");
+                //console.log("토큰 부적합");
                 return tokenFaild;
             } 
         }

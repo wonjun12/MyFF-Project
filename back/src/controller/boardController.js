@@ -62,7 +62,7 @@ export const boardWritePost = async (req, res) => {
     res.json({ result: "ok" }).end();
 
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     res.json({ result: "error" }).end();
   }
 };
@@ -303,7 +303,7 @@ export const boardDelte = async (req, res) => {
         where: { BID: id },
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
     
 
@@ -371,7 +371,7 @@ export const boardCommtEdit = async (req, res) => {
       });
       res.json({ result: "ok" }).end();
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       res.json({ result: "error" }).end();
     }
   // 댓글 수정 일때
@@ -391,7 +391,7 @@ export const boardCommtEdit = async (req, res) => {
       );
       res.json({ result: "ok" }).end();
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       res.json({ result: "error" }).end();
     }
   } else {

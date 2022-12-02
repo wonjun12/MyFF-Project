@@ -6,7 +6,7 @@ const checkToken = async (req, res, next) => {
     const {MyAccess} = req.cookies;
     
     if(!MyAccess){
-        console.log("토큰 없음");
+        //console.log("토큰 없음");
         return res.status(201).json({result: "filed"}).end();
     }
 
@@ -14,11 +14,11 @@ const checkToken = async (req, res, next) => {
     const user = await jwt.verify(MyAccess);
 
     if(user === tokenExpiration){
-        console.log("토큰 만료");
+        //console.log("토큰 만료");
         res.clearCookie("MyAccess");
         return res.status(201).json({result: "filed"}).end();
     }else if(user === tokenFaild){
-        console.log("토큰 부적합");
+        //console.log("토큰 부적합");
         return res.status(201).json({result: "filed"}).end();
     }
 
