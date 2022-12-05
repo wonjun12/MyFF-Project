@@ -122,6 +122,7 @@ const Join = (props) => {
             setCkPwdMsg('비밀번호가 일치하지 않습니다.');
             setPwdMsg('');
         }else{
+            setCkPwdMsg('');
             setPwdConfirm(true);
         }
     }
@@ -132,9 +133,11 @@ const Join = (props) => {
         
         if(pwd !== e.currentTarget.value){
             setCkPwdMsg('비밀번호가 일치하지 않습니다.');
+            setPwdConfirm(false);
         }else{
             setCkPwdMsg('');
             setCkPwdConfirm(true);
+            setPwdConfirm(true);
         }
     }
     //이름유효성

@@ -161,6 +161,7 @@ const UserEdit = (props) => {
             setEditConfirmPwdMsg('비밀번호가 일치하지 않습니다.');
             setEditPwdMsg('');
         }else{
+            setEditConfirmPwdMsg('');
             setEditPwdConfirm(true);
         }
     }
@@ -172,9 +173,11 @@ const UserEdit = (props) => {
 
         if (editPwd !== e.currentTarget.value) {
             setEditConfirmPwdMsg('비밀번호가 일치하지 않습니다.');
+            setEditPwdConfirm(false);
         } else {
             setEditConfirmPwdMsg('');
             setEditCkPwdConfirm(true);
+            setEditPwdConfirm(true);
         }
     }
 
