@@ -50,7 +50,7 @@ const BoardDetail = () => {
   }
 
   const dateAddZero = (date) => {
-    return ((date < 10)? '0' : '') + date;
+    return ((date < 10) ? '0' : '') + date;
   }
 
   const [isFollwing, setIsFollwing] = useState(false);    //팔로우여부
@@ -83,7 +83,7 @@ const BoardDetail = () => {
   const commentDataFetch = async () => {
     const res = await axios.get(`${SERVER_URL}/${id}/commt`);
 
-    if(res.data.result){
+    if (res.data.result) {
       setComments(res.data.commt);
     }
   }
@@ -163,12 +163,14 @@ const BoardDetail = () => {
 
   //게시물 좋아요
   const boardLikeFnc = async () => {
-    await axios.post(`${SERVER_URL}/${id}/like`);
-
-    setLike((prev) => ({
-      length: prev.isLike ? prev.length - 1 : prev.length + 1,
-      isLike: (!prev.isLike)
-    }));
+    if (sessionStorage.getItem('loginUID') !== 'undefined'
+      && sessionStorage.getItem('loginUID') !== null) {
+      await axios.post(`${SERVER_URL}/${id}/like`);
+      setLike((prev) => ({
+        length: prev.isLike ? prev.length - 1 : prev.length + 1,
+        isLike: (!prev.isLike)
+      }));
+    }
 
   }
 
@@ -195,42 +197,42 @@ const BoardDetail = () => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: '삭제하기',
-      cancelButtonText:'취소'
+      cancelButtonText: '취소'
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await axios.post(`${SERVER_URL}/${BID}/delete`);
         const { result } = res.data;
 
-        if(result){
+        if (result) {
           Swal.fire(
             '삭제 완료!',
             '정상적으로 삭제되었습니다.',
             'success',
           )
           navigate(`/`);
-        }else{
+        } else {
           Swal.fire({
             icon: 'error',
             title: '에러',
             text: '예상치 못한 오류가 났습니다.',
           })
         }
-        
+
       }
     })
   }
 
   //팔로우 버튼
   const followFnc = async (FUID) => {
-    const {data} = await axios.post('/api/user/' + FUID + '/follwer');
+    const { data } = await axios.post('/api/user/' + FUID + '/follwer');
     const { result } = data;
-  
-      if (result === 'follow') {
-        setIsFollwing(!isFollwing); //팔로우>언팔 / 언팔>팔로우
-      } else if (result === 'unfollow') {
-        setIsFollwing(!isFollwing);
-      }
-      dataFetch();
+
+    if (result === 'follow') {
+      setIsFollwing(!isFollwing); //팔로우>언팔 / 언팔>팔로우
+    } else if (result === 'unfollow') {
+      setIsFollwing(!isFollwing);
+    }
+    dataFetch();
   }
 
 
@@ -248,15 +250,15 @@ const BoardDetail = () => {
 
   //댓글을 열경우 실행
   useEffect(() => {
-    if(commView){
+    if (commView) {
       scrollEnd();
     }
   }, [commView])
 
 
-    
-    //시간 계산
-    const setTimeer = (createdAt) => {
+
+  //시간 계산
+  const setTimeer = (createdAt) => {
     //게시물 작성날짜 시간 가져오기
     const create = new Date(createdAt);
     //현재 시각 가져옴
@@ -265,26 +267,26 @@ const BoardDetail = () => {
     //년수 출력
     let times = Math.ceil((date.getTime() - create.getTime()) / 1000);
 
-    if(times < 60){
+    if (times < 60) {
       return `${times}초 전`
-    }else{
+    } else {
       times = Math.floor(times / 60);
-      if(times < 60){
+      if (times < 60) {
         return `${times}분 전`
-      } else{
-        times =  Math.floor(times / 60);
-        if(times < 24){
+      } else {
+        times = Math.floor(times / 60);
+        if (times < 24) {
           return `${times}시간 전`
-        }else{
-          times =  Math.floor(times / 24);
-          if(times < 30){
+        } else {
+          times = Math.floor(times / 24);
+          if (times < 30) {
             return `${times}일 전`
-          }else{
-            times =  Math.floor(times / 30);
-            if(times < 12){
+          } else {
+            times = Math.floor(times / 30);
+            if (times < 12) {
               return `${times}달 전`
-            }else {
-              times =  Math.floor(times / 12);
+            } else {
+              times = Math.floor(times / 12);
               return `${times}년 전`
             }
           }
@@ -316,8 +318,8 @@ const BoardDetail = () => {
               </Link>
               {(userID !== 'undefined' && parseInt(userID) !== board.User?.UID) ? (
                 <>
-                  {(isFollwing) ? <input className={Styles.userBtn} type="button" value="언팔로우" onClick={() => followFnc(board.User?.UID)}/>
-                    : <input className={Styles.userBtn} type="button" value="팔로우"  onClick={() => followFnc(board.User?.UID)}/>}
+                  {(isFollwing) ? <input className={Styles.userBtn} type="button" value="언팔로우" onClick={() => followFnc(board.User?.UID)} />
+                    : <input className={Styles.userBtn} type="button" value="팔로우" onClick={() => followFnc(board.User?.UID)} />}
                 </>
               ) : null}
             </div>
@@ -392,7 +394,7 @@ const BoardDetail = () => {
             <Link to={`/board/${board.BID}/edit`}>
               <input className={Styles.boardEditBtn} type="button" value="수정하기" />
             </Link>
-            <input className={Styles.boardDeleteBtn} type="button" value="삭제하기" onClick={() => boardDeleteFnc(board.BID)}/>
+            <input className={Styles.boardDeleteBtn} type="button" value="삭제하기" onClick={() => boardDeleteFnc(board.BID)} />
           </div>
         }
       </div>
@@ -444,7 +446,7 @@ const BoardDetail = () => {
                   <p>{comment.comm}</p>
                 )}
 
-                <p style={{color:'gray', paddingTop:'10px'}}>{((comment.updatedAt === comment.createdAt) ? getDate(comment.createdAt) : getDate(comment.updatedAt) + " (수정됨)")} ({setTimeer(comment.createdAt)})</p>
+                <p style={{ color: 'gray', paddingTop: '10px' }}>{((comment.updatedAt === comment.createdAt) ? getDate(comment.createdAt) : getDate(comment.updatedAt) + " (수정됨)")} ({setTimeer(comment.createdAt)})</p>
 
                 {comment.UID === parseInt(userID) &&
                   <div className={Styles.commtEditDiv}>
@@ -467,9 +469,9 @@ const BoardDetail = () => {
           })
         ) : null}
         <div className={Styles.commtMore}>
-        {((comments.length > commMore * 10 + 10) && commView)? 
+          {((comments.length > commMore * 10 + 10) && commView) ?
             <button type="button" onClick={() => {
-              setCommMore(commMore+1);
+              setCommMore(commMore + 1);
               scrollEnd();
             }}> 댓글 더 보기 </button> : null}
         </div>
