@@ -8,6 +8,7 @@ import { SetMap } from "../kakao/kakaoAPI";
 import SearchBoard from "../kakao/kakaoSearchBoard";
 import CreateMaker from "../kakao/kakaoCreateMarker";
 import Swal from "sweetalert2";
+import imageCompression from 'browser-image-compression';
 
 const SERVER_URL = "/api/board/";
 
@@ -60,7 +61,7 @@ const BoardEdit = () => {
   };
 
   //게시물 수정 submit
-  const boardEditSubmit = (e) => {
+  const boardEditSubmit = async (e) => {
     e.preventDefault();
 
     //imageFile 이 있는 경우만 게시물 작성 가능
@@ -102,7 +103,8 @@ const BoardEdit = () => {
 
       for (let i = 0; i < imageFiles.length; i++) {
         //console.log(imgFile[i]);
-        formData.append("file", imageFiles[i]);
+        const file = await imageCompression(imageFiles[i], {maxWidthOrHeight: 665});
+        formData.append("file", file);
       }
       formData.append("bodys", JSON.stringify(data));
 

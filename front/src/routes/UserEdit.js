@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Styles from "./UserEdit.module.scss";
 import { Buffer } from "buffer";
 import Swal from "sweetalert2";
+import imageCompression from 'browser-image-compression';
 
 const SERVER_URL = "/api/user/";
 
@@ -194,7 +195,7 @@ const UserEdit = (props) => {
     }
 
     //수정 완료 submit
-    function userEditPost(e) {   //저장이미지 포스트
+    async function userEditPost(e) {   //저장이미지 포스트
         e.preventDefault();
         //console.log(imgFile);
         const config = {
@@ -203,10 +204,12 @@ const UserEdit = (props) => {
             },
         };
 
+        ////////////////////////////////////
         const formData = new FormData();
 
         if (imgFile) {
-            formData.append("file", imgFile);
+            const img = await imageCompression(imgFile, {maxWidthOrHeight: 200});
+            formData.append("file", img);
         }
 
         if (editNickConfirm && editPwdConfirm && editCkPwdConfirm) {

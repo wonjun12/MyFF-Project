@@ -8,6 +8,7 @@ import CreateMaker from "../kakao/kakaoCreateMarker";
 import { socket } from "../socket/socket";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
+import imageCompression from 'browser-image-compression';
 
 const SERVER_URL = "/api/board";
 
@@ -23,7 +24,7 @@ const config = {
   },
 };
 
-const BoardWrite = () => {
+const BoardWrite = async () => {
   axios.defaults.withCredentials = true;
 
   const navigate = useNavigate();
@@ -34,8 +35,9 @@ const BoardWrite = () => {
   const [images, setImages] = useState([]); //미리보기 이미지
 
 
+  /////////////////추가
   //게시물 작성 POST
-  const boardSubmit = (e) => {
+  const boardSubmit = async (e) => {
     e.preventDefault();
 
     //유효성 검사
@@ -59,8 +61,8 @@ const BoardWrite = () => {
 
       //파일과 body가 같이 갈수 없으므로, JSON의 형태로 변환해서 보낸다.
       for (let i = 0; i < imageFiles.length; i++) {
-        //console.log(imgFile[i]);
-        formData.append("file", imageFiles[i]);
+        const file = await imageCompression(imageFiles[i], {maxWidthOrHeight: 665});
+        formData.append("file", file);
       }
 
       formData.append("bodys", JSON.stringify(data));
