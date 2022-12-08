@@ -125,7 +125,7 @@ function Header({mapView}) {
           setSearchValue(res.data.board);
         }
       }
-    }else{
+    }else if(body.select === '2'){
       toHref(`/tag/${body.value}`);
     }
   }
