@@ -2,6 +2,8 @@
 
   <div align="center">
     <h1> _Team_ - Locept  </h1>
+    <br><br>
+    <h3> 위치기반 먹거리 SNS 'MYFF' </h3>
     <br>
     <h3> Front-end </h3> <br>
     <img src="https://img.shields.io/badge/Create React App-09D3AC?style=flat&logo=Create React App&logoColor=white" /> 
